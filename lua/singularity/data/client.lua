@@ -1,9 +1,7 @@
 local Singularity = Singularity
 local Utl = Singularity.Utl --Makes it easier to read the code.
 
-Utl:HookNet("SingEntDatSync","",
-function(D)
-	print("Recieved Data Update!")
+Utl:HookNet("SingEntDatSync","",function(D)
 	D.E.SyncData = table.Merge(D.E.SyncData or {},D.T) 
 end)
 
@@ -22,3 +20,7 @@ function GetWorldTips()
     end
 end
 hook.Add("Think", "GetWorldTips", GetWorldTips)
+
+hook.Add( "PreDrawHalos", "AddHalos", function()
+	halo.Add( GetSelectedMelons(), Color( 255, 255, 255 ), 5, 5, 1 )
+end )

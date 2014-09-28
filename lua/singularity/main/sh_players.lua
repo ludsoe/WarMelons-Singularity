@@ -1,14 +1,15 @@
 local Singularity = Singularity --Localise the global table for speed.
 local Utl = Singularity.Utl --Makes it easier to read the code.
-local Teams = Singularity.Teams
+local Teams,NDat = Singularity.Teams,Utl.NetMan 
 local ENT,PLY = FindMetaTable( "Entity" ),FindMetaTable( "Player" )
 
 if SERVER then
 	function MISpawn(ply)
-		ply:SetMTeam(Teams.CreateTeam(ply:Nick(),Color(math.random(150,255),math.random(150,255),math.random(150,255),255)))
-	
 		ply.SelectedMelons = {}
+		ply.SyncedMelons = {}
 		ply.LastSelect = 0
+		
+		ply:SetMTeam(Teams.CreateTeam(ply:Nick(),Color(math.random(150,255),math.random(150,255),math.random(150,255),255)))
 	end
 
 	function MLeave(ply)
@@ -17,6 +18,25 @@ if SERVER then
 
 	Utl:HookHook("PlayerInitialSpawn","MelonsISpawn",MISpawn,1)
 	Utl:HookHook("PlayerDisconnected","MelonsLeave",MLeave,1)
+	util.AddNetworkString('SelectedMelons')
+else
+
+function GetSelectedMelons() return LocalPlayer().SelectedMelons or {} end
+
+Utl:HookNet("SelectedMelons","",function(D)
+	local Selected = LocalPlayer().SelectedMelons or {}
+	
+	for k, v in pairs(D.T) do
+		if v.A == "Add" then
+			Selected[v.K]=Entity(v.K)
+		elseif v.A == "Remove" then
+			Selected[v.K]=nil
+		end
+	end
+	
+	LocalPlayer().SelectedMelons = Selected
+end)
+
 end
 
 function PLY:GetMTeam()
@@ -25,7 +45,42 @@ end
 
 function PLY:SetMTeam(Team)
 	Team:AddMember(self)
-	self.SelectedMelons = {} --Clear selected melons.
+	self:ClearSelectedMelons() --Clear selected melons.
+end
+
+function PLY:SyncSelected()
+	local Melons,Sync = self.SelectedMelons,self.SyncedMelons
+	local Transmit = {}
+	
+	for k, v in pairs(Sync) do
+		if Melons[k]==nil or not IsValid(Melons[k]) then
+			Transmit[k]={A="Remove",K=k}
+			Sync[k]=nil
+		end
+	end
+	
+	for k, v in pairs(Melons) do
+		if Sync[k]==nil then
+			Sync[k]=v
+			Transmit[k]={A="Add",K=k}
+		end
+	end
+	
+	if table.Count(Transmit)>=1 then
+		local Send = {
+			Name="SelectedMelons",
+			Val=1,
+			Dat={{N="E",T="E",V=self},{N="T",T="T",V=Transmit}}
+		}
+		NDat.AddData(Send,self)
+	end
+end
+
+function PLY:ClearSelectedMelons(NoSync)
+	self.SelectedMelons = {}
+	if not NoSync then
+		self:SyncSelected()
+	end
 end
 
 function PLY:SelectMelons(Shift,Use)
@@ -35,12 +90,13 @@ function PLY:SelectMelons(Shift,Use)
 
 	if self.LastSelect > CurTime() then return end
 	
-	if not Shift then self.SelectedMelons = {} end
-	local entz = ents.FindInSphere(Pos,Rad)
+	if not Shift then self:ClearSelectedMelons(true) end
+	local entz,MSound = ents.FindInSphere(Pos,Rad),false
 	if Ent and IsValid(Ent) then
 		if Ent.MelonTeam then
 			if Ent.MelonTeam.name==self.MelonTeam then
 				self.SelectedMelons[Ent:EntIndex()]=Ent
+				MSound = true
 			end
 		end
 	else
@@ -48,11 +104,17 @@ function PLY:SelectMelons(Shift,Use)
 			if v:GetClass() == "swm_melon" then
 				if v.MelonTeam.name==self.MelonTeam then
 					self.SelectedMelons[v:EntIndex()]=v
+					MSound = true
 				end
 			end
 		end
 	end
 	self.LastSelect=CurTime()+0.1
+	self:SyncSelected()
+	
+	if MSound then
+	--	self:EmitSound("garrysmod/ui_return.wav",100,100)
+	end
 end
 
 function PLY:OrderMelons(Shift)
@@ -72,6 +134,10 @@ function PLY:OrderMelons(Shift)
 			else
 				self.SelectedMelons[k]=nil
 			end
+		end
+		
+		if MSound then
+	--		self:EmitSound("garrysmod/ui_click.wav",100,100)
 		end
 	end
 end
