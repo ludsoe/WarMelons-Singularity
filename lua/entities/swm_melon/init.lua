@@ -9,7 +9,7 @@ function Normalize(Vec)
 end
 
 function ENT:LineOfSight(Vec,Ent)
-	local tr = util.TraceLine({hitdatastart = self:GetPos(),endpos = Vec,filter = self} )
+	local tr = util.TraceLine({start = self:GetPos(),endpos = Vec,filter = self} )
 	local Hit,HitEnt = tr.Hit,tr.Entity
 	
 	if not Hit then
@@ -25,7 +25,8 @@ end
 
 function ENT:Attack(Ent)
 	local EPos = Ent:GetPos()
-	if self.LineOfSight(EPos,Ent) then
+	if not Ent or not IsValid(Ent) then return end
+	if self:LineOfSight(EPos,Ent) then
 		if self.Times.Attack < CurTime() then
 			Singularity.DealDamage(Ent,EPos,self.DNA.Damage,self,self)
 			self.Times.Attack=CurTime()+self.DNA.AttackRate
@@ -37,7 +38,7 @@ function ENT:ScanEnemys()
 	if self.Times.Scan < CurTime() then
 		local entz = ents.FindInSphere(self:GetPos(),self.DNA.Range)
 		for k, v in pairs(entz) do
-			if v.MelonTeam then
+			if v.MelonTeam and not v:IsPlayer() then
 				if v.MelonTeam~=self.MelonTeam then
 					if self:LineOfSight(v:GetPos(),v) then
 						self.Enemy = v

@@ -5,15 +5,6 @@ function Singularity.DealDamage(ent,position,amount,attacker,inflictor)
 	if not amount or amount==0 then print("Damage is nil") return end
 	if ent.NoDamage or Singularity.IsImmune( ent ) then return end
 	amount=math.floor(math.abs(amount))
-	
-	if ent:IsPlayer() or ent:IsNPC() then	
-		if IsValid(attacker) and not attacker:IsPlayer() then
-			inflictor=attacker
-			attacker=Singularity.GetPropOwner(attacker)
-		end
-		Singularity.ApplyPlayerDamage(ent,info,amount,attacker,inflictor) 
-		return 
-	end
 
 	if ent.OnDamage then
 		ent:OnDamage(ent,position,amount,attacker,inflictor)
@@ -144,12 +135,12 @@ function Singularity.BreakOff(ent,mult)
 end
 
 function Singularity.IsImmune( entity )
-	local GV,Class = Singularity.GV,entity:GetClass()
+	--[[local GV,Class = Singularity.GV,entity:GetClass()
 	for id, cls in pairs( GV.ImmuneClasses ) do
 		if Class == cls then
 			return true
 		end
-	end
+	end]]
 	return false
 end
 
