@@ -9,7 +9,9 @@ if SERVER then
 		ply.SyncedMelons = {}
 		ply.LastSelect = 0
 		
-		ply:SetMTeam(Teams.CreateTeam(ply:Nick(),Color(math.random(150,255),math.random(150,255),math.random(150,255),255)))
+		local VC = ply:GetPlayerColor()
+		local Col = Color((VC.x*255),(VC.y*255),(VC.z*255),255)
+		ply:SetMTeam(Teams.CreateTeam(ply:Nick(),Col))
 	end
 
 	function MLeave(ply)
