@@ -58,6 +58,7 @@ end
 function ENT:Think()
 	self:ModuleThink()
 	
+	if self.BSThink then self:BSThink() end
 	if self.Times.Transmit < CurTime() then
 		self.Times.Transmit=CurTime()+0.2
 		self:TransmitData()
@@ -115,8 +116,8 @@ function ENT:TransmitData()
 	--{Name="example",Val=1,Dat={{N="D",T="S",V="example"}}}
 	for n, v in pairs( self.OldData ) do --Update our existing data first.
 		if v.V ~= Data[n] then --If Data doesnt match
-			self.OldData[n] = {V=v,C=true} --Set it to the new value and mark as changed.
-			Transmit[n] = v
+			self.OldData[n] = {V=Data[n],C=true} --Set it to the new value and mark as changed.
+			Transmit[n] = Data[n]
 		else
 			v.C = false --Mark It unchanged.
 		end

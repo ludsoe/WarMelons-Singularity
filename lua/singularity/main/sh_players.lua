@@ -127,12 +127,8 @@ function PLY:OrderMelons(Shift)
 		--DoSoundthingy
 		for k, v in pairs(self.SelectedMelons) do
 			if v and IsValid(v) then
-				if Shift then
-					table.insert(v.TargetVec,Pos)
-				else
-					v.TargetVec={}
-					v.TargetVec[1]=Pos
-				end
+				if not Shift then v:ClearOrders() end
+				v:AddOrder({T="Goto",V=Pos})
 			else
 				self.SelectedMelons[k]=nil
 			end

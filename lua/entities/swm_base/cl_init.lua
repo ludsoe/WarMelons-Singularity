@@ -11,6 +11,7 @@ function ENT:Compile(T,N)
 end
 
 function ENT:Think()
+	if self.BSThink then self:BSThink() end
 	if not self.ClientSide then
 		self.ModType = self:GetNWString("Type","")
 		self.ModName = self:GetNWString("Name","WarMelon")

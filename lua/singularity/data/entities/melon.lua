@@ -22,12 +22,12 @@ Data.Setup = function(self,Data,MyData)
 	self:SetColor(self.MelonTeam.color)
 	self.SyncData.Team=self.MelonTeam.Name
 	
-	self:SetMaterial("lights/white")
+	self:SetMaterial("models/debug/debugwhite")
 end
 
 Data.ThinkSpeed = 0
 Data.Think = function(self)
-	self:ManageMovement()
+	self:RunOrders()
 	self:ScanEnemys()
 	
 	if IsValid(self.Enemy) then
