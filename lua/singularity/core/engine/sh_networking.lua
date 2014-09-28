@@ -10,8 +10,8 @@ NDat.NHook = NDat.NHook or {} --The table we store net hooks in.
 local NumBool = function(V) if V then return 1 else return 0 end end --Bool to number.
 local BoolNum = function(V) if V>0 then return true else return false end end --Number to bool.
 
-NDat.NetDTWrite = {S=net.WriteString,E=net.WriteEntity,F=net.WriteFloat,V=net.WriteVector,A=net.WriteAngle,B=function(V) net.WriteFloat(NumBool(V)) end,T=function(T) net.WriteString(util.TableToJSON(T)) end}
-NDat.NetDTRead = {S=net.ReadString,E=net.ReadEntity,F=net.ReadFloat,V=net.ReadVector,A=net.ReadAngle,B=function() return BoolNum(net.ReadFloat()) end,T=function() return util.JSONToTable(net.ReadString()) or {} end}
+NDat.NetDTWrite = {S=net.WriteString,E=function(V) net.WriteFloat(V:EntIndex()) end,F=net.WriteFloat,V=net.WriteVector,A=net.WriteAngle,B=function(V) net.WriteFloat(NumBool(V)) end,T=function(T) net.WriteString(util.TableToJSON(T)) end}
+NDat.NetDTRead = {S=net.ReadString,E=function(V) return Entity(net.ReadFloat()) end,F=net.ReadFloat,V=net.ReadVector,A=net.ReadAngle,B=function() return BoolNum(net.ReadFloat()) end,T=function() return util.JSONToTable(net.ReadString()) or {} end}
 	
 --Actually sends the data out.
 function NDat.SendData(Data,Name,ply)
@@ -31,7 +31,13 @@ function NDat.SendData(Data,Name,ply)
 end
 
 function Utl:HookNet(MSG,ID,Func) NDat.NHook[MSG] = Func end
-function NDat:InNetF(MSG,Data,ply) if(NDat.NHook[MSG])then NDat.NHook[MSG](Data,ply) else print("Unhandled message... "..MSG) end end
+function NDat:InNetF(MSG,Data,ply) 
+	if(NDat.NHook[MSG])then
+		NDat.NHook[MSG](Data,ply) 
+	else 
+		print("Unhandled message... "..MSG) 
+	end 
+end
 
 --Function that receives the netmessage.
 net.Receive( "sing_basenetmessage", function( length, ply )
@@ -85,7 +91,7 @@ if(SERVER)then
 		NDat.Data[ply:Nick()]={Data={},Ent=ply}
 	end
 	
-	Utl:SetupThinkHook("SyncNetData",0.2,0,NDat.CyclePlayers)	
+	Utl:SetupThinkHook("SyncNetData",0.1,0,NDat.CyclePlayers)	
 	Utl:HookHook("PlayerInitialSpawn","NetDatHook",NDat.AddPlay,1)	
 	
 else

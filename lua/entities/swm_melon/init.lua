@@ -56,8 +56,7 @@ function ENT:ManageMovement()
 		local angle1 = self.TargetVec[1] - self:GetPos()
 		if self:GetPos():Distance(self.TargetVec[1])>MoveRange then
 			self:GetPhysicsObject():SetDamping(2, 0)
-			local blah = math.abs(angle1.x - angle1.y)
-			if (self:GetVelocity():Length() < self.DNA.Speed or self.Grav == false ) and (blah >= 20 or angle1.z < self:GetPos().z) then
+			if self:GetVelocity():Length() < self.DNA.Speed then
 				self:GetPhysicsObject():ApplyForceCenter(Normalize(angle1) * self.DNA.Force)
 			end
 		else

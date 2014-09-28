@@ -20,6 +20,7 @@ Data.MyModel = "models/props_junk/watermelon01.mdl"
 Data.Setup = function(self,Data,MyData)
 	self.MelonTeam = self.Ply:GetMTeam()
 	self:SetColor(self.MelonTeam.color)
+	self.SyncData.Team=self.MelonTeam.Name
 end
 
 Data.ThinkSpeed = 0
@@ -30,6 +31,8 @@ Data.Think = function(self)
 	if IsValid(self.Enemy) then
 		self:Attack(self.Enemy)
 	end
+	
+	self.SyncData.Health = Singularity.GetHealth( self )
 end
 
 Singularity.Entities.MakeModule(Data)

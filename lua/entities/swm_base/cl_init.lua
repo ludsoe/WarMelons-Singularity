@@ -34,6 +34,13 @@ end
 
 function ENT:WorldBubble(Trace,Pos)
 	local txt = "[ "..(self.DisplayName or self.ModName).." ]"
+	for n, v in pairs( self.SyncData or {} ) do
+		txt=txt.."\n"..n..": "..tostring(v)
+		print(type(v))
+		if type(v) == "table" then
+			PrintTable(v)
+		end
+	end
 	--Add Stuff Here related to what the ship Module Displays.
 	return txt
 end

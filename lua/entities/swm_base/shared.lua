@@ -5,7 +5,9 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 
 ENT.InitData = {}
+ENT.SyncData = {}
+ENT.OldData = {}
 ENT.ModuleData = {}
 ENT.ClientSide = false
 
-ENT.Times = {Attack=0,Scan=0}
+ENT.Times = {Attack=0,Scan=0,Transmit=0}

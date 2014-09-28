@@ -6,13 +6,13 @@ function Singularity.LoadFile(Path,Mode)
 			if Mode == 1 then
 				AddCSLuaFile(Path)
 			end
-			return include(Path)
+			include(Path)
 		else
 			AddCSLuaFile(Path)
 		end
 	else
 		if Mode <= 1 then
-			return include(Path)
+			include(Path)
 		end
 	end
 end
