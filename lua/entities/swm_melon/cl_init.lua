@@ -33,7 +33,7 @@ function ENT:DrawOrder(S,E)
 end
 
 function ENT:BSThink()	
-	if self:AmISelected then
+	if self:AmISelected() then
 		local RendPos = self:GetPos()
 		for k, v in pairs(self.Orders) do
 			self:DrawOrder(RendPos,v.V)
