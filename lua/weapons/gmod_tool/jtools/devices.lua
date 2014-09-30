@@ -88,21 +88,23 @@ Tool.Primary = function(trace,ply,Settings)
 		ent:Compile(Settings.Spawns,ply)
 	end
 	
+	--PrintTable(Settings.Propertys)
+	
 	if not traceent:IsWorld() and not traceent:IsPlayer() then
 		local WeldSet = Settings.Propertys.Weld
 		local NocSet = Settings.Propertys.NoCollide
 		
-		if WeldSet.V == true then
+		if tobool(WeldSet.V) == true  then
 			weld = constraint.Weld( ent, traceent, 0, trace.PhysicsBone, 0 )
 		end
-		if NocSet.V == true then
+		if tobool(NocSet.V) == true then
 			nocollide = constraint.NoCollide( ent, traceent, 0, trace.PhysicsBone )
 		end
 	end
 	
 	local phys = ent:GetPhysicsObject()
 	local Freeze = Settings.Propertys.Freeze
-	if Freeze.V == true then
+	if tobool(Freeze.V) == true then
 		phys:EnableMotion( false ) 
 		ply:AddFrozenPhysicsObject( ent, phys )
 	end

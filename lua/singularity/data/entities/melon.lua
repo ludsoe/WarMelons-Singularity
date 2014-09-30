@@ -32,9 +32,7 @@ Data.Think = function(self)
 	
 	if IsValid(self.Enemy) then
 		self:Attack(self.Enemy)
-	end
-	
-	self.SyncData.Health = Singularity.GetHealth( self )
+	end	
 end
 
 Singularity.Entities.MakeModule(Data)

@@ -8,6 +8,8 @@ local Tool = {}
 function ViewTeamsPage(Base,Tab)
 	local MyTab = Tab["View"] or {}
 	local Name = "Select Group"
+	
+	MyTab.Base = Base
 		
 	local OnSelect = function(Data)
 		if Teams.Teams[Data].Members[LocalPlayer():Nick()] then
@@ -16,8 +18,10 @@ function ViewTeamsPage(Base,Tab)
 			MyTab.JoinButton:SetText("Join: "..Data)
 		end
 		
+		MyTab.MemberList:Clear()
+		
 		for k,v in pairs(Teams.Teams[Data].Members) do
-			print(""..k)
+			--print(""..k)
 			MyTab.MemberList:AddLine(k)
 		end
 		
@@ -27,7 +31,7 @@ function ViewTeamsPage(Base,Tab)
 	MyTab.TeamList = Singularity.MT.AddList("Teams",Teams.Teams,OnSelect,Base,260)
 		
 	MyTab.RefreshTeams = Singularity.MenuCore.CreateButton(Base,{x=150,y=40},{x=0,y=270},"Refresh",function() 
-		Teams.RequestTeams(MyTab.TeamList)
+		Teams.RequestTeams(MyTab)
 	end)
 	
 	local Mod = Singularity.MT.AddModular(Base)
@@ -40,12 +44,12 @@ function ViewTeamsPage(Base,Tab)
 			else
 				NDat.AddData({Name="JoinTeam",Val=1,Dat={{N="N",T="S",V=Data}}})
 			end
+			Teams.RequestTeams(MyTab)
 		end
 	end)
 	
 	MyTab.MemberList = Singularity.MenuCore.CreateList(Mod,{x=150,y=200},{x=0,y=80},false,function() end)
 	MyTab.MemberList:AddColumn("Members") -- Add column
-
 end
 
 Tool.Open = function(Menu,Tab) 

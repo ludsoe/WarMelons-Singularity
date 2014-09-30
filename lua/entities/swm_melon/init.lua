@@ -23,6 +23,14 @@ function ENT:LineOfSight(Vec,Ent)
 	end
 end
 
+function ENT:DrawAttack(S,E)
+	local effectdata = EffectData()
+		effectdata:SetOrigin(S+Vector(0,0,5))
+		effectdata:SetStart(E+Vector(0,0,0))
+		effectdata:SetEntity(self)
+	util.Effect( "attack_beam", effectdata )
+end
+
 function ENT:Attack(Ent)
 	local EPos = Ent:GetPos()
 	if not Ent or not IsValid(Ent) then return end
@@ -30,6 +38,7 @@ function ENT:Attack(Ent)
 		if self.Times.Attack < CurTime() then
 			Singularity.DealDamage(Ent,EPos,self.DNA.Damage,self,self)
 			self.Times.Attack=CurTime()+self.DNA.AttackRate
+			self:DrawAttack(self:GetPos(),Ent:GetPos())
 		end
 	end
 end

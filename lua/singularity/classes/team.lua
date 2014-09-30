@@ -8,7 +8,8 @@ local Team = {
 	color = Color(255,255,255,255),
 	Members = {},
 	Melons = {Units={},Buildings={}},
-	Diplomacy = {}
+	Diplomacy = {},
+	Persist = false
 }
 
 function Team:Setup(name,color)
@@ -18,14 +19,35 @@ function Team:Setup(name,color)
 	self:SyncData()
 end
 
-function Team:Destroy()
+function Team:MakePersist()
+	self.Persist = true
+end
+
+function Team:TeamDestroy()
+	--print("Destroying?")
+	if self.Persist then return end
+	--print("Yes Destroying!")
 	
+	--Add Melon Destruction
+	--Add Player booting.
+
+	NDat.AddDataAll({
+		Name="TeamDelete",
+		Val=1,
+		Dat={{N="N",T="S",V=self.name}}
+	})
+		
+	Teams.Teams[self.name]=nil
 end
 
 function Team:AddMember(Ply)
 	local OldTeam = Ply:GetMTeam()
 	
-	if not OldTeam == nil then
+	--print("Adding Member")
+	--print(tostring(OldTeam))
+	
+	if OldTeam then
+		--PrintTable(OldTeam)
 		if OldTeam.name == self.name then return end
 		OldTeam:RemoveMember(Ply)
 	end
@@ -42,11 +64,11 @@ function Team:AddMember(Ply)
 	self:SyncData()
 end
 
-function Team:RemoveMember(Ply)
+function Team:RemoveMember(Ply)	
 	self.Members[Ply:Nick()]=nil
-	
+
 	if table.Count(self.Members) <= 0 then
-		self:Destroy()
+		self:TeamDestroy()
 		return
 	end
 	
@@ -59,7 +81,7 @@ end
 
 function Team:GetLeader() return self.Leader end
 function Team:SetLeader(Ply) 
-	self.Leader = Ply
+	self.Leader = {ID=Ply:EntIndex(),E=Ply}
 	Ply:SendColorChat("WMG",self.color,"You are now the Leader of Team: "..self.name)
 	
 	self:SyncData()
@@ -86,13 +108,7 @@ function Team:SyncData()
 	})
 end
 
-Utl:HookNet("TeamSyncMsg","",function(D,Ply)
-	Singularity.Teams.Teams[D.N]=D.T
-end)
-
 Singularity.Teams.Class = Team
-
-
 
 
 

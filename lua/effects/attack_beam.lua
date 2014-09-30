@@ -5,10 +5,9 @@ function EFFECT:Init( data )
 	self.StartPos 	= data:GetStart()	
 	self.EndPos 	= data:GetOrigin()
 	self.Ent	 	= data:GetEntity()
-	self.BeamType	= data:GetColor()
-	self.Mag		= data:GetMagnitude()
+	self.Col		= self.Ent:GetColor()
 	
-	if (!self.Ent:IsValid()) then return false end
+	if not self.Ent:IsValid() then return false end
 	
 	self.Dir 		= self.EndPos - self.StartPos
 	self.LocalStartPos   = self.Ent:WorldToLocal(self.StartPos)
@@ -16,7 +15,7 @@ function EFFECT:Init( data )
 	
 	self.Entity:SetRenderBoundsWS( self.StartPos, self.EndPos )
 	
-	self.DieTime = CurTime() + self.Mag or 1
+	self.DieTime = CurTime() + 0.1
 end
 
 /*---------------------------------------------------------
@@ -39,13 +38,9 @@ end
 function EFFECT:Render( )
 	local Pos = self.StartPos
 	local EPos = self.EndPos
-	if (self.Ent:IsValid()) then
-		Pos = self.Ent:LocalToWorld(self.LocalStartPos)
-		EPos = self.Ent:LocalToWorld(self.LocalEndPos)
-	end
 	
-	render.SetMaterial( Material("cable/redlaser") )
-	render.DrawBeam( Pos, EPos, 20, 1, 10,Color(255,255,255,255))		
+	render.SetMaterial( Material("trails/laser") )
+	render.DrawBeam( Pos, EPos, 60, 4, 40,self.Col)		
 	--render.DrawLine(Pos,EPos,Color(255,255,255,255),false)
 	
 end
