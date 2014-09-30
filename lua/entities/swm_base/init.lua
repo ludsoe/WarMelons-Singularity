@@ -108,7 +108,6 @@ local Singularity = Singularity --Localise the global table for speed.
 local Utl = Singularity.Utl --Makes it easier to read the code.
 local NDat = Utl.NetMan 
 
-util.AddNetworkString('SingEntDatSync')
 function ENT:TransmitData()
 	local Data = table.Copy(self.SyncData) --Create a copy of the sync data table so we dont mess with the real one.
 	local Transmit = {}

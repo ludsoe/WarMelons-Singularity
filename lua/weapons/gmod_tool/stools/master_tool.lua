@@ -15,12 +15,14 @@ LoadFile("weapons/gmod_tool/tool_funcs.lua",1)
 LoadFile("weapons/gmod_tool/jtooldata/infopopup.lua",1)
 
 LoadFile("weapons/gmod_tool/jtools/settings.lua",1)
---LoadFile("weapons/gmod_tool/jtools/healthscanner.lua",1)
 LoadFile("weapons/gmod_tool/jtools/orders.lua",1)
---LoadFile("weapons/gmod_tool/jtools/navedit.lua",1)
-
+LoadFile("weapons/gmod_tool/jtools/teammanage.lua",1)
 LoadFile("weapons/gmod_tool/jtools/devices.lua",1)
+
+--LoadFile("weapons/gmod_tool/jtools/navedit.lua",1)
+--LoadFile("weapons/gmod_tool/jtools/healthscanner.lua",1)
 --LoadFile("weapons/gmod_tool/jtools/weapons.lua",1)
+
 
 --Load all the tools we want to display.
 local Path = "weapons/gmod_tool/jtools/addon/"

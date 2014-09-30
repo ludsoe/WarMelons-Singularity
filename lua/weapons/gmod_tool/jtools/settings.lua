@@ -18,9 +18,7 @@ Tool.Open = function(Menu,Tab)
 end --This is clientside only, called when the tool is selected.
 
 Tool.OnSync = function(ply,Settings)
-	if SERVER then
-		Singularity.MT.BindHotKey(ply,Settings.Key)
-	end
+
 end
 
 Singularity.MT.AddTool("Settings",Tool)

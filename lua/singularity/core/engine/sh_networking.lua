@@ -98,7 +98,7 @@ else
 	function NDat.AddData(Data) table.insert(NDat.Data,Data) end
 	
 	function NDat.SendToServer()
-		local Max = 50
+		local Max = 30
 		for id, Data in pairs( NDat.Data ) do
 			if(Max<=0)then break end--We reached the maximum amount of data we can send this tick.
 			Max=Max-Data.Val
@@ -107,7 +107,7 @@ else
 		end
 	end
 	
-	Utl:SetupThinkHook("SendToServer",0.2,0,NDat.SendToServer)	
+	Utl:SetupThinkHook("SendToServer",0.1,0,NDat.SendToServer)	
 	
 end
 

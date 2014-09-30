@@ -1,4 +1,7 @@
+local Singularity = Singularity --Localise the global table for speed.
 local Utl = Singularity.Utl --Makes it easier to read the code.
+local NDat = Utl.NetMan --Ease link to the netdata table.
+local Teams = Singularity.Teams
 
 local Team = {
 	name = "Error",
@@ -11,43 +14,55 @@ local Team = {
 function Team:Setup(name,color)
 	self.name = name
 	self.color = color
+	
+	self:SyncData()
 end
 
 function Team:Destroy()
 	
 end
 
-function Team:AddMember(Player)
-	local OldTeam = Player:GetMTeam()
-	if OldTeam~= nil then
-		OldTeam:RemoveMember(Player)
+function Team:AddMember(Ply)
+	local OldTeam = Ply:GetMTeam()
+	
+	if not OldTeam == nil then
+		if OldTeam.name == self.name then return end
+		OldTeam:RemoveMember(Ply)
 	end
 	
-	if #self.Members <= 0 then
-		self:SetLeader(Player)
+	if table.Count(self.Members) <= 0 then
+		self:SetLeader(Ply)
+	else
+		Ply:SendColorChat("WMG",self.color,"You are now in Team: "..self.name)
 	end
 	
-	self.Members[Player:Nick()]=Player
-	Player.MelonTeam=self.name
+	self.Members[Ply:Nick()]={ID=Ply:EntIndex(),E=Ply}
+	Ply.MelonTeam=self.name
+	
+	self:SyncData()
 end
 
-function Team:RemoveMember(Player)
-	self.Members[Player:Nick()]=nil
+function Team:RemoveMember(Ply)
+	self.Members[Ply:Nick()]=nil
 	
 	if table.Count(self.Members) <= 0 then
 		self:Destroy()
 		return
 	end
 	
-	if self.Leader == Player then
+	if self.Leader == Ply then
 		self:GetNewLeader()
 	end
+	
+	self:SyncData()
 end
 
 function Team:GetLeader() return self.Leader end
-function Team:SetLeader(Player) 
-	self.Leader = Player
-	Player:SendColorChat("WMG",self.color,"You are now the Leader of Team: "..self.name)
+function Team:SetLeader(Ply) 
+	self.Leader = Ply
+	Ply:SendColorChat("WMG",self.color,"You are now the Leader of Team: "..self.name)
+	
+	self:SyncData()
 end
 
 function Team:GetNewLeader() 
@@ -63,4 +78,31 @@ function Team:CanMakeBuilding() return true end
 function Team:MakeAlly() end
 function Team:MakeEnemy() end
 
+function Team:SyncData()
+	NDat.AddDataAll({
+		Name="TeamSyncMsg",
+		Val=1,
+		Dat={{N="N",T="S",V=self.name},{N="T",T="T",V=self}}
+	})
+end
+
+Utl:HookNet("TeamSyncMsg","",function(D,Ply)
+	Singularity.Teams.Teams[D.N]=D.T
+end)
+
 Singularity.Teams.Class = Team
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

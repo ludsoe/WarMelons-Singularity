@@ -10,7 +10,7 @@ Singularity.MT.OldSelected = Singularity.MT.OldSelected or ""
 local SettingsName = "jupiteromnitool.txt"
 
 function Singularity.MT.SaveSettings() 
-	local Data = {Settings=Singularity.MT.Settings,Bindings=Singularity.MT.ToolBindings}
+	local Data = {Settings=Singularity.MT.Settings}
 	local File =  util.TableToJSON(Data)
 	file.Write(SettingsName,File)
 end
@@ -21,16 +21,8 @@ function Singularity.MT.LoadSettings()
 		if File == "" then print("ERROR! File Is Blank!") file.Delete(SettingsName) return end
 		local Data = util.JSONToTable(File)
 		Singularity.MT.Settings = Data.Settings
-		for k,v in pairs(Data.Bindings) do
-			Singularity.MT.BindTool(v.N,v.D)
-		end
 		
-		timer.Simple(0.4,function() 
-			net.Start( "Jupiter_loadBind" )
-				net.WriteFloat(Data.Settings.KeyBind or 0)
-			net.SendToServer()
-		end)
-		print("Settings Loaded!")
+		print("Jupiter Settings Loaded!")
 	end
 end
 
@@ -118,11 +110,11 @@ function Singularity.MT.AddTool(Name,Func)
 	Singularity.MT.Tools[Name]=Func
 end
 
-function Singularity.MT.AddList(Title,Options,OnSelect)
-	local Panel = Singularity.MT.GuiMenu.Panel
-	local IC = Panel.Offset
+function Singularity.MT.AddList(Title,Options,OnSelect,Panel,Height)
+	local Panel = Panel or Singularity.MT.GuiMenu.Panel
+	local IC = Panel.Offset or 0
 	
-	local List = Singularity.MenuCore.CreateList(Panel,{x=150,y=355},{x=(IC),y=0},false,OnSelect)
+	local List = Singularity.MenuCore.CreateList(Panel,{x=150,y=Height or 355},{x=(IC),y=0},false,OnSelect)
 	List:AddColumn(Title) -- Add column
 
 	for k,v in pairs(Options) do
@@ -134,9 +126,9 @@ function Singularity.MT.AddList(Title,Options,OnSelect)
 	return List
 end
 
-function Singularity.MT.AddModular()
-	local Panel = Singularity.MT.GuiMenu.Panel
-	local IC = Panel.Offset
+function Singularity.MT.AddModular(Panel)
+	local Panel = Panel or Singularity.MT.GuiMenu.Panel
+	local IC = Panel.Offset or 0
 	local Save = {}
 	
 	local Paint  = function()
@@ -169,9 +161,9 @@ function Singularity.MT.ModAddlabel(Panel,Text,Offset)
 	return Label
 end
 
-function Singularity.MT.ModAddButton(Panel,Text,Func)
+function Singularity.MT.ModAddButton(Panel,Text,Func,Width,OffOver)
 	if not Panel.IsModular then return end --Y U DO DIS!!??!?!
-	local Button = Singularity.MenuCore.CreateButton(Panel,{x=280,y=40},{x=0,y=Panel.Offset},Text,Func)
+	local Button = Singularity.MenuCore.CreateButton(Panel,{x=Width or 280,y=40},{x=0,y=OffOver or Panel.Offset},Text,Func)
 	Panel.Offset=Panel.Offset+40
 	return Button
 end
