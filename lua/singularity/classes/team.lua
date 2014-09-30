@@ -24,9 +24,8 @@ function Team:MakePersist()
 end
 
 function Team:TeamDestroy()
-	--print("Destroying?")
 	if self.Persist then return end
-	--print("Yes Destroying!")
+	Singularity.Debug("Deleting Team: "..self.name,2,"MTeams")
 	
 	--Add Melon Destruction
 	--Add Player booting.
@@ -42,16 +41,13 @@ end
 
 function Team:AddMember(Ply)
 	local OldTeam = Ply:GetMTeam()
-	
-	--print("Adding Member")
-	--print(tostring(OldTeam))
-	
+
 	if OldTeam then
-		--PrintTable(OldTeam)
 		if OldTeam.name == self.name then return end
 		OldTeam:RemoveMember(Ply)
 	end
 	
+	Singularity.Debug("Player: "..Ply:Nick().." is now in "..self.name,2,"MTeams")
 	if table.Count(self.Members) <= 0 then
 		self:SetLeader(Ply)
 	else
@@ -83,6 +79,8 @@ function Team:GetLeader() return self.Leader end
 function Team:SetLeader(Ply) 
 	self.Leader = {ID=Ply:EntIndex(),E=Ply}
 	Ply:SendColorChat("WMG",self.color,"You are now the Leader of Team: "..self.name)
+
+	Singularity.Debug("Player: "..Ply:Nick().." is leader of "..self.name,2,"MTeams")
 	
 	self:SyncData()
 end

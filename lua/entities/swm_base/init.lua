@@ -32,6 +32,8 @@ function ENT:Compile(Data,ply)
 	self.DNA = MyData.MelonDNA
 	self.Ply = ply
 	
+	self.Times = table.Copy(self.TimesTable)
+	
 	--Lets setup our functions now.
 	if MyData.Setup then MyData.Setup(self,Data,MyData) end
 	

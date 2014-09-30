@@ -5,6 +5,7 @@ function EFFECT:Init( data )
 	self.StartPos 	= data:GetStart()	
 	self.EndPos 	= data:GetOrigin()
 	self.Ent	 	= data:GetEntity()
+	if not self.Ent or not IsValid(self.Ent) then return end 
 	self.Col		= self.Ent:GetColor()
 	
 	if not self.Ent:IsValid() then return false end

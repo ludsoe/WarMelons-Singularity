@@ -10,4 +10,4 @@ ENT.OldData = {}
 ENT.ModuleData = {}
 ENT.ClientSide = false
 
-ENT.Times = {Attack=0,Scan=0,Transmit=0}
+ENT.TimesTable = {Attack=0,Scan=0,Transmit=0}

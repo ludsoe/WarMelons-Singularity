@@ -5,15 +5,21 @@ local Utl = Singularity.Utl --Makes it easier to read the code.
 local NDat = Utl.NetMan 
 
 Utl:HookNet("MelonsSyncOrders","",function(D)
-	D.E.Orders = table.Merge(D.E.Orders or {},D.T) 
+	if D.E and IsValid(D.E) then
+		D.E.Orders = table.Merge(D.E.Orders or {},D.T)
+	end
 end)
 
 Utl:HookNet("MelonsSyncOrderComplete","",function(D)
-	table.remove(D.E.Orders,1)
+	if D.E and IsValid(D.E) then
+		table.remove(D.E.Orders,1)
+	end
 end)
 
 Utl:HookNet("MelonsClearOrders","",function(D)
-	D.E.Orders={}
+	if D.E and IsValid(D.E) then
+		D.E.Orders={}
+	end
 end)
 
 function ENT:AmISelected()
