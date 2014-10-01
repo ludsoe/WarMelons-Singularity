@@ -135,7 +135,7 @@ function ENT:TransmitData()
 	if table.Count(Transmit)>=1 then
 		NDat.AddDataAll({
 			Name="SingEntDatSync",
-			Val=1,
+			Val=2,
 			Dat={{N="E",T="E",V=self},{N="T",T="T",V=Transmit}}
 		})
 	end
@@ -152,7 +152,7 @@ function ENT:TransmitAllData(Ply)
 	
 	local Send = {
 		Name="SingEntDatSync",
-		Val=1,
+		Val=4,
 		Dat={{N="E",T="E",V=self},{N="T",T="T",V=Transmit}}
 	}
 	NDat.AddData(Send,Ply)

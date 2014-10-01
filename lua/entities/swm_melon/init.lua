@@ -153,7 +153,7 @@ function ENT:TransmitOrders()
 	if table.Count(Transmit)>=1 then
 		NDat.AddDataAll({
 			Name="MelonsSyncOrders",
-			Val=1,
+			Val=5,
 			Dat={{N="E",T="E",V=self},{N="T",T="T",V=Transmit}}
 		})
 	end
