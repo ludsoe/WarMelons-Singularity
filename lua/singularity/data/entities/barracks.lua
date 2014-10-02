@@ -28,10 +28,15 @@ Singularity.Entities.MakeModule(Data)
 
 if SERVER then
 	function BarracksMenu(Ply,self)
-		--print("syncing "..Name.." subspace")
 		local Data = {Name="open_barracks",Val=1,Dat={
 			{N="E",T="E",V=self}
 		}}
 		NDat.AddData(Data,Ply)
 	end	
+	
+	Utl:HookNet("barracks_setup_queue","",function(D)
+		if D.E and IsValid(D.E) then
+			D.E.BuildQueue = D.T or {}
+		end
+	end)
 end

@@ -27,9 +27,7 @@ function GetSelectedMelons() return LocalPlayer().SelectedMelons or {} end
 
 Utl:HookNet("SelectedMelons","",function(D)
 	local Selected = LocalPlayer().SelectedMelons or {}
-	
---	print("Rec")
-	
+
 	for k, v in pairs(D.T) do
 		if v.A == "Add" then
 			Selected[v.K]=Entity(v.K)
@@ -37,9 +35,7 @@ Utl:HookNet("SelectedMelons","",function(D)
 			Selected[v.K]=nil
 		end
 	end
-	
---	PrintTable(Selected)
-	
+
 	LocalPlayer().SelectedMelons = Selected
 end)
 
@@ -48,7 +44,10 @@ end
 function PLY:MakeMTeam()
 	local VC = self:GetPlayerColor()
 	local Col = Color((VC.x*255),(VC.y*255),(VC.z*255),255)
-	self:SetMTeam(Teams.CreateTeam(self:Nick(),Col))
+	local PlyTeam = Teams.CreateTeam(self:Nick(),Col)
+	self:SetMTeam(PlyTeam)
+	
+	PlyTeam:LockTeam()
 end
 
 function PLY:GetMTeam()

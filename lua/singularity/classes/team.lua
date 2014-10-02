@@ -9,7 +9,8 @@ local Team = {
 	Members = {},
 	Melons = {Units={},Buildings={}},
 	Diplomacy = {},
-	Persist = false
+	Persist = false,
+	PlayerOwned = false
 }
 
 function Team:Setup(name,color)
@@ -17,6 +18,10 @@ function Team:Setup(name,color)
 	self.color = color
 	
 	self:SyncData()
+end
+
+function Team:LockTeam()
+	self.PlayerOwned = true
 end
 
 function Team:MakePersist()
@@ -95,6 +100,13 @@ end
 
 function Team:CanMakeMelon() return true end
 function Team:CanMakeBuilding() return true end
+
+function Team:CanPlayerJoin(Ply)
+	if self.PlayerOwned then
+		return false
+	end
+	return true
+end
 
 function Team:MakeAlly() end
 function Team:MakeEnemy() end

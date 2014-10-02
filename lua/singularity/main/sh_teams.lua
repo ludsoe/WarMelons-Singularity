@@ -28,7 +28,9 @@ if SERVER then
 	Utl:HookNet("JoinTeam","",function(D,Ply)
 		local Team = Teams.Teams[D.N]
 		if Team then
-			Team:AddMember(Ply)
+			if Team:CanPlayerJoin(Ply) then
+				Team:AddMember(Ply)
+			end
 		end
 	end)
 	
