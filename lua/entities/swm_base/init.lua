@@ -99,7 +99,8 @@ function ENT:AcceptInput(name,activator,caller)
 end
 	
 function ENT:BuildDupeData()
-	return self.InitData or {}
+	local Data = self.InitData or {}
+	return Data
 end
 
 function ENT:OnRestore()
@@ -120,7 +121,7 @@ end
 
 function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
 	if Ent.EntityMods and Ent.EntityMods.JupiterModule then
-		self:Compile(Ent.EntityMods.JupiterModule)
+		self:Compile(Ent.EntityMods.JupiterModule,Player)
 	end
 	
     Ent.Owner = Player
