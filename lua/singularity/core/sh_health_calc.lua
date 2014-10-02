@@ -17,8 +17,6 @@ function Singularity.CalcHealth( ent )
 	
 	local volume = GetVolume(ent)	
 	local health = math.Round(((volume)^(0.515)))
-	local mass = ent:GetPhysicsObject():GetMass()
-	health = health+(health*((mass/50000)))
 	if not ent.Singularity.Health then 
 		ent.Singularity.Health=health 
 	end

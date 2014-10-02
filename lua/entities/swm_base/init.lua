@@ -14,6 +14,11 @@ function ENT:Initialize()
 	if phy:IsValid() then phy:Wake() end
 	
 	self.SyncData = {}
+	self.OldData = {}
+	
+	self.Times = table.Copy(self.TimesTable)
+	self.ModuleData = {}
+	self.Singularity = {}
 end
 
 function ENT:Compile(Data,ply)
@@ -34,15 +39,9 @@ function ENT:Compile(Data,ply)
 	self.DNA = MyData.MelonDNA
 	self.Ply = ply
 	
-	self.Times = table.Copy(self.TimesTable)
-	
 	--Lets setup our functions now.
 	if MyData.Setup then MyData.Setup(self,Data,MyData) end
-	
-	if self.BSSetup then
-		self:BSSetup(Data,ply)
-	end
-	
+
 	self.ModuleInstall = MyData.Install or function() end
 	self.ModuleUninstall = MyData.UnLink or function() end
 	self.ModuleThink = MyData.Think or function() return true end
@@ -60,6 +59,10 @@ function ENT:Compile(Data,ply)
 			self.Outputs = WireLib.CreateSpecialOutputs( self, MyData.Wire.Out.ID , MyData.Wire.Out.T or {})	
 		end
 		self.TriggerInput = MyData.Wire.Func or function() end
+	end
+	
+	if self.BSSetup then
+		self:BSSetup(Data,ply)
 	end
 end
 
@@ -119,6 +122,9 @@ local NDat = Utl.NetMan
 function ENT:TransmitData()
 	local Data = table.Copy(self.SyncData) --Create a copy of the sync data table so we dont mess with the real one.
 	local Transmit = {}
+	
+	--print("Syncing...")
+	--PrintTable(Data)
 	
 	--{Name="example",Val=1,Dat={{N="D",T="S",V="example"}}}
 	for n, v in pairs( self.OldData ) do --Update our existing data first.

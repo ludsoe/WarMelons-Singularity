@@ -57,6 +57,7 @@ function Team:AddMember(Ply)
 	self.Members[Ply:Nick()]={ID=Ply:EntIndex(),E=Ply}
 	Ply.MelonTeam=self.name
 	
+	self:SyncMember(Ply)
 	self:SyncData()
 end
 
@@ -97,6 +98,14 @@ function Team:CanMakeBuilding() return true end
 
 function Team:MakeAlly() end
 function Team:MakeEnemy() end
+
+function Team:SyncMember(Ply)
+	NDat.AddData({
+		Name="TeamMemberJoin",
+		Val=1,
+		Dat={{N="N",T="S",V=self.name}}
+	},Ply)
+end
 
 function Team:SyncData()
 	NDat.AddDataAll({

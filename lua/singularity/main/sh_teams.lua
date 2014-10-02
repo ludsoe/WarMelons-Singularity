@@ -81,3 +81,7 @@ Utl:HookNet("TeamDelete","",function(D,Ply)
 	Teams.Teams[D.N]=nil
 	Teams.RemakeList()
 end)
+
+Utl:HookNet("TeamMemberJoin","",function(D,Ply)
+	LocalPlayer().MelonTeam = D.N
+end)

@@ -74,7 +74,7 @@ function PLY:SyncSelected()
 		end
 	end
 	
-	if table.Count(Transmit)>=1 then
+	if table.Count(Transmit)>=4 then
 		local Send = {
 			Name="SelectedMelons",
 			Val=1,
@@ -94,13 +94,13 @@ end
 function PLY:SelectMelons(Shift,Use)
 	local tr = self:GetEyeTrace()
 	local Pos,Ent = tr.HitPos,tr.Entity
-	local Rad = 500 if Use then Rad = 50 end
+	local Rad = 100 if Use then Rad = 50 end
 
 	if self.LastSelect > CurTime() then return end
 	
 	if not Shift then self:ClearSelectedMelons(true) end
 	local entz,MSound = ents.FindInSphere(Pos,Rad),false
-	if Ent and IsValid(Ent) then
+	if Ent and IsValid(Ent) and not Use then
 		if Ent.MelonTeam then
 			if Ent.MelonTeam.name==self.MelonTeam then
 				self.SelectedMelons[Ent:EntIndex()]=Ent

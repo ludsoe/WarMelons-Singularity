@@ -2,7 +2,8 @@ local Singularity = Singularity
 local Utl = Singularity.Utl --Makes it easier to read the code.
 
 Utl:HookNet("SingEntDatSync","",function(D)
-	D.E.SyncData = table.Merge(D.E.SyncData or {},D.T) 
+	D.E.SyncData = table.Merge(D.E.SyncData or {},D.T)
+	--PrintTable(D.T)
 end)
 
 function GetWorldTips()
