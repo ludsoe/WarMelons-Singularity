@@ -6,8 +6,10 @@ function LoadPP()
 		Debug("Prop Protection Detected! Using its functions.")
 		--Oh good we have a CPPI prop protection installed, we can use it.
 		function Singularity.GivePlyProp(owner,prop)
-			prop:CPPISetOwner(owner) 
-			Debug("Entity: "..tostring(prop).." Given to "..owner:Nick())
+			prop:CPPISetOwner(owner)
+			if owner:IsPlayer() then
+				Debug("Entity: "..tostring(prop).." Given to "..owner:Nick())
+			end
 		end
 		
 		function Singularity.GetPropOwner(prop)
