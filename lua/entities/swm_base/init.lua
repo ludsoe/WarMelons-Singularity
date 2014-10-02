@@ -184,8 +184,10 @@ function ENT:TeamBaseWelds()
 	local Ents = constraint.GetAllConstrainedEntities_B( self )
 	
 	for n, ent in pairs( Ents ) do
-		ent.MelonTeam = self.MelonTeam
-		ent:SetColor(self:GetColor())
+		if not ent.MelonTeam then
+			ent.MelonTeam = self.MelonTeam
+			ent:SetColor(self:GetColor())
+		end
 	end
 end
 
