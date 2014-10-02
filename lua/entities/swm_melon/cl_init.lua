@@ -25,11 +25,11 @@ end)
 function ENT:AmISelected()
 	local Melon = GetSelectedMelons()[self:EntIndex()]
 	if Melon then
-		if Melon.MelonTeam.name == LocalPlayer():GetMTeam().name then
+		--if Melon.MelonTeam.name == LocalPlayer():GetMTeam().name then
 			return true
-		else
+		--[[else
 			GetSelectedMelons()[self:EntIndex()]=nil
-		end
+		end]]
 	end
 	return false
 end
