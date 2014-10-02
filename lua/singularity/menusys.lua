@@ -13,11 +13,13 @@ if(CLIENT)then
 	
 	function Singularity.MenuCore.CreateFrame(Size,Visible,XButton,Draggable,CloseDelete)
 		local Derma = vgui.Create( "DFrame" )
-			Derma:SetSize( Size.x, Size.y )
-			Derma:SetVisible( Visible )
-			Derma:ShowCloseButton( XButton )
-			Derma:SetDraggable( Draggable )
-			Derma:SetDeleteOnClose( CloseDelete )
+			if Derma then
+				Derma:SetSize( Size.x, Size.y )
+				Derma:SetVisible( Visible )
+				Derma:ShowCloseButton( XButton )
+				Derma:SetDraggable( Draggable )
+				Derma:SetDeleteOnClose( CloseDelete )
+			end
 		return Derma
 	end
 	

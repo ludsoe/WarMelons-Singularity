@@ -50,11 +50,12 @@ end
 
 --Ship Modules.
 local ModPath = "singularity/data/entities/"
---LoadFile("lss/addon/shipcores/modules/lifesupport.lua",1)
---LoadFile(ModPath.."reactor.lua",1)
---LoadFile(ModPath.."teleplatform.lua",1)
-LoadFile(ModPath.."melon.lua",1)
+local IntPath = "singularity/data/userinterfaces/"
 
+LoadFile(ModPath.."melon.lua",1)
+LoadFile(ModPath.."barracks.lua",1)
+
+LoadFile(IntPath.."barracks.lua",1)
 
 
 

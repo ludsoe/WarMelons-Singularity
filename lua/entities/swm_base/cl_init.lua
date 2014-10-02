@@ -1,5 +1,9 @@
 include('shared.lua')
 
+local Singularity = Singularity --Localise the global table for speed.
+local Utl = Singularity.Utl --Makes it easier to read the code.
+local NDat = Utl.NetMan 
+
 function ENT:Compile(T,N)
 	--Make a copy of the data pattern.
 	local MyData = table.Copy(Singularity.Entities.Modules[T][N].E)
@@ -40,4 +44,37 @@ function ENT:WorldBubble(Trace,Pos)
 	end
 	--Add Stuff Here related to what the ship Module Displays.
 	return txt
+end
+
+function ENT:AmISelected()
+	local Melon = GetSelectedMelons()[self:EntIndex()]
+	if Melon and Melon.SyncData then
+		
+		if Melon.SyncData.Team == LocalPlayer():GetMTeam().name then
+			return true
+		else
+			GetSelectedMelons()[self:EntIndex()]=nil
+		end
+	end
+	return false
+end
+
+function ENT:RenderOrder(S,E)
+	local effectdata = EffectData()
+		effectdata:SetOrigin(S+Vector(0,0,5))
+		effectdata:SetStart(E+Vector(0,0,5))
+		effectdata:SetEntity(self)
+	util.Effect( "order_display", effectdata )
+end
+
+function ENT:DrawOrders()
+	if self:AmISelected() then
+		local RendPos = self:GetPos()
+		if self.Orders then
+			for k, v in pairs(self.Orders) do
+				self:RenderOrder(RendPos,v.V)
+				RendPos=v.V
+			end
+		end
+	end
 end

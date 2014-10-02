@@ -5,6 +5,6 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 
 ENT.IsMelon = true
-ENT.DNA = {}
-ENT.Orders = {}
-ENT.SyncedOrders = {}
+--ENT.DNA = {}
+--ENT.Orders = {}
+--ENT.SyncedOrders = {}

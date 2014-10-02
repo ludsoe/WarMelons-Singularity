@@ -1,5 +1,5 @@
 local Data = {
-	Type="Test",
+	Type="Melons",
 	Class="swm_melon",
 	Wire = {},
 	Extra = {},
@@ -11,18 +11,14 @@ Data.MelonDNA={
 	Force=400,
 	Range=160,
 	Damage=20,
-	AttackRate=1,
-	MaxHealth=70
+	AttackRate=1
 }
 
-Data.Name = "Test Melon"
+Data.Name = "Basic Melon"
 Data.MyModel = "models/props_junk/watermelon01.mdl"
+Data.MaxHealth = 40
 
 Data.Setup = function(self,Data,MyData)
-	self.MelonTeam = self.Ply:GetMTeam()
-	self:SetColor(self.MelonTeam.color)
-	self.SyncData.Team=self.MelonTeam.name
-	
 	self:SetMaterial("models/debug/debugwhite")
 end
 

@@ -19,9 +19,14 @@ function ENT:Initialize()
 	self.Times = table.Copy(self.TimesTable)
 	self.ModuleData = {}
 	self.Singularity = {}
+	self.InitData = {}
+	
+	self.Orders = {}
+	self.SyncedOrders = {}
+	self.DNA = {}
 end
 
-function ENT:Compile(Data,ply)
+function ENT:Compile(Data,ply,Team)
 	--Tell the clientside what we are.
 	if not Data.T or not Data.N then print("ZOMG ERROR NO DATA!!!") return end
 		
@@ -37,13 +42,16 @@ function ENT:Compile(Data,ply)
 	self.ModuleData = MyData
 	
 	self.DNA = MyData.MelonDNA
-	self.Ply = ply
+	
+	self.MelonTeam = Team or ply:GetMTeam()
+	self:SetColor(self.MelonTeam.color)
+	self.SyncData.Team=self.MelonTeam.name
+	
+	Singularity.SetMaxHealth( self,MyData.MaxHealth )
 	
 	--Lets setup our functions now.
 	if MyData.Setup then MyData.Setup(self,Data,MyData) end
 
-	self.ModuleInstall = MyData.Install or function() end
-	self.ModuleUninstall = MyData.UnLink or function() end
 	self.ModuleThink = MyData.Think or function() return true end
 	self.ModuleUse = MyData.OnUse or function() end
 	self.OnKilled = MyData.OnDeath or function() end
@@ -74,6 +82,12 @@ function ENT:Think()
 		self.Times.Transmit=CurTime()+0.2
 		self:TransmitData()
 	end
+	
+	if self.Times.Welds < CurTime() then
+		self.Times.Welds = CurTime()+5
+		self:TeamBaseWelds()
+	end
+	
 	self:NextThink(CurTime()+0.1)
 	return true
 end
@@ -123,10 +137,6 @@ function ENT:TransmitData()
 	local Data = table.Copy(self.SyncData) --Create a copy of the sync data table so we dont mess with the real one.
 	local Transmit = {}
 	
-	--print("Syncing...")
-	--PrintTable(Data)
-	
-	--{Name="example",Val=1,Dat={{N="D",T="S",V="example"}}}
 	for n, v in pairs( self.OldData ) do --Update our existing data first.
 		if v.V ~= Data[n] then --If Data doesnt match
 			self.OldData[n] = {V=Data[n],C=true} --Set it to the new value and mark as changed.
@@ -169,4 +179,89 @@ function ENT:TransmitAllData(Ply)
 	}
 	NDat.AddData(Send,Ply)
 end
+
+function ENT:TeamBaseWelds()
+	local Ents = constraint.GetAllConstrainedEntities_B( self )
+	
+	for n, ent in pairs( Ents ) do
+		ent.MelonTeam = self.MelonTeam
+		ent:SetColor(self:GetColor())
+	end
+end
+
+function ENT:SetOrders(O)
+	self:TransClearOrders()
+	self.Orders = O
+	self:TransmitOrders()
+end
+
+function ENT:AddOrder(O)
+	O.ID=CurTime()/200
+	table.insert(self.Orders,O)
+	self:TransmitOrders()
+end
+
+function ENT:RemoveOrder(ID)
+	self.Orders[ID]=nil
+	self.SyncedOrders[ID]=nil
+	self:TransOrderComplete()
+end
+
+function ENT:ClearOrders()
+	self.Orders = {}
+	self.SyncedOrders={}
+	self:TransClearOrders()
+end
+
+function ENT:TransmitOrders()
+	local Data = table.Copy(self.Orders) --Create a copy of the sync data table so we dont mess with the real one.
+	local Transmit = {}
+	
+	for n, v in pairs( self.SyncedOrders ) do --Update our existing data first.
+		if v.ID ~= Data[n].ID then --If Data doesnt match
+			self.SyncedOrders[n] = {V=Data[n],C=true} --Set it to the new value and mark as changed.
+			Transmit[n] = Data[n]
+		else
+			v.C = false --Mark It unchanged.
+		end
+		Data[n]=nil --Remove pre parsed data to make the next part faster.
+	end
+	
+	for n, v in pairs( Data ) do --Lets mark down the new data.
+		if not self.SyncedOrders[n] then
+			self.SyncedOrders[n] = {ID=v.ID,V=v,C=true} --Tell the data its got to be sent.
+			Transmit[n] = v
+		end
+	end
+	
+	if table.Count(Transmit)>=1 then
+		NDat.AddDataAll({
+			Name="MelonsSyncOrders",
+			Val=5,
+			Dat={{N="E",T="E",V=self},{N="T",T="T",V=Transmit}}
+		})
+	end
+end
+
+function ENT:TransClearOrders()
+	NDat.AddDataAll({
+		Name="MelonsClearOrders",
+		Val=1,
+		Dat={{N="E",T="E",V=self}}
+	})
+end
+
+function ENT:TransOrderComplete()
+	NDat.AddDataAll({
+		Name="MelonsSyncOrderComplete",
+		Val=1,
+		Dat={{N="E",T="E",V=self}}
+	})
+end
+
+
+
+
+
+
 

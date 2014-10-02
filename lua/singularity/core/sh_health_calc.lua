@@ -21,7 +21,7 @@ function Singularity.CalcHealth( ent )
 		ent.Singularity.Health=health 
 	end
 	
-	ent.Singularity.MaxHealth=health
+	ent.Singularity.MaxHealth = ent.Singularity.MaxHealthOver or health
 	return health
 end
 
@@ -53,7 +53,7 @@ end
 
 -- Returns the maximum health of the entity without setting it
 function Singularity.GetMaxHealth( ent )
-	local Calc = Singularity.CalcHealth(ent)
+	local Calc = ent.Singularity.MaxHealthOver or Singularity.CalcHealth(ent)
 	if ent.Singularity and ent.Singularity.MaxHealth then 
 		if Calc == ent.Singularity.MaxHealth then
 			return ent.Singularity.MaxHealth 
@@ -61,4 +61,8 @@ function Singularity.GetMaxHealth( ent )
 	end
 	
 	return Calc
+end
+
+function Singularity.SetMaxHealth( ent,number )
+	ent.Singularity.MaxHealthOver = number
 end

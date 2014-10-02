@@ -28,6 +28,8 @@ function GetSelectedMelons() return LocalPlayer().SelectedMelons or {} end
 Utl:HookNet("SelectedMelons","",function(D)
 	local Selected = LocalPlayer().SelectedMelons or {}
 	
+	print("Rec")
+	
 	for k, v in pairs(D.T) do
 		if v.A == "Add" then
 			Selected[v.K]=Entity(v.K)
@@ -35,6 +37,8 @@ Utl:HookNet("SelectedMelons","",function(D)
 			Selected[v.K]=nil
 		end
 	end
+	
+	PrintTable(Selected)
 	
 	LocalPlayer().SelectedMelons = Selected
 end)
@@ -60,6 +64,8 @@ function PLY:SyncSelected()
 	local Melons,Sync = self.SelectedMelons,self.SyncedMelons
 	local Transmit = {}
 	
+	print("Syncing")
+	
 	for k, v in pairs(Sync) do
 		if Melons[k]==nil or not IsValid(Melons[k]) then
 			Transmit[k]={A="Remove",K=k}
@@ -74,7 +80,7 @@ function PLY:SyncSelected()
 		end
 	end
 	
-	if table.Count(Transmit)>=4 then
+	if table.Count(Transmit)>=1 then
 		local Send = {
 			Name="SelectedMelons",
 			Val=1,

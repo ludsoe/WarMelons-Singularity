@@ -73,11 +73,11 @@ Tool.Open = function(Menu,Tab)
 	local Sheet = Singularity.MenuCore.CreatePSheet(Menu,{x=520,y=355},{x=0,y=0})
 	Sheet:AddSheet( "Tactical" , C , "icon16/wrench.png" , false, false, "Base Defense and Offensive Weapons" )
 	Sheet:AddSheet( "Strategic" , M , "icon16/shield.png" , false, false, "Unit Barracks and Resource Management" )
-	Sheet:AddSheet( "Test" , L , "icon16/lightning.png" , false, false, "Test Page for spawning test shit" )
+	Sheet:AddSheet( "Melons" , L , "icon16/lightning.png" , false, false, "Test Page for spawning test shit" )
 
 	MakePage(C,"Tactical",Tab)
 	MakePage(M,"Strategic",Tab)
-	MakePage(L,"Test",Tab)
+	MakePage(L,"Melons",Tab)
 end --This is clientside only, called when the tool is selected.
 
 Tool.Primary = function(trace,ply,Settings)
