@@ -194,7 +194,7 @@ end
 
 function ENT:SetOrders(O)
 	self:TransClearOrders()
-	self.Orders = O
+	self.Orders = table.Copy(O)
 	self:TransmitOrders()
 end
 
@@ -208,6 +208,10 @@ function ENT:RemoveOrder(ID)
 	self.Orders[ID]=nil
 	self.SyncedOrders[ID]=nil
 	self:TransOrderComplete()
+end
+
+function ENT:GetOrders()
+	return self.Orders or {}
 end
 
 function ENT:ClearOrders()

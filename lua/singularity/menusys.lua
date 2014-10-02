@@ -75,6 +75,11 @@ if(CLIENT)then
 			Derma:SetPos( Spot.x, Spot.y )
 			Derma:SetSize( Size.x, Size.y )
 			Derma:SetFraction( Progress() )
+			Derma.OThink=Derma.Think
+			Derma.Think=function(self)
+				self:SetFraction( Progress())
+				--self:OThink()
+			end
 		return Derma
 	end
 	

@@ -51,9 +51,14 @@ end
 --Ship Modules.
 local ModPath = "singularity/data/entities/"
 local IntPath = "singularity/data/userinterfaces/"
+local MelPath = "singularity/data/entities/melons/"
 
-LoadFile(ModPath.."melon.lua",1)
-LoadFile(ModPath.."enginemelon.lua",1)
+LoadFile(MelPath.."scout.lua",1)
+LoadFile(MelPath.."rapid.lua",1)
+LoadFile(MelPath.."sniper.lua",1)
+LoadFile(MelPath.."heavy.lua",1)
+LoadFile(MelPath.."soldier.lua",1)
+LoadFile(MelPath.."enginemelon.lua",1)
 
 
 LoadFile(ModPath.."barracks.lua",1)

@@ -7,16 +7,17 @@ local Data = {
 }
 
 Data.MelonDNA={
-	Speed=300,
-	Force=400,
-	Range=160,
-	Damage=20,
-	AttackRate=1
+	Speed=200,
+	Force=800,
+	Range=320,
+	Damage=200,
+	AttackRate=3,
+	TrainTime=20
 }
 
-Data.Name = "Basic Melon"
+Data.Name = "Heavy Melon"
 Data.MyModel = "models/props_junk/watermelon01.mdl"
-Data.MaxHealth = 40
+Data.MaxHealth = 600
 
 Data.Setup = function(self,Data,MyData)
 	self:SetMaterial("models/debug/debugwhite")

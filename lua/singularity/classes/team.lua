@@ -61,6 +61,7 @@ function Team:AddMember(Ply)
 	
 	self.Members[Ply:Nick()]={ID=Ply:EntIndex(),E=Ply}
 	Ply.MelonTeam=self.name
+	Ply:ClearSelectedMelons()
 	
 	self:SyncMember(Ply)
 	self:SyncData()

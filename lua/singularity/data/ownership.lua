@@ -22,7 +22,9 @@ function LoadPP()
 
 		function Singularity.GivePlyProp(owner,prop)
 			prop.LSSOwner = owner
-			Debug("Entity: "..tostring(prop).." Given to "..owner:Nick())
+			if owner:IsPlayer() then
+				Debug("Entity: "..tostring(prop).." Given to "..owner:Nick())
+			end
 		end
 
 		function Singularity.GetPropOwner(prop)
