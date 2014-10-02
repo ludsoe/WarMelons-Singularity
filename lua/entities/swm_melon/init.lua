@@ -13,7 +13,7 @@ function Normalize(Vec)
 	return Vec/Length
 end
 
-function ENT:LineOfSight(Vec,Ent)
+function ENT:LineOfSight(Vec,Ent,Team,Filter)
 	local tr = util.TraceLine({start = self:GetPos(),endpos = Vec,filter = self} )
 	local Hit,HitEnt = tr.Hit,tr.Entity
 	

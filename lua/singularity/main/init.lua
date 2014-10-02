@@ -22,5 +22,6 @@ function ShouldEntitiesCollide( ent1, ent2 )
 	else
 		return true
 	end
+	return true
 end
 hook.Add( "ShouldCollide", "MelonCollide", ShouldEntitiesCollide )
