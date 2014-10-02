@@ -7,8 +7,8 @@ local Data = {
 }
 
 Data.MelonDNA={
-	Speed=600,
-	Force=2400
+	Speed=150,
+	Force=10000
 }
 
 Data.Name = "Engine Melon"
