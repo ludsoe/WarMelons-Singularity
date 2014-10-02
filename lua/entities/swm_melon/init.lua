@@ -5,7 +5,6 @@ include("shared.lua")
 
 function ENT:BSSetup(Data,ply)
 	self:ClearOrders()
-	self:SetCustomCollisionCheck() 
 end
 
 function Normalize(Vec)
