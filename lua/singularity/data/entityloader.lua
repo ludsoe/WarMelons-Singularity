@@ -53,8 +53,10 @@ local ModPath = "singularity/data/entities/"
 local IntPath = "singularity/data/userinterfaces/"
 
 LoadFile(ModPath.."melon.lua",1)
-LoadFile(ModPath.."barracks.lua",1)
+LoadFile(ModPath.."enginemelon.lua",1)
 
+
+LoadFile(ModPath.."barracks.lua",1)
 LoadFile(IntPath.."barracks.lua",1)
 
 
