@@ -18,6 +18,7 @@ Tool.Think = function(ply,Settings)
 				net.WriteEntity(ent)
 				net.WriteFloat(Singularity.GetHealth( ent ))
 			net.Send( ply )
+			print("Syncing Health")
 		end
 	end
 end

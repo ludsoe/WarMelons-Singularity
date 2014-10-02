@@ -17,23 +17,29 @@ Data.Setup = function(self,Data,MyData)
 	self.Training = {A=false,S=0,E=0,T=""}
 	
 	self.FinishTraining = function(self,Train)
-		local Data = Train.E
-		--PrintTable(Train)
-		local ent = ents.Create( Data.Class )
 		
-		ent:SetModel( Data.MyModel )
-		ent:SetPos( self:GetPos()+Vector(0,0,20))
-		ent:SetAngles( self:GetAngles() )
-		
-		ent:Spawn()
-		ent:Activate()
-		ent:GetPhysicsObject():Wake()
-		
-		ent:Compile(Train.M,ply,self.MelonTeam)
-		
-		Singularity.GivePlyProp(Singularity.GetPropOwner(self),ent)
-		
-		ent:SetOrders(self:GetOrders())
+		local tr = util.TraceLine({start = self:GetPos(),endpos = self:LocalToWorld(Vector(0,0,20)),filter = self} )
+
+		if not tr.Hit then
+			local Data = Train.E
+			local ent = ents.Create( Data.Class )
+			
+			ent:SetModel( Data.MyModel )
+			ent:SetPos( self:LocalToWorld(Vector(0,0,20)))
+			ent:SetAngles( self:GetAngles() )
+			
+			ent:Spawn() ent:Activate()
+			ent:GetPhysicsObject():Wake()
+			
+			ent:Compile(Train.M,ply,self.MelonTeam)
+			
+			Singularity.GivePlyProp(Singularity.GetPropOwner(self),ent)
+			
+			ent:SetOrders(self:GetOrders())
+			return true
+		else
+			return false
+		end
 	end
 end
 
@@ -52,7 +58,6 @@ Data.Think = function(self)
 				Train.E=CurTime()+Unit.E.MelonDNA.TrainTime
 				Train.T=Name
 				Train.U=Unit
-				--print("Started Training: "..Name)
 				SendTraining(self,Train)
 			else
 				table.remove(self.BuildQueue,1)
@@ -61,18 +66,15 @@ Data.Think = function(self)
 		end
 	else
 		if Train.E < CurTime() and Train.A and self.MelonTeam:CanMakeMelon(true) then
-			Train.A = false
-			
-			self:FinishTraining(Train.U)
-			
-			SendRemove(self)
-			--print("Melon Training Complete!")
-			if self.WillLoop then
-			--	print("Looping, Adding back into queue.")
-				SendAdd(self,Train.T)
-				table.insert(self.BuildQueue,Train.T)
+			if self:FinishTraining(Train.U) then
+				Train.A = false
+				SendRemove(self)
+				if self.WillLoop then
+					SendAdd(self,Train.T)
+					table.insert(self.BuildQueue,Train.T)
+				end
+				table.remove(self.BuildQueue,1)
 			end
-			table.remove(self.BuildQueue,1)
 		end
 	end
 end

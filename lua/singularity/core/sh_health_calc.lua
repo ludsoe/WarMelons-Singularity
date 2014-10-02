@@ -7,7 +7,7 @@ function GetVolume(ent)
 	local dif = max - min
 	local volume = dif.x * dif.y * dif.z
 	
-	return volume
+	return (volume*5)
 	
 end
 
@@ -53,8 +53,9 @@ end
 
 -- Returns the maximum health of the entity without setting it
 function Singularity.GetMaxHealth( ent )
+	ent.Singularity = ent.Singularity or {}
 	local Calc = ent.Singularity.MaxHealthOver or Singularity.CalcHealth(ent)
-	if ent.Singularity and ent.Singularity.MaxHealth then 
+	if ent.Singularity.MaxHealth then 
 		if Calc == ent.Singularity.MaxHealth then
 			return ent.Singularity.MaxHealth 
 		end

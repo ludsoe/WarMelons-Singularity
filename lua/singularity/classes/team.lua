@@ -107,14 +107,14 @@ function Team:GetNewLeader()
 end
 
 function Team:RegisterMelon(Ent)
-	self.Melons.Melons[Ent:EntIndex()]={E=Ent,Id=Ent:EntIndex()}
+	self.Melons.Units[Ent:EntIndex()]={E=Ent,Id=Ent:EntIndex()}
 end
 
 function Team:CheckMelons()
-	for k, v in pairs(self.Melons.Melons) do
+	for k, v in pairs(self.Melons.Units) do
 		local Ent = v.E
 		if not Ent or not IsValid(Ent) then
-			self.Melons.Melons[k] = nil
+			self.Melons.Units[k] = nil
 		end
 	end
 	
@@ -133,7 +133,7 @@ function Team:StartCheckTimer()
 end
 
 function Team:CanMakeMelon(Barracks)
-	if table.Count(self.Melons.Melons) >= self.MaxMelons then
+	if table.Count(self.Melons.Units) >= self.MaxMelons then
 		return false
 	end
 	return true

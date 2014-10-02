@@ -14,17 +14,30 @@ function Normalize(Vec)
 	return Vec/Length
 end
 
-function ENT:LineOfSight(Vec,Ent,Team,Filter)
-	local tr = util.TraceLine({start = self:GetPos(),endpos = Vec,filter = self} )
+function ENT:LineOfSight(Vec,Ent,Team,Filter,X)
+	local tr = util.TraceLine({start = self:GetPos(),endpos = Vec,filter = table.Merge({self},Filter or {})} )
 	local Hit,HitEnt = tr.Hit,tr.Entity
+	
+	if (X or 0) > 5 then return else X=(X or 0)+1 end
 	
 	if not Hit then
 		return true
 	else
-		if IsValid(Ent) and IsValid(HitEnt) and Ent==HitEnt then
-			return true
+		if HitEnt.MelonTeam == self.MelonTeam then
+			local Filter = Filter or {}
+			table.insert(Filter,HitEnt)
+			return self:LineOfSight(Vec,Ent,Team,Filter,X)
 		else
-			return false
+			if IsValid(Ent) and IsValid(HitEnt) then
+				if not Ent==HitEnt and Ent.MelonTeam == HitEnt.MelonTeam then
+					self.Enemy = HitEnt
+					return false
+				else
+					return true
+				end
+			else
+				return false
+			end
 		end
 	end
 end

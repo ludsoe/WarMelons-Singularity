@@ -19,8 +19,9 @@ LoadFile("weapons/gmod_tool/jtools/orders.lua",1)
 LoadFile("weapons/gmod_tool/jtools/teammanage.lua",1)
 LoadFile("weapons/gmod_tool/jtools/devices.lua",1)
 
---LoadFile("weapons/gmod_tool/jtools/navedit.lua",1)
 --LoadFile("weapons/gmod_tool/jtools/healthscanner.lua",1)
+
+--LoadFile("weapons/gmod_tool/jtools/navedit.lua",1)
 --LoadFile("weapons/gmod_tool/jtools/weapons.lua",1)
 
 
