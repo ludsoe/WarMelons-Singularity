@@ -9,9 +9,9 @@ if SERVER then
 		ply.SyncedMelons = {}
 		ply.LastSelect = 0
 		
-		local VC = ply:GetPlayerColor()
-		local Col = Color((VC.x*255),(VC.y*255),(VC.z*255),255)
-		ply:SetMTeam(Teams.CreateTeam(ply:Nick(),Col))
+		timer.Create(ply:Nick().."TCreate",1,1,function()
+			ply:MakeMTeam()
+		end)
 	end
 
 	function MLeave(ply)
@@ -39,6 +39,12 @@ Utl:HookNet("SelectedMelons","",function(D)
 	LocalPlayer().SelectedMelons = Selected
 end)
 
+end
+
+function PLY:MakeMTeam()
+	local VC = self:GetPlayerColor()
+	local Col = Color((VC.x*255),(VC.y*255),(VC.z*255),255)
+	self:SetMTeam(Teams.CreateTeam(self:Nick(),Col))
 end
 
 function PLY:GetMTeam()

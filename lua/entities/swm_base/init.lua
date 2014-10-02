@@ -12,6 +12,8 @@ function ENT:Initialize()
 	
 	local phy = self:GetPhysicsObject()
 	if phy:IsValid() then phy:Wake() end
+	
+	self.SyncData = {}
 end
 
 function ENT:Compile(Data,ply)
@@ -36,6 +38,10 @@ function ENT:Compile(Data,ply)
 	
 	--Lets setup our functions now.
 	if MyData.Setup then MyData.Setup(self,Data,MyData) end
+	
+	if self.BSSetup then
+		self:BSSetup(Data,ply)
+	end
 	
 	self.ModuleInstall = MyData.Install or function() end
 	self.ModuleUninstall = MyData.UnLink or function() end

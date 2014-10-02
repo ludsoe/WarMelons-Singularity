@@ -3,6 +3,10 @@ AddCSLuaFile("cl_init.lua")
 
 include("shared.lua")
 
+function ENT:BSSetup(Data,ply)
+	self:ClearOrders()
+end
+
 function Normalize(Vec)
 	local Length = Vec:Length()
 	return Vec/Length

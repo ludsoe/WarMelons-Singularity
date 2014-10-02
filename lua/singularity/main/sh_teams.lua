@@ -35,9 +35,7 @@ if SERVER then
 	Utl:HookNet("LeaveTeam","",function(D,ply)
 		ply:GetMTeam():RemoveMember(ply)
 		
-		local VC = ply:GetPlayerColor()
-		local Col = Color((VC.x*255),(VC.y*255),(VC.z*255),255)
-		ply:SetMTeam(Teams.CreateTeam(ply:Nick(),Col))
+		ply:MakeMTeam()
 	end)
 else
 	

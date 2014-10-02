@@ -5,7 +5,7 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 
 ENT.InitData = {}
-ENT.SyncData = {}
+--ENT.SyncData = {}
 ENT.OldData = {}
 ENT.ModuleData = {}
 ENT.ClientSide = false

@@ -23,11 +23,15 @@ Utl:HookNet("MelonsClearOrders","",function(D)
 end)
 
 function ENT:AmISelected()
-	if GetSelectedMelons()[self:EntIndex()] then
-		return true
-	else
-		return false
+	local Melon = GetSelectedMelons()[self:EntIndex()]
+	if Melon then
+		if Melon.MelonTeam.name == LocalPlayer():GetMTeam().name then
+			return true
+		else
+			GetSelectedMelons()[self:EntIndex()]=nil
+		end
 	end
+	return false
 end
 
 function ENT:DrawOrder(S,E)
