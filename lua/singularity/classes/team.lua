@@ -10,14 +10,20 @@ local Team = {
 	Melons = {Units={},Buildings={}},
 	Diplomacy = {},
 	Persist = false,
-	PlayerOwned = false
+	PlayerOwned = false,
+	MaxMelons = 40
 }
 
 function Team:Setup(name,color)
 	self.name = name
 	self.color = color
 	
+	self:StartCheckTimer()
 	self:SyncData()
+end
+
+function Team:SetMaxMelons(Max)
+	self.MaxMelons = Max
 end
 
 function Team:LockTeam()
@@ -42,6 +48,7 @@ function Team:TeamDestroy()
 	})
 		
 	Teams.Teams[self.name]=nil
+	Utl:SetupThinkHook(self.name.."MelonCheckHook",0,1,function() end)
 end
 
 function Team:AddMember(Ply)
@@ -99,8 +106,42 @@ function Team:GetNewLeader()
 	end
 end
 
-function Team:CanMakeMelon() return true end
-function Team:CanMakeBuilding() return true end
+function Team:RegisterMelon(Ent)
+	self.Melons.Melons[Ent:EntIndex()]={E=Ent,Id=Ent:EntIndex()}
+end
+
+function Team:CheckMelons()
+	for k, v in pairs(self.Melons.Melons) do
+		local Ent = v.E
+		if not Ent or not IsValid(Ent) then
+			self.Melons.Melons[k] = nil
+		end
+	end
+	
+	for k, v in pairs(self.Melons.Buildings) do
+		local Ent = v.E
+		if not Ent or not IsValid(Ent) then
+			self.Melons.Buildings[k] = nil
+		end
+	end	
+	
+	self:SyncData()
+end
+
+function Team:StartCheckTimer()
+	Utl:SetupThinkHook(self.name.."MelonCheckHook",10,0,function() self:CheckMelons() end)
+end
+
+function Team:CanMakeMelon(Barracks)
+	if table.Count(self.Melons.Melons) >= self.MaxMelons then
+		return false
+	end
+	return true
+end
+
+function Team:CanMakeBuilding() 
+	return true
+end
 
 function Team:CanPlayerJoin(Ply)
 	if self.PlayerOwned then

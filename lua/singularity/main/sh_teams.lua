@@ -15,7 +15,10 @@ if SERVER then
 		local Team = {} Team = table.Copy(Teams.Class)
 		
 		Team:Setup(name,color)
-		if persist then Team:MakePersist() end
+		if persist then 
+			Team:MakePersist() 
+			Team:SetMaxMelons(80)
+		end
 		
 		Teams.Teams[name]=Team
 		return Team

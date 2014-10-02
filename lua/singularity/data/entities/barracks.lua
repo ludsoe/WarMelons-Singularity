@@ -60,7 +60,7 @@ Data.Think = function(self)
 			end
 		end
 	else
-		if Train.E < CurTime() and Train.A then
+		if Train.E < CurTime() and Train.A and self.MelonTeam:CanMakeMelon(true) then
 			Train.A = false
 			
 			self:FinishTraining(Train.U)
