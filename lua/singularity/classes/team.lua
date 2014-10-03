@@ -59,6 +59,10 @@ function Team:AddMember(Ply)
 		OldTeam:RemoveMember(Ply)
 	end
 	
+	for k, v in pairs(self.Members) do
+		v.E:SendColorChat("WMG",self.color,Ply:Nick().." Is now in you're Team.")
+	end
+	
 	Singularity.Debug("Player: "..Ply:Nick().." is now in "..self.name,2,"MTeams")
 	if table.Count(self.Members) <= 0 then
 		self:SetLeader(Ply)
@@ -81,6 +85,10 @@ function Team:RemoveMember(Ply)
 		self:TeamDestroy()
 		return
 	end
+		
+	for k, v in pairs(self.Members) do
+		v.E:SendColorChat("WMG",self.color,Ply:Nick().." has left you're Team.")
+	end
 	
 	if self.Leader == Ply then
 		self:GetNewLeader()
@@ -101,7 +109,7 @@ end
 
 function Team:GetNewLeader() 
 	for k, v in pairs(self.Members) do
-		self:SetLeader(v)
+		self:SetLeader(v.E)
 		return
 	end
 end
