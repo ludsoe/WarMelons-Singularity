@@ -96,6 +96,18 @@ function PLY:ClearSelectedMelons(NoSync)
 	end
 end
 
+function PLY:ContraptionSelect(Ent)
+	local Ents = constraint.GetAllConstrainedEntities_B( Ent )
+	
+	for k, v in pairs( Ents ) do
+		if Ent.MelonTeam and Ent.MelonOrders then
+			if v.MelonTeam.name==self.MelonTeam then
+				self.SelectedMelons[v:EntIndex()]=v
+			end
+		end
+	end
+end
+
 function PLY:SelectMelons(Shift,Use)
 	local tr = self:GetEyeTrace()
 	local Pos,Ent = tr.HitPos,tr.Entity
@@ -105,12 +117,16 @@ function PLY:SelectMelons(Shift,Use)
 	
 	if not Shift then self:ClearSelectedMelons(true) end
 	local entz,MSound = ents.FindInSphere(Pos,Rad),false
-	if Ent and IsValid(Ent) and not Use then
-		if Ent.MelonTeam then
-			if Ent.MelonTeam.name==self.MelonTeam then
-				self.SelectedMelons[Ent:EntIndex()]=Ent
-				MSound = true
-			end
+	if Ent and IsValid(Ent) then
+		if Use then
+			self:ContraptionSelect(Ent)
+		else
+			if Ent.MelonTeam and Ent.MelonOrders then
+				if Ent.MelonTeam.name==self.MelonTeam then
+					self.SelectedMelons[Ent:EntIndex()]=Ent
+					MSound = true
+				end
+			end		
 		end
 	else
 		for k, v in pairs(entz) do
