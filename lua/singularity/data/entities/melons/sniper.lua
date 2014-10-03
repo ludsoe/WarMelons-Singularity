@@ -10,8 +10,8 @@ Data.MelonDNA={
 	Speed=250,
 	Force=400,
 	Range=800,
-	Damage=10,
-	AttackRate=3,
+	Damage=100,
+	AttackRate=5,
 	TrainTime=25
 }
 
