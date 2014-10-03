@@ -75,6 +75,7 @@ function ENT:Compile(Data,ply,Team)
 end
 
 function ENT:Think()
+	if not self.ModuleThink then return end
 	self:ModuleThink()
 	
 	if self.BSThink then self:BSThink() end

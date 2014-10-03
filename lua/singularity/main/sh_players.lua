@@ -100,7 +100,7 @@ function PLY:ContraptionSelect(Ent)
 	local Ents = constraint.GetAllConstrainedEntities_B( Ent )
 	
 	for k, v in pairs( Ents ) do
-		if Ent.MelonTeam and Ent.MelonOrders then
+		if v.MelonTeam and v.MelonOrders then
 			if v.MelonTeam.name==self.MelonTeam then
 				self.SelectedMelons[v:EntIndex()]=v
 			end
@@ -117,8 +117,10 @@ function PLY:SelectMelons(Shift,Use)
 	
 	if not Shift then self:ClearSelectedMelons(true) end
 	local entz,MSound = ents.FindInSphere(Pos,Rad),false
+	print("Selectig")
 	if Ent and IsValid(Ent) then
 		if Use then
+			print("Contraption select")
 			self:ContraptionSelect(Ent)
 		else
 			if Ent.MelonTeam and Ent.MelonOrders then
