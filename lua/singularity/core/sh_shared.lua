@@ -1,13 +1,6 @@
 
 local Singularity = Singularity
 
-function Singularity.CanNoClip(ply) 
-    --if ply:GetMoveType() == MOVETYPE_NOCLIP then return true end
-    if ply:IsAdmin() then return true end -- Only Admins can Noclip.
-
-    return false    
-end
-
 hook.Add( "CanDrive","FUCKCANDRIVE", function( ply, ent ) return false end)
 
 if SERVER then

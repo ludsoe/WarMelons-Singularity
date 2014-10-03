@@ -208,24 +208,25 @@ if(SERVER)then
 	
 	--OnJoin
 	local F = function( name, address )
-		local Text = name .. " has connected from IP: " .. address
+		local Text = name .. " has connected."
 		Utl:NotifyPlayers("Server",Text,{r=150,g=150,b=150})
 	end
-	Utl:HookHook("PlayerConnect","UtlChatMsg",F,1)
+	--Utl:HookHook("PlayerConnect","UtlChatMsg",F,1)
 	
 	--OnLeave
 	local F = function( ply )
-		local Text = ply:GetName().." has disconnected from the server. (SteamID: "..ply:SteamID().." )"
+		--ply:SteamID()
+		local Text = ply:GetName().." has disconnected from the server."
 		Utl:NotifyPlayers("Server",Text,{r=150,g=150,b=150})
 	end
-	Utl:HookHook("PlayerDisconnected","UtlChatMsg",F,1)	
+	--Utl:HookHook("PlayerDisconnected","UtlChatMsg",F,1)	
 	
 	--OnIntSpawn
 	local F = function( ply )
 		local Text = ply:GetName().." has spawned."
 		Utl:NotifyPlayers("Server",Text,{r=150,g=150,b=150})
 	end
-	Utl:HookHook("PlayerInitialSpawn","UtlChatMsg",F,1)
+	--Utl:HookHook("PlayerInitialSpawn","UtlChatMsg",F,1)
 	
 else
 	--[[----------------------------------------------------
