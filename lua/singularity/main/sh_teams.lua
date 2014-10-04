@@ -27,6 +27,8 @@ if SERVER then
 	Teams.CreateTeam("Red",Color(255,0,0,255),true)
 	Teams.CreateTeam("Green",Color(0,255,0,255),true)
 	Teams.CreateTeam("Blue",Color(0,0,255,255),true)
+	Teams.CreateTeam("Purple",Color(255,0,255,255),true)
+	Teams.CreateTeam("Yellow",Color(255,255,0,255),true)
 	
 	Utl:HookNet("JoinTeam","",function(D,Ply)
 		local Team = Teams.Teams[D.N]

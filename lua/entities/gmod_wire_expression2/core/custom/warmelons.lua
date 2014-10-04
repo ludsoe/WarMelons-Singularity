@@ -1,9 +1,13 @@
 
-EnvExpTest = {}
+MelonE2 = {}
 
-function EnvExpTest.AdminAction(self)
-	local ply = self.player
-	return ply:IsAdmin()
+function MelonE2.CanCommand(self,ent)
+	local myteam = self.player:GetMTeam().name
+	local enteam = ent.MelonTeam
+	if not ent.MelonOrders then return false end
+	if ply:IsAdmin() then return true end
+	if myteam == enteam then return true end
+	return false 
 end
 
 e2function number entity:ismelon()
@@ -23,20 +27,24 @@ end
 e2function void entity:clearmelonorders()
 	if not IsValid(this) then return end
 	if not this.MelonOrders then return end
-	this:ClearOrders()
-	return
+	if MelonE2.CanCommand(self,this) then
+		this:ClearOrders()
+	end
 end
 
 e2function void entity:givemelonmoveorder(vector vec)
 	if not IsValid(this) then return end
 	if not this.MelonOrders then return end
-	this:AddOrder({T="Goto",V=vec})
-	return
+	if MelonE2.CanCommand(self,this) then
+		this:AddOrder({T="Goto",V=vec})
+	end
 end
 
-e2function array entity:getmelonorders()
-	if not IsValid(this) then return end
-	if not this.MelonOrders then return end
-	
-	return this:GetOrders()
+e2function table entity:getmelonorders()
+	if not IsValid(this) then return {} end
+	if not this.MelonOrders then return {} end
+	if MelonE2.CanCommand(self,this) then
+		return this:GetOrders()
+	end
+	return {}
 end
