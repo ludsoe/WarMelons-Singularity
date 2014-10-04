@@ -14,6 +14,7 @@ Data.MyModel = "models/props_lab/kennel_physics.mdl"
 Data.MaxHealth = 1000
 
 Data.Setup = function(self,Data,MyData)
+	self.IsBarracks = true
 	self.Training = {A=false,S=0,E=0,T=""}
 	
 	self.FinishTraining = function(self,Train)
@@ -39,6 +40,13 @@ Data.Setup = function(self,Data,MyData)
 			return true
 		else
 			return false
+		end
+	end
+	
+	self.AddToQueue(self,Name)
+		if Singularity.Entities.Modules["Melons"][Name] then
+			SendAdd(self,Name)
+			table.insert(self.BuildQueue,Name)			
 		end
 	end
 end
@@ -103,7 +111,7 @@ if SERVER then
 		NDat.AddDataAll({Name="barracks_queue_add",Val=1,Dat={
 			{N="E",T="E",V=self},
 			{N="S",T="S",V=Name},
-		}})		
+		}})
 	end
 	
 	function SendTraining(self,Train)

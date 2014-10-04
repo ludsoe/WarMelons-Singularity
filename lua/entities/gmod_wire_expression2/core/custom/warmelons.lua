@@ -10,21 +10,28 @@ function MelonE2.CanCommand(self,ent)
 	return false 
 end
 
-e2function number entity:ismelon()
+e2function number entity:wmismelon()
 	if not IsValid(this) then return 0 end
 	if not this.IsMelon then return 0 end
 	if not this.IsMelon == true then return 0 end
 	return 1
 end
 
-e2function number entity:cantakemelonorders()
+e2function number entity:wmisbarracks()
+	if not IsValid(this) then return 0 end
+	if not this.IsBarracks then return 0 end
+	if not this.IsBarracks == true then return 0 end
+	return 1
+end
+
+e2function number entity:wmcantakeorders()
 	if not IsValid(this) then return 0 end
 	if not this.MelonOrders then return 0 end
 	if not this.MelonOrders == true then return 0 end
 	return 1
 end
 
-e2function void entity:clearmelonorders()
+e2function void entity:wmclearorders()
 	if not IsValid(this) then return end
 	if not this.MelonOrders then return end
 	if MelonE2.CanCommand(self,this) then
@@ -32,7 +39,7 @@ e2function void entity:clearmelonorders()
 	end
 end
 
-e2function void entity:givemelonmoveorder(vector vec)
+e2function void entity:wmgivemoveorder(vector vec)
 	if not IsValid(this) then return end
 	if not this.MelonOrders then return end
 	if MelonE2.CanCommand(self,this) then
@@ -40,11 +47,37 @@ e2function void entity:givemelonmoveorder(vector vec)
 	end
 end
 
-e2function table entity:getmelonorders()
+e2function table entity:wmgetorders()
 	if not IsValid(this) then return {} end
 	if not this.MelonOrders then return {} end
 	if MelonE2.CanCommand(self,this) then
 		return this:GetOrders()
 	end
 	return {}
+end
+
+e2function void entity:wmaddtobuildqueue(string str)
+	if not IsValid(this) then return end
+	if not this.MelonOrders then return end
+	if MelonE2.CanCommand(self,this) then
+		this:AddToQueue(str)
+	end
+end
+
+e2function table entity:wmgetbuildqueue()
+	if not IsValid(this) then return {} end
+	if not this.MelonOrders then return {} end
+	if not this.IsBarracks then return {} end
+	if MelonE2.CanCommand(self,this) then
+		return this.BuildQueue
+	end
+	return {}
+end
+
+e2function table entity:wmgetmelontypes()
+	local Types = {}
+	for k, v in pairs(Singularity.Entities.Modules["Melons"]) do
+		table.insert(Types,k)
+	end
+	return Types
 end
