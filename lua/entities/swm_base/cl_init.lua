@@ -5,6 +5,7 @@ local Utl = Singularity.Utl --Makes it easier to read the code.
 local NDat = Utl.NetMan 
 
 function ENT:Compile(T,N)
+	if T == nil or N == nil then return end
 	--Make a copy of the data pattern.
 	local MyData = table.Copy(Singularity.Entities.Modules[T][N].E)
 	self.ModuleData = MyData
