@@ -116,7 +116,7 @@ function PLY:SelectMelons(Shift,Use)
 	if self.LastSelect > CurTime() then return end
 	
 	if not Shift then self:ClearSelectedMelons(true) end
-	local entz,MSound = ents.FindInSphere(Pos,Rad),false
+	local MSound = false
 	print("Selectig")
 	if Ent and IsValid(Ent) then
 		if Use then
@@ -131,6 +131,7 @@ function PLY:SelectMelons(Shift,Use)
 			end		
 		end
 	else
+		local entz = ents.FindInSphere(Pos,Rad)
 		for k, v in pairs(entz) do
 			if v:GetClass() == "swm_melon" then
 				if v.MelonTeam.name==self.MelonTeam then
