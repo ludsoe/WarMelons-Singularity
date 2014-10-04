@@ -3,6 +3,10 @@ local Utl = Singularity.Utl --Makes it easier to read the code.
 local Teams,NDat = Singularity.Teams,Utl.NetMan 
 local ENT,PLY = FindMetaTable( "Entity" ),FindMetaTable( "Player" )
 
+local Develpers = {
+"STEAM_0:1:21922427"--Spudsoe
+}
+
 if SERVER then
 	function MISpawn(ply)
 		ply.SelectedMelons = {}
@@ -12,6 +16,13 @@ if SERVER then
 		timer.Create(ply:Nick().."TCreate",1,1,function()
 			ply:MakeMTeam()
 		end)
+		
+		--Mark Developers with a special variable!
+		for k, v in pairs(Develpers) do
+			if ply:SteamID() == v then
+				ply.WarMelonDeveloper = true
+			end
+		end
 	end
 
 	function MLeave(ply)
@@ -117,10 +128,10 @@ function PLY:SelectMelons(Shift,Use)
 	
 	if not Shift then self:ClearSelectedMelons(true) end
 	local MSound = false
-	print("Selectig")
+	--print("Selectig")
 	if Ent and IsValid(Ent) then
 		if Use then
-			print("Contraption select")
+			--print("Contraption select")
 			self:ContraptionSelect(Ent)
 		else
 			if Ent.MelonTeam and Ent.MelonOrders then

@@ -5,6 +5,10 @@ local Teams = Singularity.Teams
 
 local Tool = {}
 
+function ReloadOptions()
+	
+end
+
 function ViewTeamsPage(Base,Tab)
 	local MyTab = Tab["View"] or {}
 	local Name = "Select Group"
@@ -48,13 +52,13 @@ function ViewTeamsPage(Base,Tab)
 		end
 	end)
 	
-	MyTab.MemberList = Singularity.MenuCore.CreateList(Mod,{x=150,y=200},{x=0,y=80},false,function() end)
+	MyTab.MemberList = Singularity.MenuCore.CreateList(Mod,{x=150,y=200},{x=0,y=110},false,function() end)
 	MyTab.MemberList:AddColumn("Members") -- Add column
 end
 
 Tool.Open = function(Menu,Tab) 
 	Menu.Paint = function() end
-	local Mod = Singularity.MT.AddModular()
+	
 	Tab.Save = Tab.Save or {}
 	
 	local C,M = vgui.Create( "DPanel" ),vgui.Create( "DPanel" )

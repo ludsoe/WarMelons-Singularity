@@ -8,7 +8,7 @@ local Data = {
 
 Data.MelonDNA={
 	Speed=200,
-	Force=800,
+	Force=600,
 	Range=320,
 	Damage=200,
 	AttackRate=3,

@@ -73,7 +73,7 @@ Tool.Open = function(Menu,Tab)
 	local Sheet = Singularity.MenuCore.CreatePSheet(Menu,{x=520,y=355},{x=0,y=0})
 	Sheet:AddSheet( "Tactical" , C , "icon16/wrench.png" , false, false, "Base Defense and Offensive Weapons" )
 	Sheet:AddSheet( "Strategic" , M , "icon16/shield.png" , false, false, "Unit Barracks and Resource Management" )
-	Sheet:AddSheet( "Melons" , L , "icon16/lightning.png" , false, false, "Test Page for spawning test shit" )
+	Sheet:AddSheet( "Melons" , L , "icon16/lightning.png" , false, false, "Spawn The Melons Directly." )
 
 	MakePage(C,"Tactical",Tab)
 	MakePage(M,"Strategic",Tab)
@@ -83,6 +83,13 @@ end --This is clientside only, called when the tool is selected.
 Tool.Primary = function(trace,ply,Settings)
 	if not Settings.Spawns then return false end
 	local traceent = trace.Entity
+	
+	if Settings.Spawns.T == "Melons" and not Singularity.Settings["ManualMelonspawn"] then
+		ply:SendColorChat("WarMelons",Color(30,150,255),"You Cannot Spawn: "..Settings.Spawns.N.." Right now!")
+
+		return false
+	end
+	
 	local ent = Singularity.MT.CreateDevice(ply, trace, Settings.Spawns.E, Settings.Spawns.M)
 	if ent.Compile then
 		ent:Compile(Settings.Spawns,ply)

@@ -18,6 +18,7 @@ LoadFile("weapons/gmod_tool/jtools/settings.lua",1)
 LoadFile("weapons/gmod_tool/jtools/orders.lua",1)
 LoadFile("weapons/gmod_tool/jtools/teammanage.lua",1)
 LoadFile("weapons/gmod_tool/jtools/devices.lua",1)
+LoadFile("weapons/gmod_tool/jtools/serversettings.lua",1)
 
 --LoadFile("weapons/gmod_tool/jtools/healthscanner.lua",1)
 
