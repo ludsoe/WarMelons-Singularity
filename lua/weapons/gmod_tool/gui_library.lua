@@ -168,6 +168,20 @@ function Singularity.MT.ModAddButton(Panel,Text,Func,Width,OffOver)
 	return Button
 end
 
+function Singularity.MT.ModAddTextInput(Panel,Text,Value,Func,OffOver)
+	if not Panel.IsModular then return end --Y U DO DIS!!??!?!
+	--local Button = Singularity.MenuCore.CreateButton(Panel,{x=Width or 280,y=40},{x=0,y=OffOver or Panel.Offset},Text,Func)
+	local Input = Singularity.MenuCore.CreatePanel(Panel,{x=280,y=20},{x=0,y=OffOver or Panel.Offset})
+	Input.TextLabel = Singularity.MenuCore.CreateText(Input,{x=5,y=3},Text,Color(0,0,0,255))
+	Input.InputBox = Singularity.MenuCore.CreateTextBar(Input,{x=100,y=20},{x=180,y=0},Value,Func)
+	
+	Input.SetText= function(self,Text) self.TextLabel:SetText(Text) end
+	Input.SetValue= function(self,Value) self.InputBox:SetText(Value) end
+	
+	Panel.Offset=Panel.Offset+20
+	return Input
+end
+
 function Singularity.MT.ModUpdSettings(Panel,Data,clear)
 	if not Panel.IsPropGrid then return end --Y U DO DIS!!??!?!
 	

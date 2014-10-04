@@ -8,10 +8,9 @@ local Team = {
 	color = Color(255,255,255,255),
 	Members = {},
 	Melons = {Units={},Buildings={}},
+	Settings = {CanJoin = true, AttackMode = 1},
 	Diplomacy = {},
-	Persist = false,
-	PlayerOwned = false,
-	MaxMelons = 40
+	Persist = false
 }
 
 function Team:Setup(name,color)
@@ -27,7 +26,7 @@ function Team:SetMaxMelons(Max)
 end
 
 function Team:LockTeam()
-	self.PlayerOwned = true
+	self.Settings.CanJoin = true
 end
 
 function Team:MakePersist()
@@ -35,12 +34,27 @@ function Team:MakePersist()
 end
 
 function Team:TeamDestroy()
+	
 	if self.Persist then return end
+	
+	for k, v in pairs(self.Melons.Units) do
+		local Ent = v.E
+		if not Ent or not IsValid(Ent) then
+			Ent:Remove()
+		end
+	end
+	
+	for k, v in pairs(self.Melons.Buildings) do
+		local Ent = v.E
+		if not Ent or not IsValid(Ent) then
+			Ent:Remove()
+		end
+	end	
+	
+	--Add Player booting.
+	
 	Singularity.Debug("Deleting Team: "..self.name,2,"MTeams")
 	
-	--Add Melon Destruction
-	--Add Player booting.
-
 	NDat.AddDataAll({
 		Name="TeamDelete",
 		Val=1,
@@ -118,6 +132,10 @@ function Team:RegisterMelon(Ent)
 	self.Melons.Units[Ent:EntIndex()]={E=Ent,Id=Ent:EntIndex()}
 end
 
+function Team:RegisterStructure(Ent)
+	self.Melons.Buildings[Ent:EntIndex()]={E=Ent,Id=Ent:EntIndex()}
+end
+
 function Team:CheckMelons()
 	for k, v in pairs(self.Melons.Units) do
 		local Ent = v.E
@@ -141,20 +159,28 @@ function Team:StartCheckTimer()
 end
 
 function Team:CanMakeMelon(Barracks)
-	if table.Count(self.Melons.Units) >= self.MaxMelons then
-		return false
+	local Count = table.Count(self.Melons.Units)
+	if not self.Persist then
+		return Count < Singularity.Settings["PlayerTeamMelonCap"]
+	else
+		return Count < Singularity.Settings["PersistTeamMelonCap"]
 	end
 	return true
 end
 
-function Team:CanMakeBuilding() 
+function Team:CanMakeBuilding()
+	local Count = table.Count(self.Melons.Buildings)
+	if not self.Persist then
+		return Count < Singularity.Settings["PlayerTeamBuildingCap"]
+	else
+		return Count < Singularity.Settings["PersistTeamBuildingCap"]
+	end
 	return true
 end
 
 function Team:CanPlayerJoin(Ply)
-	if self.PlayerOwned then
-		return false
-	end
+	if Utl:CheckAdmin( Ply ) then return true end
+	if not self.Settings.CanJoin then return false end
 	return true
 end
 

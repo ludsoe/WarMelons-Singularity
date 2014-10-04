@@ -9,7 +9,7 @@ Tool.Open = function(Menu,Tab)
 	local Settings = Singularity.Settings
 	
 	Singularity.MT.ModAddButton(Mod,"Reset to Default",function() 
-
+		Utl.NetMan.AddData({Name="SingSettingsReset",Val=1,Dat={}})
 	end)
 	
 	local Set,Text = "ManualMelonspawn","Manual Melon Spawns: "	
@@ -20,6 +20,29 @@ Tool.Open = function(Menu,Tab)
 	end)
 	
 	local Set,Text = "MelonsDoDamage","Melons Can Attack: "	
+	Tab[Set] = Singularity.MT.ModAddButton(Mod,Text..tostring(Settings[Set]),function() 
+		Settings[Set] = not Settings[Set]
+		Tab[Set]:SetText(Text..tostring(Settings[Set]))
+		Utl:SyncSetting(Set,Settings[Set])
+	end)
+	
+	local Set,Text = "PlayerTeamMelonCap","Player Team Melon Cap"
+	function SetSetting(V) Settings[Set]=V Utl:SyncSetting(Set,Settings[Set]) end
+	Singularity.MT.ModAddTextInput(Mod,Text,Settings[Set],function(V) SetSetting(V) end)
+	
+	local Set,Text = "PersistTeamMelonCap","Preset Team Melon Cap"
+	function SetSetting(V) Settings[Set]=V Utl:SyncSetting(Set,Settings[Set]) end
+	Singularity.MT.ModAddTextInput(Mod,Text,Settings[Set],function(V) SetSetting(V) end)
+	
+	local Set,Text = "PlayerTeamBuildingCap","Player Team Structure Cap"
+	function SetSetting(V) Settings[Set]=V Utl:SyncSetting(Set,Settings[Set]) end
+	Singularity.MT.ModAddTextInput(Mod,Text,Settings[Set],function(V) SetSetting(V) end)
+	
+	local Set,Text = "PersistTeamBuildingCap","Preset Team Structure Cap"
+	function SetSetting(V) Settings[Set]=V Utl:SyncSetting(Set,Settings[Set]) end
+	Singularity.MT.ModAddTextInput(Mod,Text,Settings[Set],function(V) SetSetting(V) end)	
+		
+	local Set,Text = "EnforceBuildingCap","Structure Cap Enforcement: "	
 	Tab[Set] = Singularity.MT.ModAddButton(Mod,Text..tostring(Settings[Set]),function() 
 		Settings[Set] = not Settings[Set]
 		Tab[Set]:SetText(Text..tostring(Settings[Set]))

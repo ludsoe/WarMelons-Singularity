@@ -10,9 +10,9 @@ Data.MelonDNA={
 	Speed=600,
 	Force=600,
 	Range=120,
-	Damage=10,
-	AttackRate=1,
-	TrainTime=5
+	Damage=25,
+	AttackRate=0.5,
+	TrainTime=2
 }
 
 Data.Name = "Swarm Melon"
@@ -30,8 +30,8 @@ Data.Think = function(self)
 	
 	self.SyncData.Health = Singularity.GetHealth( self ).."/"..Singularity.GetMaxHealth( self )
 	
-	if IsValid(self.Enemy) then
-		self:Attack(self.Enemy)
+	if IsValid(self.Target) then
+		self:Attack(self.Target)
 	end	
 end
 

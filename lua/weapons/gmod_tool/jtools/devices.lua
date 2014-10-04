@@ -84,10 +84,19 @@ Tool.Primary = function(trace,ply,Settings)
 	if not Settings.Spawns then return false end
 	local traceent = trace.Entity
 	
-	if Settings.Spawns.T == "Melons" and not Singularity.Settings["ManualMelonspawn"] then
-		ply:SendColorChat("WarMelons",Color(30,150,255),"You Cannot Spawn: "..Settings.Spawns.N.." Right now!")
-
-		return false
+	local Type = Settings.Spawns.T
+	if Type == "Melons" then
+		if not Singularity.Settings["ManualMelonspawn"] then
+			ply:SendColorChat("WarMelons",Color(30,150,255),"You Cannot Spawn: "..Settings.Spawns.N.." Right now! Reason: Manual Melon Spawns are Disabled!")
+			return false
+		end
+	elseif Type == "Tactical" or Type == "Strategic" then
+		if Singularity.Settings["EnforceBuildingCap"] then
+			if not ply:GetMTeam():CanMakeBuilding() then
+				ply:SendColorChat("WarMelons",Color(30,150,255),"You Cannot Spawn: "..Settings.Spawns.N.." Right now! Reason: You are at Structure Cap!")
+				return false
+			end
+		end
 	end
 	
 	local ent = Singularity.MT.CreateDevice(ply, trace, Settings.Spawns.E, Settings.Spawns.M)

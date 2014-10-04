@@ -10,14 +10,14 @@ Data.MelonDNA={
 	Speed=400,
 	Force=600,
 	Range=160,
-	Damage=10,
-	AttackRate=0.1,
-	TrainTime=12
+	Damage=20,
+	AttackRate=0.2,
+	TrainTime=6
 }
 
 Data.Name = "Rapid Melon"
 Data.MyModel = "models/props_junk/watermelon01.mdl"
-Data.MaxHealth = 200
+Data.MaxHealth = 400
 
 Data.Setup = function(self,Data,MyData)
 	self:SetMaterial("models/debug/debugwhite")
@@ -30,8 +30,8 @@ Data.Think = function(self)
 	
 	self.SyncData.Health = Singularity.GetHealth( self ).."/"..Singularity.GetMaxHealth( self )
 	
-	if IsValid(self.Enemy) then
-		self:Attack(self.Enemy)
+	if IsValid(self.Target) then
+		self:Attack(self.Target)
 	end	
 end
 

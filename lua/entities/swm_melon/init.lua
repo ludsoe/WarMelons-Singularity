@@ -6,6 +6,13 @@ include("shared.lua")
 function ENT:BSSetup(Data,ply)
 	self:ClearOrders()
 	
+	local Team = self.MelonTeam or ply:GetMTeam()
+
+	if not Team:CanMakeMelon() then
+		self:Remove()
+		return false
+	end
+	
 	self.MelonTeam:RegisterMelon(self)
 end
 
@@ -58,10 +65,10 @@ function ENT:RunOrders()
 			end
 		end
 	else
-		if self.Enemy and IsValid(self.Enemy) then
-			self:ManageMovement(self.Enemy:GetPos()+(Normalize(self:GetPos()-self.Enemy:GetPos())*(self.DNA.Range/2)))
+		if self.Target and IsValid(self.Target) then
+			self:ManageMovement(self.Target:GetPos()+(Normalize(self:GetPos()-self.Target:GetPos())*(self.DNA.Range/2)))
 		else
-			self.Enemy = nil
+			self.Target = nil
 		end
 	end
 end

@@ -22,7 +22,11 @@ else
 	
 	function VGUI:SetupQueue(Items) self:SetupList(self.BQ,Items) end
 	function VGUI:ToggleLoop(set)
-		self.WillLoop = set or not self.WillLoop
+		if not set==nil then
+			self.WillLoop = set 
+		else
+			self.WillLoop = not self.WillLoop
+		end
 		self.Loop:SetText("Queue Loop: "..tostring(self.WillLoop))
 	end
 	
@@ -107,7 +111,7 @@ else
 		self.Loop = Singularity.MenuCore.CreateButton(FactoryMenu,{x=180,y=40},{x=520,y=275})
 		self.Loop:SetText( "Queue Loop: "..tostring(self.WillLoop) )
 		self.Loop.DoClick = function()
-			self:ToggleLoop()
+			self:ToggleLoop(not self.WillLoop)
 		end
 				
 	end

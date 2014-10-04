@@ -70,7 +70,7 @@ function ENT:Compile(Data,ply,Team)
 	end
 	
 	if self.BSSetup then
-		self:BSSetup(Data,ply)
+		self:BSSetup(Data,ply,MyData)
 	end
 end
 

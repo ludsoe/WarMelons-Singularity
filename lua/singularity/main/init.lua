@@ -34,6 +34,14 @@ if SERVER then
 		Utl:NotifyPlayers("WarMelons","Console has changed "..N.." to "..tostring(Value),Color(30,150,255))
 		Utl:SyncSettings()		
 	end
+	
+	Utl:HookNet("SingSettingsReset","",function(D,ply)
+		if not Utl:CheckAdmin( ply ) then return end
+		Singularity.Settings=table.Copy(Singularity.DefaultSettings)
+				
+		Utl:NotifyPlayers("WarMelons",ply:Nick().." has reset the WarMelons Settings!",Color(30,150,255))
+		Utl:SyncSettings()
+	end)
 else
 	Utl:HookNet("SingSettingsSync","",function(D,ply)
 		Singularity.Settings = D.T or {}
