@@ -34,9 +34,9 @@ if CLIENT then
 	language.Add( "worldspawn", "World" )
 	language.Add( "trigger_hurt", "Environment" )
 else
-	hook.Add("GetGameDescription", "GameDesc", function() 
+	--[[hook.Add("GetGameDescription", "GameDesc", function() 
 		return "Singularity: "..Singularity.Version
-	end)
+	end)]]
 end
 
 print("Singularity AutoRun Finished! Took "..(SysTime()-StartTime).."'s to load.")
