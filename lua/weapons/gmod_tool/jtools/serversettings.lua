@@ -27,20 +27,24 @@ Tool.Open = function(Menu,Tab)
 	end)
 	
 	local Set,Text = "PlayerTeamMelonCap","Player Team Melon Cap"
-	function SetSetting(V) Settings[Set]=V Utl:SyncSetting(Set,Settings[Set]) end
-	Singularity.MT.ModAddTextInput(Mod,Text,Settings[Set],function(V) SetSetting(V) end)
+	Singularity.MT.ModAddTextInput(Mod,Text,Settings[Set],function(V)
+		Settings[Set]=V Utl:SyncSetting(Set,Settings[Set])
+	end)
 	
 	local Set,Text = "PersistTeamMelonCap","Preset Team Melon Cap"
-	function SetSetting(V) Settings[Set]=V Utl:SyncSetting(Set,Settings[Set]) end
-	Singularity.MT.ModAddTextInput(Mod,Text,Settings[Set],function(V) SetSetting(V) end)
+	Singularity.MT.ModAddTextInput(Mod,Text,Settings[Set],function(V) 
+		Settings[Set]=V Utl:SyncSetting(Set,Settings[Set])
+	end)
 	
 	local Set,Text = "PlayerTeamBuildingCap","Player Team Structure Cap"
-	function SetSetting(V) Settings[Set]=V Utl:SyncSetting(Set,Settings[Set]) end
-	Singularity.MT.ModAddTextInput(Mod,Text,Settings[Set],function(V) SetSetting(V) end)
+	Singularity.MT.ModAddTextInput(Mod,Text,Settings[Set],function(V) 
+		Settings[Set]=V Utl:SyncSetting(Set,Settings[Set])
+	end)
 	
 	local Set,Text = "PersistTeamBuildingCap","Preset Team Structure Cap"
-	function SetSetting(V) Settings[Set]=V Utl:SyncSetting(Set,Settings[Set]) end
-	Singularity.MT.ModAddTextInput(Mod,Text,Settings[Set],function(V) SetSetting(V) end)	
+	Singularity.MT.ModAddTextInput(Mod,Text,Settings[Set],function(V) 
+		Settings[Set]=V Utl:SyncSetting(Set,Settings[Set])
+	end)	
 		
 	local Set,Text = "EnforceBuildingCap","Structure Cap Enforcement: "	
 	Tab[Set] = Singularity.MT.ModAddButton(Mod,Text..tostring(Settings[Set]),function() 
