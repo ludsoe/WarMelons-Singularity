@@ -39,6 +39,14 @@ e2function void entity:wmclearorders()
 	end
 end
 
+e2function void entity:wmsettarget(entity ent)
+	if not IsValid(this) then return end
+	if not this.IsMelon then return end
+	if MelonE2.CanCommand(self,this) then
+		this.Target=ent
+	end
+end
+
 e2function void entity:wmgivemoveorder(vector vec)
 	if not IsValid(this) then return end
 	if not this.MelonOrders then return end
