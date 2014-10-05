@@ -46,6 +46,7 @@ Data.Setup = function(self,Data,MyData)
 	self.AddToQueue = function(self,Name)
 		if Singularity.Entities.Modules["Melons"][Name] then
 			SendAdd(self,Name)
+			self.BuildQueue = self.BuildQueue or {}
 			table.insert(self.BuildQueue,Name)			
 		end
 	end

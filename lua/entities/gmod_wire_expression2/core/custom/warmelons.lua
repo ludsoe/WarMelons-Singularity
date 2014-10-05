@@ -43,15 +43,19 @@ e2function void entity:wmgivemoveorder(vector vec)
 	if not IsValid(this) then return end
 	if not this.MelonOrders then return end
 	if MelonE2.CanCommand(self,this) then
-		this:AddOrder({T="Goto",V=vec})
+		--this:AddOrder({T="Goto",V=vec})
 	end
 end
 
-e2function table entity:wmgetorders()
+e2function array entity:wmgetorders()
 	if not IsValid(this) then return {} end
 	if not this.MelonOrders then return {} end
 	if MelonE2.CanCommand(self,this) then
-		return this:GetOrders()
+		local Array = {}
+		for k,v in pairs( this:GetOrders() ) do
+			Array[#Array + 1] = v
+		end
+		return Array
 	end
 	return {}
 end
@@ -64,20 +68,24 @@ e2function void entity:wmaddtobuildqueue(string str)
 	end
 end
 
-e2function table entity:wmgetbuildqueue()
+e2function array entity:wmgetbuildqueue()
 	if not IsValid(this) then return {} end
 	if not this.MelonOrders then return {} end
 	if not this.IsBarracks then return {} end
 	if MelonE2.CanCommand(self,this) then
-		return this.BuildQueue
+		local Array = {}
+		for k,v in pairs( this.BuildQueue ) do
+			Array[#Array + 1] = v
+		end
+		return Array
 	end
 	return {}
 end
 
-e2function table entity:wmgetmelontypes()
+e2function array entity:wmgetmelontypes()
 	local Types = {}
 	for k, v in pairs(Singularity.Entities.Modules["Melons"]) do
-		table.insert(Types,k)
+		Array[#Array + 1] = v
 	end
 	return Types
 end
