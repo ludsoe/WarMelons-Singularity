@@ -44,11 +44,43 @@ if SERVER then
 		
 		ply:MakeMTeam()
 	end)
+		
+	Utl:HookNet("ReqTeamAlly","",function(D,ply)
+		local Team = ply:GetMTeam()
+		if Team.name == D.T1 then
+			if Team:GetLeader() == ply or Utl:CheckAdmin( ply ) then 
+				Team:MakeAlly(Teams.Teams[D.T2])
+			end
+		end
+	end)
+			
+	Utl:HookNet("ReqTeamNeutral","",function(D,ply)
+		local Team = ply:GetMTeam()
+		if Team.name == D.T1 then
+			if Team:GetLeader() == ply or Utl:CheckAdmin( ply ) then 
+				Team:MakeNeutral(Teams.Teams[D.T2])
+			end
+		end
+	end)
+			
+	Utl:HookNet("ReqTeamHostile","",function(D,ply)
+		local Team = ply:GetMTeam()
+		if Team.name == D.T1 then
+			if Team:GetLeader() == ply or Utl:CheckAdmin( ply ) then 
+				Team:MakeEnemy(Teams.Teams[D.T2])
+			end
+		end
+	end)	
 else
 	
 	function Teams.RequestTeams(Tab)
 		NDat.AddData({Name="TeamRequest",Val=1,Dat={}})	
 		Teams.Tab = Tab
+	end	
+	
+	function Teams.RequestAllys(Tab)
+		NDat.AddData({Name="AllyRequest",Val=1,Dat={}})	
+		Teams.ATab = Tab
 	end
 end
 
@@ -66,6 +98,37 @@ function Teams.RemakeList()
 	Teams.Tab.Selected = nil
 end
 
+function Teams.ReloadAlliances()
+	local MyTab = Teams.ATab
+	--print("Reloading Allys")
+	if not MyTab.TeamList or not IsValid(MyTab.TeamList) then return end
+	MyTab.MyTeam = GetMyTeam()
+	local MyTeam = MyTab.MyTeam
+	--print("Clearing List")
+	MyTab.TeamList:Clear()
+	for k,v in pairs(Singularity.Teams.Teams) do
+		if MyTeam.name ~= v.name then
+			MyTab.TeamList:AddLine(k,GetRelations(MyTeam,v),GetRelations(v,MyTeam))
+		end
+	end
+	--print("Finished")
+end
+
+Utl:HookNet("AllyRequest","",function(D,Ply)
+	if SERVER then
+		local Send = {
+			Name="AllyRequest",
+			Val=1,
+			Dat={{N="T",T="T",V=Teams.Teams}}
+		}
+		NDat.AddData(Send,Ply)	
+	else
+		Singularity.Teams.Teams=D.T
+
+		Teams.ReloadAlliances()
+	end
+end)
+
 Utl:HookNet("TeamRequest","",function(D,Ply)
 	if SERVER then
 		local Send = {
@@ -80,15 +143,24 @@ Utl:HookNet("TeamRequest","",function(D,Ply)
 	end
 end)
 
-Utl:HookNet("TeamSyncMsg","",function(D,Ply)
-	Teams.Teams[D.N]=D.T
-end)
+Utl:HookNet("TeamSyncMsg","",function(D,Ply) Teams.Teams[D.N]=D.T end)
+Utl:HookNet("TeamDelete","",function(D,Ply) Teams.Teams[D.N]=nil Teams.RemakeList() end)
+Utl:HookNet("TeamMemberJoin","",function(D,Ply) LocalPlayer().MelonTeam = D.N end)
 
-Utl:HookNet("TeamDelete","",function(D,Ply)
-	Teams.Teams[D.N]=nil
-	Teams.RemakeList()
-end)
+function GetMyTeam()
+	for k,v in pairs(Teams.Teams) do
+		if v.Members[LocalPlayer():Nick()] then
+			return v
+		end
+	end
+end
 
-Utl:HookNet("TeamMemberJoin","",function(D,Ply)
-	LocalPlayer().MelonTeam = D.N
-end)
+function GetRelations(T1,T2)
+	return T1.Diplomacy[T2.name] or "Neutral"
+end
+
+
+
+
+
+

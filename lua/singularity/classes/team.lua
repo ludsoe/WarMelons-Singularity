@@ -13,12 +13,18 @@ local Team = {
 	Persist = false
 }
 
+Team.DefaultSettings = Team.Settings
+
 function Team:Setup(name,color)
 	self.name = name
 	self.color = color
 	
 	self:StartCheckTimer()
 	self:SyncData()
+	
+	for k, v in pairs(Teams.Teams) do
+		self:MakeNeutral(v)
+	end
 end
 
 function Team:SetMaxMelons(Max)
@@ -33,23 +39,37 @@ function Team:MakePersist()
 	self.Persist = true
 end
 
-function Team:TeamDestroy()
-	
-	if self.Persist then return end
-	
+function Team:CleanupMelons()
 	for k, v in pairs(self.Melons.Units) do
 		local Ent = v.E
-		if not Ent or not IsValid(Ent) then
+		if Ent and IsValid(Ent) then
 			Ent:Remove()
 		end
 	end
-	
+end
+
+function Team:CleanupStructures()
 	for k, v in pairs(self.Melons.Buildings) do
 		local Ent = v.E
-		if not Ent or not IsValid(Ent) then
+		if Ent and IsValid(Ent) then
 			Ent:Remove()
 		end
 	end	
+end
+
+function Team:Reset()
+	self:CleanupMelons()
+	self:CleanupStructures()
+	
+	self.Settings = table.Copy(self.DefaultSettings)
+end
+
+function Team:TeamDestroy()
+	
+	if self.Persist then self:Reset() return end
+
+	self:CleanupMelons()
+	self:CleanupStructures()
 	
 	--Add Player booting.
 	
@@ -104,14 +124,14 @@ function Team:RemoveMember(Ply)
 		v.E:SendColorChat("WMG",self.color,Ply:Nick().." has left you're Team.")
 	end
 	
-	if self.Leader == Ply then
+	if self.Leader.E == Ply then
 		self:GetNewLeader()
 	end
 	
 	self:SyncData()
 end
 
-function Team:GetLeader() return self.Leader end
+function Team:GetLeader() return self.Leader.E end
 function Team:SetLeader(Ply) 
 	self.Leader = {ID=Ply:EntIndex(),E=Ply}
 	Ply:SendColorChat("WMG",self.color,"You are now the Leader of Team: "..self.name)
@@ -123,8 +143,10 @@ end
 
 function Team:GetNewLeader() 
 	for k, v in pairs(self.Members) do
-		self:SetLeader(v.E)
-		return
+		if v.E and IsValid(v.E) then
+			self:SetLeader(v.E)
+			return
+		end	
 	end
 end
 
@@ -184,8 +206,87 @@ function Team:CanPlayerJoin(Ply)
 	return true
 end
 
-function Team:MakeAlly() end
-function Team:MakeEnemy() end
+function Team:DiplomacyCheck(Team,Over)
+	self.Diplomacy[Team.name] = self.Diplomacy[Team.name] or "Neutral"
+	if not Over then Team:DiplomacyCheck(self,true) end
+end
+
+function Team:CanAttack(Ent)
+	if not Ent.MelonTeam then return end
+	return not Ent.MelonTeam:GetRelations(self) == "Hostile"
+end
+
+function Team:CanHeal(Ent)
+	if not Ent.MelonTeam then return end
+	return not Ent.MelonTeam:GetRelations(self) == "Allied"
+end
+
+function Team:GetRelations(Team)
+	self:DiplomacyCheck(Team)
+	return self.Diplomacy[Team.name]
+end
+
+function Team:SetRelations(Team,Rel)
+	self.Diplomacy[Team.name]=Rel
+end
+
+function Team:MakeAlly(Team,Over) 
+	self:DiplomacyCheck(Team)
+	
+	if self:GetRelations(Team)=="Pending" then return end
+	
+	self:SetRelations(Team,"Pending")
+	
+	if Team:GetRelations(self)=="Pending" then
+		self:SetRelations(Team,"Allied")
+		
+		Team:MsgMembers("You're now allied with Team: "..Team.name)
+		
+		if Over then return end
+		Team:MakeAlly(self,true)
+	else
+		Team:MsgMembers("Team: "..self.name.." wants to become allied with you!")
+		self:MsgMembers("Alliance Request with Team: "..Team.name.." is pending!")
+	end
+	
+	self:SyncData()
+end
+
+function Team:MakeEnemy(Team,Over) 
+	self:DiplomacyCheck(Team)
+	
+	self:SetRelations(Team,"Hostile")
+	
+	if Team:GetRelations(self)=="Allied" then
+		Team:MakeEnemy(self)
+	end
+	
+	self:MsgMembers("You're now Hostile towards Team: "..Team.name)
+
+	self:SyncData()
+end
+
+function Team:MakeNeutral(Team,Over)
+	self:DiplomacyCheck(Team)
+
+	self:SetRelations(Team,"Neutral")
+	
+	if Team:GetRelations(self)=="Allied" then
+		Team:MakeNeutral(self)
+	end
+	
+	self:MsgMembers("You're now Neutral towards Team: "..Team.name)
+	
+	self:SyncData()
+end
+
+function Team:MsgMembers(Text)
+	for k, v in pairs(self.Members) do
+		if v.E and IsValid(v.E) then
+			v.E:SendColorChat("WMG",self.color,""..Text)
+		end
+	end
+end
 
 function Team:SyncMember(Ply)
 	NDat.AddData({

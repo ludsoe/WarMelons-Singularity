@@ -20,23 +20,24 @@ function ENT:LineOfSight(Vec,Ent,Team,Filter,X)
 	if not Hit then
 		return true
 	else
-		if HitEnt.MelonTeam == self.MelonTeam then
-			local Filter = Filter or {}
-			table.insert(Filter,HitEnt)
-			return self:LineOfSight(Vec,Ent,Team,Filter,X)
+		if Ent==HitEnt then
+			return true
 		else
-			if IsValid(Ent) and IsValid(HitEnt) then
-				if not Ent==HitEnt and Ent.MelonTeam == HitEnt.MelonTeam then
-					self.Enemy = HitEnt
-					return false
-				else
-					return true
-				end
+			if not HitEnt.MelonTeam then return end
+			if HitEnt.MelonTeam == self.MelonTeam then
+				local Filter = Filter or {}
+				table.insert(Filter,HitEnt)
+				return self:LineOfSight(Vec,Ent,Team,Filter,X)
 			else
+				if HitEnt.MelonTeam and not Team then
+					self.Target = HitEnt
+				end
 				return false
 			end
 		end
 	end
+	
+	return false
 end
 
 function ENT:DrawAttack(S,E)
@@ -71,7 +72,7 @@ function ENT:ScanEnemys()
 		local entz = ents.FindInSphere(self:GetPos(),self.DNA.Range*2)
 		for k, v in pairs(entz) do
 			if v.MelonTeam and not v:IsPlayer() then
-				if v.MelonTeam~=self.MelonTeam then
+				if self.MelonTeam:CanAttack(v) then
 					if self:LineOfSight(v:GetPos(),v) then
 						self.Target = v
 						break
@@ -92,7 +93,7 @@ function ENT:Heal(Ent)
 	if not Ent or not IsValid(Ent) then return end
 	if not Singularity.Settings["MelonsDoDamage"] then self.Target = nil return end
 	local Distance = self:GetPos():Distance(Ent:GetPos())
-	if self:LineOfSight(EPos,Ent) and Distance<self.DNA.Range and IsDamaged(Ent) then
+	if self:LineOfSight(EPos,Ent,true) and Distance<self.DNA.Range and IsDamaged(Ent) then
 		if self.Times.Attack < CurTime() then
 			Singularity.RepairHealth(Ent,self.DNA.Damage)
 			self.Times.Attack=CurTime()+self.DNA.AttackRate
@@ -108,11 +109,11 @@ end
 function ENT:ScanInjured()
 	if not Singularity.Settings["MelonsDoDamage"] then return end
 	if self.Times.Scan < CurTime() then
-		local entz = ents.FindInSphere(self:GetPos(),self.DNA.Range*2)
+		local entz = ents.FindInSphere(self:GetPos(),self.DNA.Range*4)
 		for k, v in pairs(entz) do
 			if v.MelonTeam and not v:IsPlayer() then
-				if v.MelonTeam==self.MelonTeam then
-					if self:LineOfSight(v:GetPos(),v) then
+				if self.MelonTeam:CanHeal(v) and IsDamaged(v) then
+					if self:LineOfSight(v:GetPos(),v,true) then
 						self.Target = v
 						break
 					end
