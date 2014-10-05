@@ -62,11 +62,16 @@ function Team:Reset()
 	self:CleanupStructures()
 	
 	self.Settings = table.Copy(self.DefaultSettings)
+	
+	for k, v in pairs(Singularity.Teams.Teams) do
+		v:MakeNeutral(self)
+		self:MakeNeutral(v)
+	end
 end
 
 function Team:TeamDestroy()
 	
-	if self.Persist then self:Reset() return end
+	if self.Persist then --[[self:Reset()]] return end
 
 	self:CleanupMelons()
 	self:CleanupStructures()
@@ -115,6 +120,10 @@ end
 function Team:RemoveMember(Ply)	
 	self.Members[Ply:Nick()]=nil
 
+	if self.Leader.E == Ply then
+		self:GetNewLeader()
+	end
+	
 	if table.Count(self.Members) <= 0 then
 		self:TeamDestroy()
 		return
@@ -122,10 +131,6 @@ function Team:RemoveMember(Ply)
 		
 	for k, v in pairs(self.Members) do
 		v.E:SendColorChat("WMG",self.color,Ply:Nick().." has left you're Team.")
-	end
-	
-	if self.Leader.E == Ply then
-		self:GetNewLeader()
 	end
 	
 	self:SyncData()
@@ -212,13 +217,19 @@ function Team:DiplomacyCheck(Team,Over)
 end
 
 function Team:CanAttack(Ent)
-	if not Ent.MelonTeam then return end
-	return not Ent.MelonTeam:GetRelations(self) == "Hostile"
+	if not Ent.MelonTeam then return false end
+	if self:GetRelations(Ent.MelonTeam) == "Hostile" then
+		return true
+	end
+	return false 
 end
 
 function Team:CanHeal(Ent)
-	if not Ent.MelonTeam then return end
-	return not Ent.MelonTeam:GetRelations(self) == "Allied"
+	if not Ent.MelonTeam then return false end
+	if self:GetRelations(Ent.MelonTeam) == "Allied" then
+		return true
+	end
+	return false
 end
 
 function Team:GetRelations(Team)
@@ -233,18 +244,19 @@ end
 function Team:MakeAlly(Team,Over) 
 	self:DiplomacyCheck(Team)
 	
-	if self:GetRelations(Team)=="Pending" then return end
-	
-	self:SetRelations(Team,"Pending")
+	local Relations = self:GetRelations(Team)
+	if Relations == "Allied" then return end
 	
 	if Team:GetRelations(self)=="Pending" then
 		self:SetRelations(Team,"Allied")
+		Team:SetRelations(self,"Allied")
 		
-		Team:MsgMembers("You're now allied with Team: "..Team.name)
-		
-		if Over then return end
-		Team:MakeAlly(self,true)
+		Team:MsgMembers("You're now allied with Team: "..self.name)
+		self:MsgMembers("You're now allied with Team: "..Team.name)
 	else
+		if Relations == "Pending" then return end
+		self:SetRelations(Team,"Pending")
+
 		Team:MsgMembers("Team: "..self.name.." wants to become allied with you!")
 		self:MsgMembers("Alliance Request with Team: "..Team.name.." is pending!")
 	end
@@ -254,6 +266,8 @@ end
 
 function Team:MakeEnemy(Team,Over) 
 	self:DiplomacyCheck(Team)
+	
+	if self:GetRelations(Team)=="Hostile" then return end
 	
 	self:SetRelations(Team,"Hostile")
 	
@@ -268,6 +282,8 @@ end
 
 function Team:MakeNeutral(Team,Over)
 	self:DiplomacyCheck(Team)
+	
+	if self:GetRelations(Team)=="Neutral" then return end
 
 	self:SetRelations(Team,"Neutral")
 	

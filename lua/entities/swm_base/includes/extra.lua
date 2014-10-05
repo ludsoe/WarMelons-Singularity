@@ -24,7 +24,8 @@ function ENT:LineOfSight(Vec,Ent,Team,Filter,X)
 			return true
 		else
 			if not HitEnt.MelonTeam then return end
-			if HitEnt.MelonTeam == self.MelonTeam then
+			local MyTeam = self.MelonTeam
+			if MyTeam:CanHeal(HitEnt) then
 				local Filter = Filter or {}
 				table.insert(Filter,HitEnt)
 				return self:LineOfSight(Vec,Ent,Team,Filter,X)
@@ -53,14 +54,16 @@ function ENT:Attack(Ent)
 	if not Ent or not IsValid(Ent) then return end
 	if not Singularity.Settings["MelonsDoDamage"] then self.Target = nil return end
 	local Distance = self:GetPos():Distance(Ent:GetPos())
-	if self:LineOfSight(EPos,Ent) and Distance<self.DNA.Range then
+	local CanAttack = self.MelonTeam:CanAttack(Ent)
+	if self:LineOfSight(EPos,Ent) and Distance<self.DNA.Range and CanAttack then
 		if self.Times.Attack < CurTime() then
 			Singularity.DealDamage(Ent,EPos,self.DNA.Damage,self,self)
 			self.Times.Attack=CurTime()+self.DNA.AttackRate
 			self:DrawAttack(self:GetPos(),self.LastTrace)
+			Ent.MelonTeam:MakeEnemy(self.MelonTeam) 
 		end
 	else
-		if Distance>self.DNA.Range*2 then
+		if Distance>self.DNA.Range*2 or not CanAttack then
 			self.Target = nil
 		end
 	end
@@ -93,14 +96,16 @@ function ENT:Heal(Ent)
 	if not Ent or not IsValid(Ent) then return end
 	if not Singularity.Settings["MelonsDoDamage"] then self.Target = nil return end
 	local Distance = self:GetPos():Distance(Ent:GetPos())
-	if self:LineOfSight(EPos,Ent,true) and Distance<self.DNA.Range and IsDamaged(Ent) then
+	local CanHeal = self.MelonTeam:CanHeal(Ent)
+	local IsDamaged = IsDamaged(Ent)
+	if self:LineOfSight(EPos,Ent,true) and Distance<self.DNA.Range and IsDamaged and CanHeal then
 		if self.Times.Attack < CurTime() then
 			Singularity.RepairHealth(Ent,self.DNA.Damage)
 			self.Times.Attack=CurTime()+self.DNA.AttackRate
 			self:DrawAttack(self:GetPos(),self.LastTrace)
 		end
 	else
-		if Distance>self.DNA.Range*2 then
+		if Distance>self.DNA.Range*2 or not CanHeal or not IsDamaged then
 			self.Target = nil
 		end
 	end

@@ -124,7 +124,7 @@ Utl:HookNet("AllyRequest","",function(D,Ply)
 		NDat.AddData(Send,Ply)	
 	else
 		Singularity.Teams.Teams=D.T
-
+		Teams.RemakeList()
 		Teams.ReloadAlliances()
 	end
 end)
@@ -140,6 +140,7 @@ Utl:HookNet("TeamRequest","",function(D,Ply)
 	else
 		Singularity.Teams.Teams=D.T
 		Teams.RemakeList()
+		Teams.ReloadAlliances()
 	end
 end)
 

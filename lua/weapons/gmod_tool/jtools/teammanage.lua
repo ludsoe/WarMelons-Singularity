@@ -75,7 +75,7 @@ function AlliancePage(Base,Tab)
 	
 	MyTab.MyTeam = GetMyTeam()
 	
-	MyTab.RefreshTeams = Singularity.MenuCore.CreateButton(Base,{x=190,y=40},{x=310,y=5},"Alliance",function() 
+	Singularity.MenuCore.CreateButton(Base,{x=190,y=40},{x=310,y=5},"Alliance",function() 
 		local Data = MyTab.Selected
 		if Data then
 			NDat.AddData({Name="ReqTeamAlly",Val=1,Dat={{N="T1",T="S",V=MyTab.MyTeam.name},{N="T2",T="S",V=Data}}})
@@ -84,7 +84,7 @@ function AlliancePage(Base,Tab)
 		Teams.RequestAllys(MyTab)
 	end)
 	
-	MyTab.RefreshTeams = Singularity.MenuCore.CreateButton(Base,{x=190,y=40},{x=310,y=50},"Neutral",function() 
+	Singularity.MenuCore.CreateButton(Base,{x=190,y=40},{x=310,y=50},"Neutral",function() 
 		local Data = MyTab.Selected
 		if Data then
 			NDat.AddData({Name="ReqTeamNeutral",Val=1,Dat={{N="T1",T="S",V=MyTab.MyTeam.name},{N="T2",T="S",V=Data}}})
@@ -93,12 +93,16 @@ function AlliancePage(Base,Tab)
 		Teams.RequestAllys(MyTab)
 	end)
 	
-	MyTab.RefreshTeams = Singularity.MenuCore.CreateButton(Base,{x=190,y=40},{x=310,y=95},"Hostile",function() 
+	Singularity.MenuCore.CreateButton(Base,{x=190,y=40},{x=310,y=95},"Hostile",function() 
 		local Data = MyTab.Selected
 		if Data then
 			NDat.AddData({Name="ReqTeamHostile",Val=1,Dat={{N="T1",T="S",V=MyTab.MyTeam.name},{N="T2",T="S",V=Data}}})
 		end		
 		
+		Teams.RequestAllys(MyTab)
+	end)
+		
+	Singularity.MenuCore.CreateButton(Base,{x=190,y=40},{x=310,y=275},"Refresh",function() 
 		Teams.RequestAllys(MyTab)
 	end)	
 end
