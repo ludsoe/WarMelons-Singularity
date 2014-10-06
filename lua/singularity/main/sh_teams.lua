@@ -105,6 +105,7 @@ function Teams.ReloadAlliances()
 	if not MyTab.TeamList or not IsValid(MyTab.TeamList) then return end
 	MyTab.MyTeam = GetMyTeam()
 	local MyTeam = MyTab.MyTeam
+	if not MyTeam then return end
 	--print("Clearing List")
 	MyTab.TeamList:Clear()
 	for k,v in pairs(Singularity.Teams.Teams) do

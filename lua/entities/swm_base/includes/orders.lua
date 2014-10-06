@@ -31,12 +31,17 @@ function ENT:ClearOrders()
 	self:TransClearOrders()
 end
 
+local function Normalize(Vec)
+	local Length = Vec:Length()
+	return Vec/Length
+end
+
 function ENT:RunOrders()
 	if table.Count(self.Orders)>0 then
 		for k, v in pairs(self.Orders) do
 			local Completed = false
 			if self.OrderFuncs[v.T] then
-				Completed = self.OrderFuncs[v.T](self,v.V)
+				Completed = self.OrderFuncs[v.T](self,v)
 			else
 				Completed = true
 			end
@@ -49,7 +54,9 @@ function ENT:RunOrders()
 		end
 	else
 		if self.Target and IsValid(self.Target) then
-			self:ManageMovement(self.Target:GetPos()+(Normalize(self:GetPos()-self.Target:GetPos())*(self.DNA.Range/2)))
+			if self.ManageMovement then
+				self:ManageMovement(self.Target:GetPos()+(Normalize(self:GetPos()-self.Target:GetPos())*(self.DNA.Range/2)))
+			end
 		else
 			self.Target = nil
 		end

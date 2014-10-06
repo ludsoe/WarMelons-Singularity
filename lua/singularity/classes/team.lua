@@ -134,7 +134,7 @@ end
 function Team:RemoveMember(Ply)	
 	self.Members[Ply:Nick()]=nil
 
-	if self.Leader.E == Ply then
+	if self.Leader and self.Leader.E == Ply then
 		self:GetNewLeader()
 	end
 	

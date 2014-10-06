@@ -27,6 +27,7 @@ LoadFile(CoreF.."engine/sh_networking.lua",1)
 LoadFile(CoreF.."engine/sh_constraints.lua",1)
 LoadFile(CoreF.."sh_health_calc.lua",1)
 LoadFile(CoreF.."sv_damage_core.lua",2)
+LoadFile(CoreF.."damage/weapon_corefunc.lua",1)
 LoadFile(DataF.."init.lua",1)
 LoadFile(MainF.."init.lua",1)
 

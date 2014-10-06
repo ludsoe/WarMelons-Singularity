@@ -127,7 +127,6 @@ function PLY:SelectMelons(Shift,Use)
 	if self.LastSelect > CurTime() then return end
 	
 	if not Shift then self:ClearSelectedMelons(true) end
-	local MSound = false
 	--print("Selectig")
 	if Ent and IsValid(Ent) then
 		if Use then
@@ -137,7 +136,6 @@ function PLY:SelectMelons(Shift,Use)
 			if Ent.MelonTeam and Ent.MelonOrders then
 				if Ent.MelonTeam.name==self.MelonTeam then
 					self.SelectedMelons[Ent:EntIndex()]=Ent
-					MSound = true
 				end
 			end		
 		end
@@ -147,16 +145,30 @@ function PLY:SelectMelons(Shift,Use)
 			if v:GetClass() == "swm_melon" then
 				if v.MelonTeam.name==self.MelonTeam then
 					self.SelectedMelons[v:EntIndex()]=v
-					MSound = true
 				end
 			end
 		end
 	end
 	self.LastSelect=CurTime()+0.1
 	self:SyncSelected()
+end
+
+function PLY:OrderSelection(v,Ent,Pos)
+	if v.NoahCannon then
+		v:AddOrder({T="Fire",V=Pos})
+		return
+	end
 	
-	if MSound then
-	--	self:EmitSound("garrysmod/ui_return.wav",100,100)
+	if Ent and IsValid(Ent) then
+		if Ent.MelonLoadable then
+			if v.IsBarracks or v.IsMelon then
+				v:AddOrder({T="Enter",V=Ent:GetPos(),E=Ent})
+			end
+		end
+	else
+		if v.IsBarracks or v.IsMelon then
+			v:AddOrder({T="Goto",V=Pos})
+		end
 	end
 end
 
@@ -169,16 +181,14 @@ function PLY:OrderMelons(Shift)
 		for k, v in pairs(self.SelectedMelons) do
 			if v and IsValid(v) then
 				if not Shift then v:ClearOrders() end
-				v:AddOrder({T="Goto",V=Pos})
+				self:OrderSelection(v,Ent,Pos)
 			else
 				self.SelectedMelons[k]=nil
 			end
 		end
-		
-		if MSound then
-	--		self:EmitSound("garrysmod/ui_click.wav",100,100)
-		end
 	end
+	
+	self:SyncSelected()
 end
 
 
