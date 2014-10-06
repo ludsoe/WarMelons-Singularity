@@ -31,13 +31,14 @@ function ENT:BSSetup(Data,ply)
 	end
 end
 
-function Normalize(Vec)
+local function Normalize(Vec)
 	local Length = Vec:Length()
 	return Vec/Length
 end
 
 function ENT:MoveTrace(Target)
 	local Parent = self:GetParent()
+	if self.IgnoreTrace then return false end
 	if not Parent or not IsValid(Parent) then
 		local Start = self:GetPos()
 		local tr = util.TraceLine({start = Start,endpos = Target+Start,filter = self} )
@@ -47,4 +48,5 @@ function ENT:MoveTrace(Target)
 			return true
 		end
 	end
+	return false
 end

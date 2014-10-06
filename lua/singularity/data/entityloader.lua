@@ -60,6 +60,7 @@ LoadFile(MelPath.."heavy.lua",1)
 LoadFile(MelPath.."soldier.lua",1)
 LoadFile(MelPath.."enginemelon.lua",1)
 LoadFile(MelPath.."medic.lua",1)
+LoadFile(MelPath.."liftmelon.lua",1)
 
 LoadFile(ModPath.."sentrybasic.lua",1)
 LoadFile(ModPath.."sentrysniper.lua",1)

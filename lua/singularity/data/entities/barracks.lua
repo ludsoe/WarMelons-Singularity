@@ -32,7 +32,9 @@ Data.Setup = function(self,Data,MyData)
 			ent:Spawn() ent:Activate()
 			ent:GetPhysicsObject():Wake()
 			
-			ent:Compile(Train.M,ply,self.MelonTeam)
+			ent.BarracksTrained = true
+			
+			ent:Compile(Train.M,nil,self.MelonTeam)
 			
 			Singularity.GivePlyProp(Singularity.GetPropOwner(self),ent)
 			

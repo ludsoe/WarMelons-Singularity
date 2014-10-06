@@ -9,7 +9,8 @@ function ENT:SetOrders(O)
 end
 
 function ENT:AddOrder(O)
-	O.ID=CurTime()/200
+	if self.OrderChange then self.OrderChange(O) end
+	O.ID=math.random(1,3000)
 	table.insert(self.Orders,O)
 	self:TransmitOrders()
 end
