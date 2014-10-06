@@ -20,7 +20,7 @@ Data.Setup = function(self,Data,MyData)
 
 	self.FinishTraining = function(self,Train)
 		
-		local tr = util.TraceLine({start = self:GetPos(),endpos = self:LocalToWorld(Vector(0,0,20)),filter = self} )
+		local tr = util.TraceLine({start = self:LocalToWorld(Vector(-5,0,0)),endpos = self:LocalToWorld(Vector(-20,0,0)),filter = self} )
 
 		if not tr.Hit and self.MelonTeam:CanMakeMelon(true) then
 			local Data = Train.E
