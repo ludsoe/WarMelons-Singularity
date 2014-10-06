@@ -30,6 +30,31 @@ function ENT:ClearOrders()
 	self:TransClearOrders()
 end
 
+function ENT:RunOrders()
+	if table.Count(self.Orders)>0 then
+		for k, v in pairs(self.Orders) do
+			local Completed = false
+			if self.OrderFuncs[v.T] then
+				Completed = self.OrderFuncs[v.T](self,v.V)
+			else
+				Completed = true
+			end
+			
+			if Completed then
+				self:RemoveOrder(k)
+			else
+				break
+			end
+		end
+	else
+		if self.Target and IsValid(self.Target) then
+			self:ManageMovement(self.Target:GetPos()+(Normalize(self:GetPos()-self.Target:GetPos())*(self.DNA.Range/2)))
+		else
+			self.Target = nil
+		end
+	end
+end
+
 function ENT:TransmitOrders()
 	local Data = table.Copy(self.Orders) --Create a copy of the sync data table so we dont mess with the real one.
 	local Transmit = {}

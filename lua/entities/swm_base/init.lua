@@ -20,6 +20,7 @@ function ENT:Initialize()
 	self.ModuleData = {}
 	self.Singularity = {}
 	self.InitData = {}
+	self.OrderFuncs = {}
 	
 	self.Orders = {}
 	self.SyncedOrders = {}

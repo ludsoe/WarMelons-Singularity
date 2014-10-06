@@ -14,6 +14,21 @@ function ENT:BSSetup(Data,ply)
 	end
 	
 	self.MelonTeam:RegisterMelon(self)
+	
+	self.OrderFuncs["Goto"]=function(self,Pos)
+		local angle1 = Pos - self:GetPos()
+		if self:GetPos():Distance(Pos)>50 then
+			self:GetPhysicsObject():SetDamping(2, 0)
+			if self:GetVelocity():Length() < self.DNA.Speed then
+				local Force = self.DNA.Force
+				if not self:MoveTrace(angle1) then Force = -Force end
+				self:GetPhysicsObject():ApplyForceCenter(Normalize(angle1)*Force)
+			end
+		else
+			return true
+		end
+		return false
+	end
 end
 
 function Normalize(Vec)
@@ -33,43 +48,3 @@ function ENT:MoveTrace(Target)
 		end
 	end
 end
-
-local MoveRange = 50
-function ENT:ManageMovement(Pos)
-	local angle1 = Pos - self:GetPos()
-	if self:GetPos():Distance(Pos)>MoveRange then
-		self:GetPhysicsObject():SetDamping(2, 0)
-		if self:GetVelocity():Length() < self.DNA.Speed then
-			if self:MoveTrace(angle1) then
-				self:GetPhysicsObject():ApplyForceCenter(Normalize(angle1) * self.DNA.Force)
-			end
-		end
-	else
-		return true
-	end
-	return false
-end
-
-function ENT:RunOrders()
-	if table.Count(self.Orders)>0 then
-		for k, v in pairs(self.Orders) do
-			local Completed = false
-			if v.T == "Goto" then
-				Completed = self:ManageMovement(v.V)
-			end
-			
-			if Completed then
-				self:RemoveOrder(k)
-			else
-				break
-			end
-		end
-	else
-		if self.Target and IsValid(self.Target) then
-			self:ManageMovement(self.Target:GetPos()+(Normalize(self:GetPos()-self.Target:GetPos())*(self.DNA.Range/2)))
-		else
-			self.Target = nil
-		end
-	end
-end
-
