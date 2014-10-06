@@ -20,9 +20,9 @@ function ENT:BSSetup(Data,ply)
 		if self:GetPos():Distance(Pos)>50 then
 			self:GetPhysicsObject():SetDamping(2, 0)
 			if self:GetVelocity():Length() < self.DNA.Speed then
-				local Force = self.DNA.Force
-				if not self:MoveTrace(angle1) then Force = -Force end
-				self:GetPhysicsObject():ApplyForceCenter(Normalize(angle1)*Force)
+				if not self:MoveTrace(angle1) then 
+					self:GetPhysicsObject():ApplyForceCenter(Normalize(angle1)*self.DNA.Force)
+				end
 			end
 		else
 			return true

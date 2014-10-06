@@ -63,9 +63,9 @@ if(SERVER)then
 	--Loops the players and prepares to send their data.
 	function NDat.CyclePlayers()
 		for nick, pdat in pairs( NDat.Data ) do
-			local Max = 50
+			local Max = 100
 			for id, Data in pairs( pdat.Data ) do
-				if(Max<=0)then break end--We reached the maximum amount of data for this player.
+				if(Max<=0)then return end--We reached the maximum amount of data for this player.
 				Max=Max-Data.Val
 				NDat.SendData(Data,Data.Name,pdat.Ent)
 				table.remove(pdat.Data,id)
@@ -98,7 +98,7 @@ else
 	function NDat.AddData(Data) table.insert(NDat.Data,Data) end
 	
 	function NDat.SendToServer()
-		local Max = 30
+		local Max = 50
 		for id, Data in pairs( NDat.Data ) do
 			if(Max<=0)then break end--We reached the maximum amount of data we can send this tick.
 			Max=Max-Data.Val
