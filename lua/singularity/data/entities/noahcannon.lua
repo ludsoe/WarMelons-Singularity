@@ -97,7 +97,6 @@ Data.Wire.Func = function(self,iname,value)
 		end
 	elseif iname == "ClearQueue" then
 		self:ClearOrders()
-	end
 	elseif iname == "Vector" then
 		self.WirePos = value
 	end
