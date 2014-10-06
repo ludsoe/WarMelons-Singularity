@@ -87,7 +87,7 @@ Data.MyModel = "models/props_combine/combinethumper002.mdl"
 Data.MaxHealth = 2000
 
 local V,N,A,E = "VECTOR","NORMAL","ANGLE","ENTITY"
-Data.Wire.In = {ID={"AddToQueue","Vector"},T={N,V}}
+Data.Wire.In = {ID={"AddToQueue","ClearQueue","Vector"},T={N,N,V}}
 Data.Wire.Out = {ID={"Canister Ready","Loaded Melons"}}
 
 Data.Wire.Func = function(self,iname,value)
@@ -95,6 +95,9 @@ Data.Wire.Func = function(self,iname,value)
 		if value > 0 and self.WirePos~=Vector(0,0,0) then
 			self:AddOrder({T="Fire",V=self.WirePos})
 		end
+	elseif iname == "ClearQueue" then
+		self:ClearOrders()
+	end
 	elseif iname == "Vector" then
 		self.WirePos = value
 	end

@@ -68,12 +68,12 @@ e2function number entity:wmhasorder()
 end
 
 e2function vector entity:wmgetorder()
-	local Vec = {1=0,2=0,3=0}
+	local Vec = {0,0,0}
 	if not IsValid(this) then return Vec end
 	if not this.MelonOrders then return Vec end
 	if MelonE2.CanCommand(self,this) then
 		local V = this:GetOrders()[1] or Vector(0,0,0)
-		return {1=V.x,2=V.y,3=V.z}
+		return {V.x,V.y,V.z}
 	end
 	return Vec
 end
