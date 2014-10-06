@@ -73,15 +73,13 @@ if SERVER then
 	end)	
 else
 	
-	function Teams.RequestTeams(Tab)
-		NDat.AddData({Name="TeamRequest",Val=1,Dat={}})	
-		Teams.Tab = Tab
+	function Teams.RequestTeams(Tab,Tab2)
+		NDat.AddData({Name="TeamRequest",Val=1,Dat={}})
+		if Tab and Tab2 then
+			Teams.Tab = Tab
+			Teams.ATab = Tab2
+		end
 	end	
-	
-	function Teams.RequestAllys(Tab)
-		NDat.AddData({Name="AllyRequest",Val=1,Dat={}})	
-		Teams.ATab = Tab
-	end
 end
 
 function Teams.RemakeList()
@@ -95,12 +93,15 @@ function Teams.RemakeList()
 	end
 	Teams.Tab.JoinButton:SetText("Select Group")
 	Teams.Tab.MemberList:Clear()
+	Teams.Tab.Alliances:Clear()
+
 	Teams.Tab.Selected = nil
 end
 
 function Teams.ReloadAlliances()
 	local MyTab = Teams.ATab
 	--print("Reloading Allys")
+	if not MyTab then return end
 	if not MyTab.TeamList or not IsValid(MyTab.TeamList) then return end
 	MyTab.MyTeam = GetMyTeam()
 	local MyTeam = MyTab.MyTeam
@@ -113,21 +114,6 @@ function Teams.ReloadAlliances()
 	end
 	--print("Finished")
 end
-
-Utl:HookNet("AllyRequest","",function(D,Ply)
-	if SERVER then
-		local Send = {
-			Name="AllyRequest",
-			Val=1,
-			Dat={{N="T",T="T",V=Teams.Teams}}
-		}
-		NDat.AddData(Send,Ply)	
-	else
-		Singularity.Teams.Teams=D.T
-		Teams.RemakeList()
-		Teams.ReloadAlliances()
-	end
-end)
 
 Utl:HookNet("TeamRequest","",function(D,Ply)
 	if SERVER then

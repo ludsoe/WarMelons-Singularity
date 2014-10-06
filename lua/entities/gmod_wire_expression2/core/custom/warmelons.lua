@@ -5,7 +5,7 @@ function MelonE2.CanCommand(self,ent)
 	local myteam = self.player:GetMTeam().name
 	local enteam = ent.MelonTeam
 	if not ent.MelonOrders then return false end
-	if ply:IsAdmin() then return true end
+	if self.player:IsAdmin() then return true end
 	if myteam == enteam then return true end
 	return false 
 end
@@ -51,7 +51,8 @@ e2function void entity:wmgivemoveorder(vector vec)
 	if not IsValid(this) then return end
 	if not this.MelonOrders then return end
 	if MelonE2.CanCommand(self,this) then
-		--this:AddOrder({T="Goto",V=vec})
+		local TrueVector = Vector(vec[1],vec[2],vec[3])
+		this:AddOrder({T="Goto",V=TrueVector})
 	end
 end
 

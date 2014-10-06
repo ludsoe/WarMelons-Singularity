@@ -12,18 +12,8 @@ Tool.Open = function(Menu,Tab)
 		Utl.NetMan.AddData({Name="SingSettingsReset",Val=1,Dat={}})
 	end)
 	
-	local Set,Text = "ManualMelonspawn","Manual Melon Spawns: "	
-	Tab[Set] = Singularity.MT.ModAddButton(Mod,Text..tostring(Settings[Set]),function() 
-		Settings[Set] = not Settings[Set]
-		Tab[Set]:SetText(Text..tostring(Settings[Set]))
-		Utl:SyncSetting(Set,Settings[Set])
-	end)
-	
-	local Set,Text = "MelonsDoDamage","Melons Can Attack: "	
-	Tab[Set] = Singularity.MT.ModAddButton(Mod,Text..tostring(Settings[Set]),function() 
-		Settings[Set] = not Settings[Set]
-		Tab[Set]:SetText(Text..tostring(Settings[Set]))
-		Utl:SyncSetting(Set,Settings[Set])
+	Singularity.MT.ModAddButton(Mod,"CleanUp WarMelons",function() 
+		Utl.NetMan.AddData({Name="ClearAllMelons",Val=1,Dat={}})
 	end)
 	
 	local Set,Text = "PlayerTeamMelonCap","Player Team Melon Cap"
@@ -45,7 +35,21 @@ Tool.Open = function(Menu,Tab)
 	Singularity.MT.ModAddTextInput(Mod,Text,Settings[Set],function(V) 
 		Settings[Set]=V Utl:SyncSetting(Set,Settings[Set])
 	end)	
-		
+			
+	local Set,Text = "ManualMelonspawn","Manual Melon Spawns: "	
+	Tab[Set] = Singularity.MT.ModAddButton(Mod,Text..tostring(Settings[Set]),function() 
+		Settings[Set] = not Settings[Set]
+		Tab[Set]:SetText(Text..tostring(Settings[Set]))
+		Utl:SyncSetting(Set,Settings[Set])
+	end)
+	
+	local Set,Text = "MelonsDoDamage","Melons Can Attack: "	
+	Tab[Set] = Singularity.MT.ModAddButton(Mod,Text..tostring(Settings[Set]),function() 
+		Settings[Set] = not Settings[Set]
+		Tab[Set]:SetText(Text..tostring(Settings[Set]))
+		Utl:SyncSetting(Set,Settings[Set])
+	end)
+
 	local Set,Text = "EnforceBuildingCap","Structure Cap Enforcement: "	
 	Tab[Set] = Singularity.MT.ModAddButton(Mod,Text..tostring(Settings[Set]),function() 
 		Settings[Set] = not Settings[Set]

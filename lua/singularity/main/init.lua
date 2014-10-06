@@ -11,6 +11,18 @@ Singularity.LoadFile(MainF.."sh_teams.lua",1)
 Singularity.LoadFile(MainF.."sh_players.lua",1)
 
 if SERVER then
+	Utl:HookNet("ClearAllMelons","",function(D,ply)
+		if not Utl:CheckAdmin( ply ) then return end	
+		
+		for k, v in pairs(Singularity.Teams.Teams) do
+			v:CleanupMelons()
+			v:CleanupStructures()
+			v:CleanupProps()
+		end
+		
+		Utl:NotifyPlayers("WarMelons",ply:Nick().." has cleared all the Melons!",Color(30,150,255))
+	end)
+
 	Utl:HookNet("SingSettingsSync","",function(D,ply)
 		if not Utl:CheckAdmin( ply ) then return end
 		if Singularity.Settings[D.T.N] == nil then return end

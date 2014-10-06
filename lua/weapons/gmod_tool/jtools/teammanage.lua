@@ -7,6 +7,7 @@ local Tool = {}
 
 function ViewTeamsPage(Base,Tab)
 	local MyTab = Tab["View"] or {}
+	Tab["View"] = MyTab
 	local Name = "Select Group"
 	
 	MyTab.Base = Base
@@ -19,10 +20,16 @@ function ViewTeamsPage(Base,Tab)
 		end
 		
 		MyTab.MemberList:Clear()
-		
 		for k,v in pairs(Teams.Teams[Data].Members) do
 			--print(""..k)
 			MyTab.MemberList:AddLine(k)
+		end
+		
+		MyTab.Alliances:Clear()
+		for k,v in pairs(Teams.Teams) do
+			if Data ~= v.name then
+				MyTab.Alliances:AddLine(k,GetRelations(Teams.Teams[Data],v))
+			end
 		end
 		
 		local Text = "None"
@@ -36,10 +43,9 @@ function ViewTeamsPage(Base,Tab)
 	end	
 	
 	MyTab.TeamList = Singularity.MT.AddList("Teams",Teams.Teams,OnSelect,Base,260)
-	Teams.RequestTeams(MyTab)
 	
 	MyTab.RefreshTeams = Singularity.MenuCore.CreateButton(Base,{x=150,y=40},{x=0,y=270},"Refresh",function() 
-		Teams.RequestTeams(MyTab)
+		Teams.RequestTeams()
 	end)
 	
 	local Mod = Singularity.MT.AddModular(Base)
@@ -52,18 +58,30 @@ function ViewTeamsPage(Base,Tab)
 			else
 				NDat.AddData({Name="JoinTeam",Val=1,Dat={{N="N",T="S",V=Data}}})
 			end
-			Teams.RequestTeams(MyTab)
+			Teams.RequestTeams()
 		end
 	end)
 	
 	MyTab.Leader = Singularity.MT.ModAddlabel(Mod,"Leader: ",5)
 	
-	MyTab.MemberList = Singularity.MenuCore.CreateList(Mod,{x=150,y=200},{x=0,y=110},false,function() end)
+	local A,M = vgui.Create( "DPanel" ),vgui.Create( "DPanel" )
+	MyTab.Sheet = Singularity.MenuCore.CreatePSheet(Mod,{x=280,y=220},{x=0,y=90})
+	MyTab.Sheet:AddSheet( "Members" , M , "icon16/group.png" , false, false, "Players On This Team." )
+	MyTab.Sheet:AddSheet( "Alliances" , A , "icon16/gun.png" , false, false, "This Teams Relations." )
+
+	MyTab.MemberList = Singularity.MenuCore.CreateList(M,{x=264,y=184},{x=0,y=0},false,function() end)
 	MyTab.MemberList:AddColumn("Members") -- Add column
+
+	MyTab.Alliances = Singularity.MenuCore.CreateList(A,{x=264,y=184},{x=0,y=0},false,function() end)
+	MyTab.Alliances:AddColumn("Team") -- Add column
+	MyTab.Alliances:AddColumn("Relation") -- Add column
+		
 end
 
 function AlliancePage(Base,Tab)
 	local MyTab = Tab["Ally"] or {}
+	Tab["Ally"] = MyTab
+
 	local OnSelect = function(Data) MyTab.Selected = Data end	
 	
 	MyTab.TeamList = Singularity.MenuCore.CreateList(Base,{x=300,y=310},{x=5,y=5},false,OnSelect)
@@ -71,7 +89,6 @@ function AlliancePage(Base,Tab)
 	MyTab.TeamList:AddColumn("Our Stance") -- Add column
 	MyTab.TeamList:AddColumn("Their Stance") -- Add column
 
-	Teams.RequestAllys(MyTab)
 	
 	MyTab.MyTeam = GetMyTeam()
 	
@@ -81,7 +98,7 @@ function AlliancePage(Base,Tab)
 			NDat.AddData({Name="ReqTeamAlly",Val=1,Dat={{N="T1",T="S",V=MyTab.MyTeam.name},{N="T2",T="S",V=Data}}})
 		end
 		
-		Teams.RequestAllys(MyTab)
+		Teams.RequestTeams()
 	end)
 	
 	Singularity.MenuCore.CreateButton(Base,{x=190,y=40},{x=310,y=50},"Neutral",function() 
@@ -90,7 +107,7 @@ function AlliancePage(Base,Tab)
 			NDat.AddData({Name="ReqTeamNeutral",Val=1,Dat={{N="T1",T="S",V=MyTab.MyTeam.name},{N="T2",T="S",V=Data}}})
 		end		
 		
-		Teams.RequestAllys(MyTab)
+		Teams.RequestTeams()
 	end)
 	
 	Singularity.MenuCore.CreateButton(Base,{x=190,y=40},{x=310,y=95},"Hostile",function() 
@@ -99,11 +116,11 @@ function AlliancePage(Base,Tab)
 			NDat.AddData({Name="ReqTeamHostile",Val=1,Dat={{N="T1",T="S",V=MyTab.MyTeam.name},{N="T2",T="S",V=Data}}})
 		end		
 		
-		Teams.RequestAllys(MyTab)
+		Teams.RequestTeams()
 	end)
 		
 	Singularity.MenuCore.CreateButton(Base,{x=190,y=40},{x=310,y=275},"Refresh",function() 
-		Teams.RequestAllys(MyTab)
+		Teams.RequestTeams()
 	end)	
 end
 
@@ -114,12 +131,15 @@ Tool.Open = function(Menu,Tab)
 	
 	local C,M,A = vgui.Create( "DPanel" ),vgui.Create( "DPanel" ),vgui.Create( "DPanel" )
 	local Sheet = Singularity.MenuCore.CreatePSheet(Menu,{x=520,y=355},{x=0,y=0})
-	Sheet:AddSheet( "View Teams" , C , "icon16/eye.png" , false, false, "" )
-	Sheet:AddSheet( "Team Settings" , M , "icon16/cog.png" , false, false, "" )
-	Sheet:AddSheet( "Team Alliances" , A , "icon16/gun.png" , false, false, "" )
+	Sheet:AddSheet( "View Teams" , C , "icon16/eye.png" , false, false, "View All Teams" )
+	Sheet:AddSheet( "Team Settings" , M , "icon16/cog.png" , false, false, "Manage Your Teams Settings" )
+	Sheet:AddSheet( "Team Alliances" , A , "icon16/gun.png" , false, false, "Manage Your Teams Relations with others" )
 
 	ViewTeamsPage(C,Tab)
 	AlliancePage(A,Tab)
+	
+	Teams.RequestTeams(Tab["View"],Tab["Ally"])
+
 end --This is clientside only, called when the tool is selected.
 
 Singularity.MT.AddTool("Team Management",Tool)

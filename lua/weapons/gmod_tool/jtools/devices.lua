@@ -73,7 +73,7 @@ Tool.Open = function(Menu,Tab)
 	local Sheet = Singularity.MenuCore.CreatePSheet(Menu,{x=520,y=355},{x=0,y=0})
 	Sheet:AddSheet( "Tactical" , C , "icon16/shield.png" , false, false, "Base Defense and Offensive Weapons" )
 	Sheet:AddSheet( "Strategic" , M , "icon16/wrench.png" , false, false, "Unit Barracks and Resource Management" )
-	Sheet:AddSheet( "Melons" , L , "icon16/lightning.png" , false, false, "Spawn The Melons Directly." )
+	Sheet:AddSheet( "Melons" , L , "icon16/bullet_green.png" , false, false, "Spawn The Melons Directly." )
 
 	MakePage(C,"Tactical",Tab)
 	MakePage(M,"Strategic",Tab)

@@ -7,7 +7,7 @@ local Team = {
 	name = "Error",
 	color = Color(255,255,255,255),
 	Members = {},
-	Melons = {Units={},Buildings={}},
+	Melons = {Units={},Buildings={},Props={}},
 	Settings = {CanJoin = true, AttackMode = 1},
 	Diplomacy = {},
 	Persist = false
@@ -45,6 +45,7 @@ function Team:CleanupMelons()
 		if Ent and IsValid(Ent) then
 			Ent:Remove()
 		end
+		self.Melons.Units[k]=nil
 	end
 end
 
@@ -54,12 +55,24 @@ function Team:CleanupStructures()
 		if Ent and IsValid(Ent) then
 			Ent:Remove()
 		end
+		self.Melons.Buildings[k]=nil
 	end	
+end
+
+function Team:CleanupProps()
+	for k, v in pairs(self.Melons.Props) do
+		local Ent = v.E
+		if Ent and IsValid(Ent) then
+			Ent:Remove()
+		end
+		self.Melons.Props[k]=nil
+	end
 end
 
 function Team:Reset()
 	self:CleanupMelons()
 	self:CleanupStructures()
+	self:CleanupProps()
 	
 	self.Settings = table.Copy(self.DefaultSettings)
 	
@@ -71,7 +84,8 @@ end
 
 function Team:TeamDestroy()
 	
-	if self.Persist then --[[self:Reset()]] return end
+	if game.SinglePlayer and game.SinglePlayer() then return end
+	if self.Persist then self:Reset() return end
 
 	self:CleanupMelons()
 	self:CleanupStructures()
@@ -125,6 +139,7 @@ function Team:RemoveMember(Ply)
 	end
 	
 	if table.Count(self.Members) <= 0 then
+		self:SyncData()
 		self:TeamDestroy()
 		return
 	end
@@ -153,6 +168,8 @@ function Team:GetNewLeader()
 			return
 		end	
 	end
+	self.Leader = nil
+	self:SyncData()	
 end
 
 function Team:RegisterMelon(Ent)
