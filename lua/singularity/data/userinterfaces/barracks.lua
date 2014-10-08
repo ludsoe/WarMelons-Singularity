@@ -170,6 +170,8 @@ end)
 
 Utl:HookNet("barracks_queue_add","",function(D,P)
 	local Ent = D.E
+	
+	if not Ent.BuildQueue then return end
 
 	if Ent and IsValid(Ent) then
 		table.insert(Ent.BuildQueue,D.S)
@@ -183,7 +185,9 @@ end)
 
 Utl:HookNet("barracks_queue_remove","",function(D,P)
 	local Ent = D.E
-
+	
+	if not Ent.BuildQueue then return end
+	
 	if Ent and IsValid(Ent) then
 		table.remove(Ent.BuildQueue,1)
 	end

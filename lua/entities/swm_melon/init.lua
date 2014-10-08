@@ -19,6 +19,7 @@ function ENT:BSSetup(Data,ply)
 		local Ent = Dat.E
 		if not Ent or not IsValid(Ent) then return true end
 		if self:GetPos():Distance(Ent:GetPos())<100 then
+			if Ent.CanEnter and not Ent:CanEnter(self) then return end
 			table.insert(Ent.StoredMelons,self.InitData.N)
 			self:Remove()
 			return true
@@ -30,6 +31,12 @@ function ENT:BSSetup(Data,ply)
 	
 	self.OrderFuncs["Goto"]=function(self,Dat)
 		return self:ManageMovement(Dat.V)
+	end
+end
+
+function ENT:BSRemove()
+	if self.MelonTeam then
+		self.MelonTeam:DeRegisterMelon(self)
 	end
 end
 

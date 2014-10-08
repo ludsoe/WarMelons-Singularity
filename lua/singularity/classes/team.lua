@@ -23,9 +23,10 @@ function Team:Setup(name,color)
 	self:SyncData()
 	
 	for k, v in pairs(Teams.Teams) do
-		self:MakeNeutral(v)
+		self:MakeEnemy(v)
 	end
 end
+
 
 function Team:SetMaxMelons(Max)
 	self.MaxMelons = Max
@@ -39,34 +40,51 @@ function Team:MakePersist()
 	self.Persist = true
 end
 
-function Team:CleanupMelons()
-	for k, v in pairs(self.Melons.Units) do
+function Team:LoopMels(tab,func)
+	for k, v in pairs(self.Melons[tab]) do
 		local Ent = v.E
 		if Ent and IsValid(Ent) then
-			Ent:Remove()
+			func(k,Ent)
+		else
+			self.Melons[tab][k]=nil
 		end
-		self.Melons.Units[k]=nil
 	end
+end
+
+function Team:SetColor(color)
+	self.color = color
+	self:SyncData()
+	
+	self:LoopMels("Units",function(k,Ent)
+		Ent:SetColor(self.color)
+	end)
+	self:LoopMels("Buildings",function(k,Ent)
+		Ent:SetColor(self.color)
+	end)
+	self:LoopMels("Props",function(k,Ent)
+		Ent:SetColor(self.color)
+	end)
+end
+
+function Team:CleanupMelons()
+	self:LoopMels("Units",function(k,Ent)
+		Ent:Remove()
+		self.Melons.Units[k]=nil
+	end)
 end
 
 function Team:CleanupStructures()
-	for k, v in pairs(self.Melons.Buildings) do
-		local Ent = v.E
-		if Ent and IsValid(Ent) then
-			Ent:Remove()
-		end
+	self:LoopMels("Buildings",function(k,Ent)
+		Ent:Remove()
 		self.Melons.Buildings[k]=nil
-	end	
+	end)
 end
 
 function Team:CleanupProps()
-	for k, v in pairs(self.Melons.Props) do
-		local Ent = v.E
-		if Ent and IsValid(Ent) then
-			Ent:Remove()
-		end
+	self:LoopMels("Props",function(k,Ent)
+		Ent:Remove()
 		self.Melons.Props[k]=nil
-	end
+	end)
 end
 
 function Team:Reset()
@@ -77,8 +95,8 @@ function Team:Reset()
 	self.Settings = table.Copy(self.DefaultSettings)
 	
 	for k, v in pairs(Singularity.Teams.Teams) do
-		v:MakeNeutral(self)
-		self:MakeNeutral(v)
+		v:MakeEnemy(self)
+		self:MakeEnemy(v)
 	end
 end
 
@@ -172,34 +190,24 @@ function Team:GetNewLeader()
 	self:SyncData()	
 end
 
-function Team:RegisterMelon(Ent)
-	self.Melons.Units[Ent:EntIndex()]={E=Ent,Id=Ent:EntIndex()}
-end
+function Team:RegisterMelon(Ent) self.Melons.Units[Ent:EntIndex()]={E=Ent,Id=Ent:EntIndex()} end
+function Team:RegisterStructure(Ent) self.Melons.Buildings[Ent:EntIndex()]={E=Ent,Id=Ent:EntIndex()} end
+function Team:RegisterProp(Ent) self.Melons.Props[Ent:EntIndex()]={E=Ent,Id=Ent:EntIndex()} end
 
-function Team:RegisterStructure(Ent)
-	self.Melons.Buildings[Ent:EntIndex()]={E=Ent,Id=Ent:EntIndex()}
-end
+function Team:DeRegisterProp(Ent) self.Melons.Props[Ent:EntIndex()]=nil end
+function Team:DeRegisterStructure(Ent) self.Melons.Buildings[Ent:EntIndex()]=nil end
+function Team:DeRegisterMelon(Ent) self.Melons.Units[Ent:EntIndex()]=nil end
 
 function Team:CheckMelons()
-	for k, v in pairs(self.Melons.Units) do
-		local Ent = v.E
-		if not Ent or not IsValid(Ent) then
-			self.Melons.Units[k] = nil
-		end
-	end
-	
-	for k, v in pairs(self.Melons.Buildings) do
-		local Ent = v.E
-		if not Ent or not IsValid(Ent) then
-			self.Melons.Buildings[k] = nil
-		end
-	end	
+	self:LoopMels("Units",function(k,Ent) end)	
+	self:LoopMels("Buildings",function(k,Ent) end)	
+	self:LoopMels("Props",function(k,Ent) end)
 	
 	self:SyncData()
 end
 
 function Team:StartCheckTimer()
-	Utl:SetupThinkHook(self.name.."MelonCheckHook",10,0,function() self:CheckMelons() end)
+	Utl:SetupThinkHook(self.name.."MelonCheckHook",5,0,function() self:CheckMelons() end)
 end
 
 function Team:CanMakeMelon(Barracks)
@@ -303,10 +311,7 @@ function Team:MakeNeutral(Team,Over)
 	if self:GetRelations(Team)=="Neutral" then return end
 
 	self:SetRelations(Team,"Neutral")
-	
-	if Team:GetRelations(self)=="Allied" then
-		Team:MakeNeutral(self)
-	end
+	Team:MakeNeutral(self)
 	
 	self:MsgMembers("You're now Neutral towards Team: "..Team.name)
 	

@@ -14,7 +14,9 @@ end)
 
 Utl:HookNet("MelonsSyncOrderComplete","",function(D)
 	if D.E and IsValid(D.E) then
-		table.remove(D.E.Orders,1)
+		if D.E.Orders then
+			table.remove(D.E.Orders,1)
+		end
 	end
 end)
 

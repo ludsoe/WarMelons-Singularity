@@ -160,10 +160,14 @@ function PLY:OrderSelection(v,Ent,Pos)
 	end
 	
 	if Ent and IsValid(Ent) then
-		if Ent.MelonLoadable then
-			if v.IsBarracks or v.IsMelon then
-				v:AddOrder({T="Enter",V=Ent:GetPos(),E=Ent})
+		if Ent.MelonTeam == v.MelonTeam then
+			if Ent.MelonLoadable then
+				if v.IsBarracks or v.IsMelon then
+					v:AddOrder({T="Enter",V=Ent:GetPos(),E=Ent})
+				end
 			end
+		else
+			
 		end
 	else
 		if v.IsBarracks or v.IsMelon then
@@ -172,7 +176,7 @@ function PLY:OrderSelection(v,Ent,Pos)
 	end
 end
 
-function PLY:OrderMelons(Shift)
+function PLY:OrderMelons(Shift,Use)
 	local tr = self:GetEyeTrace()
 	local Pos,Ent = tr.HitPos,tr.Entity
 	
@@ -180,8 +184,12 @@ function PLY:OrderMelons(Shift)
 		--DoSoundthingy
 		for k, v in pairs(self.SelectedMelons) do
 			if v and IsValid(v) then
-				if not Shift then v:ClearOrders() end
-				self:OrderSelection(v,Ent,Pos)
+				if Use then
+					v:ClearOrders()
+				else
+					if not Shift then v:ClearOrders() end
+					self:OrderSelection(v,Ent,Pos)
+				end
 			else
 				self.SelectedMelons[k]=nil
 			end

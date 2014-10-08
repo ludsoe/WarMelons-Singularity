@@ -17,7 +17,7 @@ Data.MelonDNA={
 
 Data.Name = "Sniper Sentry"
 Data.MyModel = "models/Roller.mdl"
-Data.MaxHealth = 500
+Data.MaxHealth = 1000
 
 Data.ThinkSpeed = 0
 Data.Think = function(self)

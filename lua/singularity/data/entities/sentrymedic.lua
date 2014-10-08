@@ -10,22 +10,22 @@ local Data = {
 }
 
 Data.MelonDNA={
-	Range=600,
-	Damage=100,
+	Range=500,
+	Damage=10,
 	AttackRate=0.2
 }
 
-Data.Name = "Basic Sentry"
+Data.Name = "Medic Sentry"
 Data.MyModel = "models/Roller.mdl"
 Data.MaxHealth = 1000
 
 Data.ThinkSpeed = 0
 Data.Think = function(self)
 	self.SyncData.Health = Singularity.GetHealth( self ).."/"..Singularity.GetMaxHealth( self )
-	self:ScanEnemys()
+	self:ScanInjured()
 		
 	if IsValid(self.Target) then
-		self:Attack(self.Target)
+		self:Heal(self.Target)
 	end	
 end
 

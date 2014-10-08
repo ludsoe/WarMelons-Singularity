@@ -75,6 +75,16 @@ function ENT:Compile(Data,ply,Team)
 	end
 end
 
+function ENT:OnRemove()
+	if self.ModuleRemove then
+		self:ModuleRemove()
+	end
+	
+	if self.BSRemove then
+		self:BSRemove()
+	end
+end
+
 function ENT:Think()
 	if not self.ModuleThink then return end
 	self:ModuleThink()

@@ -64,6 +64,7 @@ LoadFile(MelPath.."liftmelon.lua",1)
 
 LoadFile(ModPath.."sentrybasic.lua",1)
 LoadFile(ModPath.."sentrysniper.lua",1)
+LoadFile(ModPath.."sentrymedic.lua",1)
 
 LoadFile(ModPath.."noahcannon.lua",1)
 LoadFile(ModPath.."canister.lua",1)

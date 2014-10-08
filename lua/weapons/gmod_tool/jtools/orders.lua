@@ -7,6 +7,7 @@ local Help = {
 "",
 "---------Right Click:--------",
 "Anywhere: Order Selected to that position.",
+"While Holding Use [Aka E], RightClick anywhere to clear orders.",
 "",
 "---------Extra Tips:--------",
 "Hold Shift While selecting melons to add them to your existing selection.",
@@ -34,7 +35,7 @@ Tool.Think = function(ply,Settings)
 end
 
 Tool.Secondary = function(trace,ply,Settings)
-	ply:OrderMelons(ply:KeyDown(IN_SPEED))
+	ply:OrderMelons(ply:KeyDown(IN_SPEED),ply:KeyDown(IN_USE))
 end
 
 Tool.Holster = function(ply,Settings)

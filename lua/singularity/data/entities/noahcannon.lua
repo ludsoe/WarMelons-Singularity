@@ -15,22 +15,25 @@ local OnHit = function(tr,data)
 	ent:SetModel( "models/props_combine/headcrabcannister01a.mdl" )
 	ent:SetPos( tr.HitPos )
 	ent:SetAngles(-tr.HitNormal:Angle())
-	
+		
 	ent:Spawn() ent:Activate()
 	if tr.Entity and not tr.HitWorld then
 		local E = tr.Entity
 		ent:SetParent(E)
-		print("Test")
 	else
 		ent:GetPhysicsObject():EnableMotion(false)
 	end
 	
+	local Team = data.Ignore.MelonTeam
+	
 	Singularity.GivePlyProp(Singularity.GetPropOwner(data.Ignore),ent)
-	ent:Compile(Singularity.Entities.Modules["Hidden"]["Canister"].M,nil,data.MelonTeam)
+	ent:Compile(Singularity.Entities.Modules["Hidden"]["Canister"].M,nil,Team)
 	ent.StoredMelons = data.Melons
+	
+	Team:RegisterProp(ent)
 end
 
-local ReloadTime = 10
+local ReloadTime = 5 --60
 Data.Setup = function(self,Data,MyData)
 	self.NoahCannon = true
 	self.MelonLoadable = true
@@ -49,6 +52,16 @@ Data.Setup = function(self,Data,MyData)
 		if self:CanFire() then
 			self.NextFire = CurTime()+ReloadTime
 			
+			local Batch = {}
+			for n, v in pairs( self.StoredMelons ) do
+				if table.Count(Batch)<20 then
+					table.insert(Batch,v)
+					table.remove(self.StoredMelons,n)
+				else
+					break
+				end
+			end
+			
 			local MyData = {
 				ShootPos = self:LocalToWorld(Vector(0,0,80)),
 				Direction = self:GetUp(),
@@ -60,7 +73,7 @@ Data.Setup = function(self,Data,MyData)
 				Model="models/props_combine/headcrabcannister01a.mdl",
 				Ignore = self,
 				
-				Melons=self.StoredMelons,
+				Melons=Batch,
 				MelonTeam=self.MelonTeam,
 				OnHit=OnHit,
 				
@@ -71,7 +84,7 @@ Data.Setup = function(self,Data,MyData)
 			}
 			
 			Singularity.WeaponFunc.FireProjectile(MyData)
-			self.StoredMelons={}
+			self:EmitSound("npc/env_headcrabcanister/launch.wav")
 			return true
 		end
 		return false
