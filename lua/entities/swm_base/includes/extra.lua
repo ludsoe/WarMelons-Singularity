@@ -4,7 +4,7 @@ function ENT:TeamBaseWelds()
 	for n, ent in pairs( Ents ) do
 		if not ent.IsMelon then
 			ent.MelonTeam = self.MelonTeam
-			ent:SetColor(self:GetColor())
+			ent:SetColor(self.MelonTeam.color)
 		end
 	end
 end
@@ -12,7 +12,9 @@ end
 function ENT:LineOfSight(Vec,Ent,Team,Filter,X)
 	if (X or 0) > 5 then return false else X=(X or 0)+1 end
 
-	local tr = util.TraceLine({start = self:GetPos(),endpos = Vec,filter = table.Merge({self},Filter or {})} )
+	local MyPos = self.MelonDNA.AttackPosition or self:GetPos()
+	
+	local tr = util.TraceLine({start = MyPos,endpos = Vec,filter = table.Merge({self},Filter or {})} )
 	local Hit,HitEnt = tr.Hit,tr.Entity
 
 	self.LastTrace = tr.HitPos
@@ -76,13 +78,14 @@ function ENT:Attack(Ent)
 	local EPos = Ent:GetPos()
 	if not Ent or not IsValid(Ent) then return end
 	if not Singularity.Settings["MelonsDoDamage"] then self.Target = nil return end
-	local Distance = self:GetPos():Distance(Ent:GetPos())
+	local MyPos = self.MelonDNA.AttackPosition or self:GetPos()
+	local Distance = MyPos:Distance(Ent:GetPos())
 	local CanAttack = self.MelonTeam:CanAttack(Ent)
 	if self:LineOfSight(EPos,Ent) and Distance<self.DNA.Range and CanAttack then
 		if self.Times.Attack < CurTime() then
 			Singularity.DealDamage(Ent,EPos,self.DNA.Damage,self,self)
 			self.Times.Attack=CurTime()+self.DNA.AttackRate
-			self:DrawAttack(self:GetPos(),self.LastTrace)
+			self:DrawAttack(MyPos,self.LastTrace)
 			Ent.MelonTeam:MakeEnemy(self.MelonTeam) 
 		end
 	else
@@ -118,14 +121,15 @@ function ENT:Heal(Ent)
 	local EPos = Ent:GetPos()
 	if not Ent or not IsValid(Ent) then return end
 	if not Singularity.Settings["MelonsDoDamage"] then self.Target = nil return end
-	local Distance = self:GetPos():Distance(Ent:GetPos())
+	local MyPos = self.MelonDNA.AttackPosition or self:GetPos()
+	local Distance = MyPos:Distance(Ent:GetPos())
 	local CanHeal = self.MelonTeam:CanHeal(Ent)
 	local IsDamaged = IsDamaged(Ent)
 	if self:LineOfSight(EPos,Ent,true) and Distance<self.DNA.Range and IsDamaged and CanHeal then
 		if self.Times.Attack < CurTime() then
 			Singularity.RepairHealth(Ent,self.DNA.Damage)
 			self.Times.Attack=CurTime()+self.DNA.AttackRate
-			self:DrawAttack(self:GetPos(),self.LastTrace)
+			self:DrawAttack(MyPos,self.LastTrace)
 		end
 	else
 		if Distance>self.DNA.Range*2 or not CanHeal or not IsDamaged then

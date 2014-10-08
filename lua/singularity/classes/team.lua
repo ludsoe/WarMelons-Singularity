@@ -25,6 +25,7 @@ function Team:Setup(name,color)
 	for k, v in pairs(Teams.Teams) do
 		self:MakeEnemy(v)
 	end
+	self:SetRelations(self,"Allied")
 end
 
 

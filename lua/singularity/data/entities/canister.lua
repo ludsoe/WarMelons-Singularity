@@ -60,7 +60,8 @@ Data.IgnoreBuildMax = true
 Data.MelonDNA={
 	Range=400,
 	Damage=200,
-	AttackRate=0.2
+	AttackRate=0.2,
+	AttackPosition=Vector(-60,0,0)
 }
 
 Data.ThinkSpeed = 0
