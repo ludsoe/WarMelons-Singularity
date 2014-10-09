@@ -38,6 +38,7 @@ else
 	--[[hook.Add("GetGameDescription", "GameDesc", function() 
 		return "Singularity: "..Singularity.Version
 	end)]]
+	resource.AddWorkshop( "324447523" ) --Ourself!
 end
 
 print("Singularity AutoRun Finished! Took "..(SysTime()-StartTime).."'s to load.")

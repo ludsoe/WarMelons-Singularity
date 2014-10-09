@@ -44,11 +44,14 @@ function ENT:Compile(Data,ply,Team)
 	
 	self.DNA = MyData.MelonDNA
 	
-	self.MelonTeam = Team or ply:GetMTeam()
-	self:SetColor(self.MelonTeam.color)
-	self.SyncData.Team=self.MelonTeam.name
 	
-	Singularity.SetMaxHealth( self,MyData.MaxHealth )
+	if not self.IsResource then
+		self.MelonTeam = Team or ply:GetMTeam()
+		self:SetColor(self.MelonTeam.color)
+		self.SyncData.Team=self.MelonTeam.name
+		
+		Singularity.SetMaxHealth( self,MyData.MaxHealth )
+	end
 	
 	--Lets setup our functions now.
 	if MyData.Setup then MyData.Setup(self,Data,MyData) end
@@ -95,9 +98,11 @@ function ENT:Think()
 		self:TransmitData()
 	end
 	
-	if self.Times.Welds < CurTime() then
-		self.Times.Welds = CurTime()+5
-		self:TeamBaseWelds()
+	if not self.IsResource then
+		if self.Times.Welds < CurTime() then
+			self.Times.Welds = CurTime()+5
+			self:TeamBaseWelds()
+		end
 	end
 	
 	self:NextThink(CurTime()+0.1)

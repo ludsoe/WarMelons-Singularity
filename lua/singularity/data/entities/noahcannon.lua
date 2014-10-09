@@ -14,7 +14,7 @@ local OnHit = function(tr,data)
 	
 	ent:SetModel( "models/props_combine/headcrabcannister01a.mdl" )
 	ent:SetPos( tr.HitPos )
-	ent:SetAngles(-tr.HitNormal:Angle())
+	ent:SetAngles(-tr.Normal:Angle())
 		
 	ent:Spawn() ent:Activate()
 	if tr.Entity and not tr.HitWorld then

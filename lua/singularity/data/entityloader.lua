@@ -52,6 +52,7 @@ end
 local ModPath = "singularity/data/entities/"
 local IntPath = "singularity/data/userinterfaces/"
 local MelPath = "singularity/data/entities/melons/"
+local ResPath = "singularity/data/entities/resources/"
 
 LoadFile(MelPath.."scout.lua",1)
 LoadFile(MelPath.."rapid.lua",1)
@@ -72,7 +73,7 @@ LoadFile(ModPath.."canister.lua",1)
 LoadFile(ModPath.."barracks.lua",1)
 LoadFile(IntPath.."barracks.lua",1)
 
-
+LoadFile(ResPath.."melonium.lua",1)
 
 
 

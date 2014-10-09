@@ -9,6 +9,7 @@ local Team = {
 	Members = {},
 	Melons = {Units={},Buildings={},Props={}},
 	Settings = {CanJoin = true, AttackMode = 1},
+	Resources = {Energy=0,Melonium=0,Scrap=0,Crystal=0},
 	Diplomacy = {},
 	Persist = false
 }
