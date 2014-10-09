@@ -25,6 +25,7 @@ function ENT:Initialize()
 	self.Orders = {}
 	self.SyncedOrders = {}
 	self.DNA = {}
+	self.Inventory = {}
 end
 
 function ENT:Compile(Data,ply,Team)
@@ -44,8 +45,13 @@ function ENT:Compile(Data,ply,Team)
 	
 	self.DNA = MyData.MelonDNA
 	
+	if self.BSSetup then
+		self:BSSetup(Data,ply,MyData)
+	end
 	
-	if not self.IsResource then
+	if self.IsResource then
+	
+	else
 		self.MelonTeam = Team or ply:GetMTeam()
 		self:SetColor(self.MelonTeam.color)
 		self.SyncData.Team=self.MelonTeam.name
@@ -71,10 +77,6 @@ function ENT:Compile(Data,ply,Team)
 			self.Outputs = WireLib.CreateSpecialOutputs( self, MyData.Wire.Out.ID , MyData.Wire.Out.T or {})	
 		end
 		self.TriggerInput = MyData.Wire.Func or function() end
-	end
-	
-	if self.BSSetup then
-		self:BSSetup(Data,ply,MyData)
 	end
 end
 

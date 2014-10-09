@@ -1,3 +1,12 @@
+local function IsDamaged(self)
+	return Singularity.GetHealth( self ) < Singularity.GetMaxHealth( self ) 	
+end
+
+local function Normalize(Vec)
+	local Length = Vec:Length()
+	return Vec/Length
+end
+
 function ENT:TeamBaseWelds()
 	local Ents = constraint.GetAllConstrainedEntities_B( self )
 	
@@ -12,7 +21,7 @@ end
 function ENT:LineOfSight(Vec,Ent,Team,Filter,X)
 	if (X or 0) > 5 then return false else X=(X or 0)+1 end
 
-	local MyPos = self.MelonDNA.AttackPosition or self:GetPos()
+	local MyPos = self.DNA.AttackPosition or self:GetPos()
 	
 	local tr = util.TraceLine({start = MyPos,endpos = Vec,filter = table.Merge({self},Filter or {})} )
 	local Hit,HitEnt = tr.Hit,tr.Entity
@@ -51,11 +60,6 @@ function ENT:DrawAttack(S,E)
 	util.Effect( "attack_beam", effectdata )
 end
 
-local function Normalize(Vec)
-	local Length = Vec:Length()
-	return Vec/Length
-end
-
 function ENT:HoverAtAlt()
 	local MyPos,Pos = self:GetPos(),self:GetPos()
 	Pos.z = self.HoverAlt
@@ -78,8 +82,8 @@ function ENT:Attack(Ent)
 	local EPos = Ent:GetPos()
 	if not Ent or not IsValid(Ent) then return end
 	if not Singularity.Settings["MelonsDoDamage"] then self.Target = nil return end
-	local MyPos = self.MelonDNA.AttackPosition or self:GetPos()
-	local Distance = MyPos:Distance(Ent:GetPos())
+	local MyPos = self.DNA.AttackPosition or self:GetPos()
+	local Distance = MyPos:Distance(EPos)
 	local CanAttack = self.MelonTeam:CanAttack(Ent)
 	if self:LineOfSight(EPos,Ent) and Distance<self.DNA.Range and CanAttack then
 		if self.Times.Attack < CurTime() then
@@ -95,34 +99,12 @@ function ENT:Attack(Ent)
 	end
 end
 
-function ENT:ScanEnemys()
-	if not Singularity.Settings["MelonsDoDamage"] then return end
-	if self.Times.Scan < CurTime() then
-		local entz = ents.FindInSphere(self:GetPos(),self.DNA.Range*2)
-		for k, v in pairs(entz) do
-			if v.MelonTeam and not v:IsPlayer() then
-				if self.MelonTeam:CanAttack(v) then
-					if self:LineOfSight(v:GetPos(),v) then
-						self.Target = v
-						break
-					end
-				end
-			end
-		end
-		self.Times.Scan=CurTime()+0.2
-	end
-end
-
-function IsDamaged(self)
-	return Singularity.GetHealth( self ) < Singularity.GetMaxHealth( self ) 	
-end
-
 function ENT:Heal(Ent)
 	local EPos = Ent:GetPos()
 	if not Ent or not IsValid(Ent) then return end
 	if not Singularity.Settings["MelonsDoDamage"] then self.Target = nil return end
-	local MyPos = self.MelonDNA.AttackPosition or self:GetPos()
-	local Distance = MyPos:Distance(Ent:GetPos())
+	local MyPos = self.DNA.AttackPosition or self:GetPos()
+	local Distance = MyPos:Distance(EPos)
 	local CanHeal = self.MelonTeam:CanHeal(Ent)
 	local IsDamaged = IsDamaged(Ent)
 	if self:LineOfSight(EPos,Ent,true) and Distance<self.DNA.Range and IsDamaged and CanHeal then
@@ -138,20 +120,108 @@ function ENT:Heal(Ent)
 	end
 end
 
-function ENT:ScanInjured()
+function ENT:Mine(Ent)
+	local EPos = Ent:LocalToWorld(Vector(0,0,5))
+	if not Ent or not IsValid(Ent) then return end
+	local MyPos = self.DNA.AttackPosition or self:GetPos()
+	local Distance = MyPos:Distance(EPos)
+	if self:LineOfSight(EPos,Ent) and Distance<self.DNA.Range then
+		if self.Times.Attack < CurTime() then
+			self.Times.Attack=CurTime()+self.DNA.AttackRate
+			self:DrawAttack(MyPos,self.LastTrace)
+			return Ent:Mine(self.DNA.Damage)
+		end
+	else
+		if Distance>self.DNA.Range*2 then
+			self.Target = nil
+		end
+	end
+end
+
+function ENT:ScanEnemys()
 	if not Singularity.Settings["MelonsDoDamage"] then return end
 	if self.Times.Scan < CurTime() then
-		local entz = ents.FindInSphere(self:GetPos(),self.DNA.Range*4)
+		local entz = ents.FindInSphere(self:GetPos(),self.DNA.Range*2)
+		local C = 9999
 		for k, v in pairs(entz) do
 			if v.MelonTeam and not v:IsPlayer() then
-				if self.MelonTeam:CanHeal(v) and IsDamaged(v) then
-					if self:LineOfSight(v:GetPos(),v,true) then
-						self.Target = v
-						break
+				if self.MelonTeam:CanAttack(v) then
+					if self:LineOfSight(v:GetPos(),v) then
+						local Dist = v:GetPos():Distance(self:GetPos())
+						if Dist<C then
+							C=Dist
+							Closest = v
+						end
 					end
 				end
 			end
 		end
+		self.Target = Closest
+		self.Times.Scan=CurTime()+0.2
+	end
+end
+
+function ENT:ScanInjured()
+	if not Singularity.Settings["MelonsDoDamage"] then return end
+	if self.Times.Scan < CurTime() then
+		local entz = ents.FindInSphere(self:GetPos(),self.DNA.Range*4)
+		local C = 9999
+		for k, v in pairs(entz) do
+			if v.MelonTeam and not v:IsPlayer() then
+				if self.MelonTeam:CanHeal(v) and IsDamaged(v) then
+					if self:LineOfSight(v:GetPos(),v,true) then
+					local Dist = v:GetPos():Distance(self:GetPos())
+						if Dist<C then
+							C=Dist
+							Closest = v
+						end
+					end
+				end
+			end
+		end
+		self.Target = Closest
+		self.Times.Scan=CurTime()+0.2
+	end
+end
+
+function ENT:ScanMinables()
+	if self.Times.Scan < CurTime() then
+		if self.Target and IsValid(self.Target) then return end
+		local entz = ents.FindInSphere(self:GetPos(),self.DNA.Range*4)
+		local C = 9999
+		for k, v in pairs(entz) do
+			if v.IsResource and v.IsMinable then
+				if self:LineOfSight(v:LocalToWorld(Vector(0,0,5)),v) then
+					local Dist = v:GetPos():Distance(self:GetPos())
+					if Dist<C then
+						C=Dist
+						Closest = v
+					end
+				end
+			end
+		end
+		self.Target = Closest
+		self.Times.Scan=CurTime()+0.2
+	end
+end
+
+function ENT:ScanDropOff()
+	if self.Times.Scan < CurTime() then
+		if self.Target and IsValid(self.Target) then return end
+		local entz = ents.FindInSphere(self:GetPos(),self.DNA.Range*4)
+		local C = 9999
+		for k, v in pairs(entz) do
+			if v.IsResource and v.IsMinable then
+				if self:LineOfSight(v:LocalToWorld(Vector(0,0,5)),v) then
+					local Dist = v:GetPos():Distance(self:GetPos())
+					if Dist<C then
+						C=Dist
+						Closest = v
+					end
+				end
+			end
+		end
+		self.Target = Closest
 		self.Times.Scan=CurTime()+0.2
 	end
 end

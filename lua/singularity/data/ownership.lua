@@ -41,6 +41,7 @@ function LoadPP()
 		function CPPI:GetVersion() return Singularity.Version end
 		function metaent:CPPIGetOwner() return Singularity.GetPropOwner(self) end
 		function metaent:CPPISetOwner(ply) return Singularity.GivePlyProp(ply,self) end
+		function metaent:CPPISetOwnerless(bool) return Singularity.GivePlyProp("Ownerless",self) end
 		function metaply:CPPIGetFriends() return {} end
 		function metaent:CPPICanTool(ply,mode) return true end
 		function metaent:CPPICanPhysgun(ply) return true end

@@ -15,13 +15,13 @@ Data.Setup = function(self,Data,MyData)
 	self.Times.Recap = CurTime()
 	
 	local Found,Scale = false,3
-	local entz = ents.FindInSphere(self:GetPos(),120)
+	local entz = ents.FindInSphere(self:GetPos(),130)
 	for k, v in pairs(entz) do
 		if v.IsResource then
 			if v.CenterPeice then
 				self.SourceParent = v
 				Found = true
-				Scale = math.Clamp((200-v:GetPos():Distance(self:GetPos()))/100,0.2,2)+(math.random(-8,8)*0.01)
+				Scale = math.Clamp((200-v:GetPos():Distance(self:GetPos()))/100,0.3,2)+(math.random(-8,8)*0.01)
 				break
 			end
 		end
@@ -34,10 +34,13 @@ Data.Setup = function(self,Data,MyData)
 	if not Found then
 		self:CreateGlow({10,10,150},500,6)
 		self.CenterPeice = true
+	else
+		self.IsMinable = true
+		self.Resources["Melonium"]=math.Round(40*Scale)
 	end
 end
 
-Data.Name = "Melonium"
+Data.Name = "Melonium Crystal"
 Data.MyModel = "models/ce_ls3additional/tiberium/tiberium_normal.mdl"
 
 Data.ThinkSpeed = 0
@@ -45,14 +48,15 @@ Data.Think = function(self)
 	if self.CenterPeice then
 		if self.Times.Grow < CurTime() then
 			self.Times.Grow = CurTime()+10
-			if table.Count(self.Seedlings)<20 then
-				for I=1,60 do
-					local Spawn,Tr = self:LeapGrowth()
-					if Spawn then
-						local Pos,Norm = Tr.HitPos,Tr.HitNormal
-						if Pos:Distance(self:GetPos())>180 then return end
-						table.insert(self.Seedlings,self:SpawnSelf(Pos+Norm,Norm:Angle()+Angle(90,0,0)))
-					end
+			local X=0
+			while (table.Count(self.Seedlings)<20 or X>=20) do
+				local Spawn,Tr = self:LeapGrowth()
+				if Spawn then
+					local Pos,Norm = Tr.HitPos,Tr.HitNormal
+					if Pos:Distance(self:GetPos())>180 then return end
+					table.insert(self.Seedlings,self:SpawnSelf(Pos+Norm,Norm:Angle()+Angle(90,0,0)))
+				else
+					X=X+1
 				end
 			end
 		end

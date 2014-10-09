@@ -10,8 +10,27 @@ function WMRPhysgunPickup(ply,ent)
 end
 hook.Add("PhysgunPickup","WMRPhysgunPickup",WMRPhysgunPickup)
 
+function ENT:BSThink()
+	if self.IsMinable then
+		local Total = 0
+		for k,v in pairs(self.Resources) do
+			self.SyncData[k]=v
+			Total=Total+v
+		end
+		if Total <= 0 then Singularity.KillEnt(self) return end
+	end
+end
+
 function ENT:BSSetup(Data,ply)
 	self:CPPISetOwnerless(true)
+	self.Resources = {}
+	self.IsMinable = false
+end
+
+function ENT:BSRemove()
+	if self.Glow and IsValid(self.Glow) then
+		self.Glow:Remove()
+	end
 end
 
 function ENT:CreateGlow(color,distance,brightness)
@@ -37,6 +56,24 @@ function ENT:CreateGlow(color,distance,brightness)
 		self.Glow:SetKeyValue("distance",distance)
 		self.Glow:SetKeyValue("brightness",brightness)
 	end
+end
+
+function ENT:Mine(Amt)
+	if not self.IsMinable then return end
+	local Mined = {}
+	for k,v in pairs(self.Resources) do
+		if v >= Amt then
+			Mined[k]=Amt 
+			self.Resources[k]=v-Amt 
+			Amt=0
+		else
+			Mined[k]=v 
+			Amt=Amt-v 
+			self.Resources[k]=0
+		end
+		if Amt <= 0 then break end
+	end
+	return Mined
 end
 
 include("includes/spawning.lua")

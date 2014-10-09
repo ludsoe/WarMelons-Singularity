@@ -239,6 +239,7 @@ function Team:CanPlayerJoin(Ply)
 end
 
 function Team:DiplomacyCheck(Team,Over)
+	if not Team.name then return end
 	self.Diplomacy[Team.name] = self.Diplomacy[Team.name] or "Neutral"
 	if not Over then Team:DiplomacyCheck(self,true) end
 end

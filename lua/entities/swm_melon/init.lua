@@ -13,7 +13,7 @@ function ENT:BSSetup(Data,ply)
 		return false
 	end
 	
-	self.MelonTeam:RegisterMelon(self)
+	Team:RegisterMelon(self)
 	
 	self.OrderFuncs["Enter"]=function(self,Dat)
 		local Ent = Dat.E
