@@ -5,7 +5,7 @@ include("shared.lua")
 
 function WMRPhysgunPickup(ply,ent)
 	if ent.IsResource or ent.NoPhysicsPickup then
-		return false
+		return Singularity.Utl:CheckAdmin( ply ) or false
 	end
 end
 hook.Add("PhysgunPickup","WMRPhysgunPickup",WMRPhysgunPickup)
@@ -22,7 +22,8 @@ function ENT:BSThink()
 end
 
 function ENT:BSSetup(Data,ply)
-	self:CPPISetOwnerless(true)
+	if self.CPPISetOwnerless then self:CPPISetOwnerless(true) end
+	
 	self.Resources = {}
 	self.IsMinable = false
 end
