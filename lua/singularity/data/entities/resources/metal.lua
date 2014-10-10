@@ -13,10 +13,8 @@ Data.Setup = function(self,Data,MyData)
 	self.Seedlings = {self}
 	self.Times.Grow = CurTime()
 	self.Times.Recap = CurTime()
-	
-	local SkinRand = math.random(1,50)
-	local Skin = 1
-	if SkinRand < 25 then Skin = 0 end
+
+
 	local Found,Scale = false,3
 	if not self.SourceParent or not IsValid(self.SourceParent) then
 		local entz = ents.FindInSphere(self:GetPos(),130)
@@ -26,7 +24,6 @@ Data.Setup = function(self,Data,MyData)
 					self.SourceParent = v
 					Found = true
 					Scale = math.Clamp((200-v:GetPos():Distance(self:GetPos()))/100,0.3,2)+(math.random(-8,8)*0.01)
-					Skin=v:GetSkin()
 					break
 				end
 			end
@@ -40,21 +37,15 @@ Data.Setup = function(self,Data,MyData)
 	self:SetAngles(self:LocalToWorldAngles(Angle(0,math.random(-180,180),0)))
 	
 	if not Found then
-		self:SetSkin(Skin)
-		if Skin == 1 then
-			self:CreateGlow({10,10,150},500,6)
-		else
-			self:CreateGlow({10,150,10},500,6)
-		end
 		self.CenterPeice = true
 	else
 		self.IsMinable = true
-		self.Resources["Melonium"]=math.Round(400*Scale)
+		self.Resources["Metal"]=math.Round(400*Scale)
 	end
 end
 
-Data.Name = "Melonium Crystal"
-Data.MyModel = "models/ce_ls3additional/tiberium/tiberium_normal.mdl"
+Data.Name = "Scrap Metal"
+Data.MyModel = "models/props_c17/oildrum001.mdl"
 
 Data.ThinkSpeed = 0
 Data.Think = function(self)
