@@ -126,16 +126,19 @@ function Singularity.MT.AddList(Title,Options,OnSelect,Panel,Height)
 	return List
 end
 
-function Singularity.MT.AddModular(Panel,Size)
+function Singularity.MT.AddModular(Panel,Size,Offsets,Col)
 	local Panel = Panel or Singularity.MT.GuiMenu.Panel
 	local IC = Panel.Offset or 0
 	local Save = {}
+	local Offsets = Offsets or {}
+	
+	Col=Col or {255,255,255,255}
 	
 	local Paint  = function()
-		surface.SetDrawColor( 255, 255, 255, 255 )
+		surface.SetDrawColor( Col[1] or 255, Col[2] or 255, Col[3] or 255, Col[4] or 255 )
 		surface.DrawRect( 0, 0, Save:GetWide(), Save:GetTall() )
 	end
-	Save=Singularity.MenuCore.CreatePanel(Panel,{x=Size or 280,y=350},{x=(IC),y=0})
+	Save=Singularity.MenuCore.CreatePanel(Panel,{x=Size or 280,y=350},{x=Offsets.x or (IC),y=Offsets.y or 0})
 	Save.IsModular = true
 	Save.Offset = 0
 	Save.Paint = Paint

@@ -20,6 +20,9 @@ Data.Name = "Mining Melon"
 Data.MyModel = "models/props_junk/watermelon01.mdl"
 Data.MaxHealth = 300
 
+Data.ResourceCost = {}
+Data.ResourceCost["Melonium"]=200
+
 Data.Setup = function(self,Data,MyData)
 	self:SetMaterial("models/debug/debugwhite")
 	self.MaxInventory = self.DNA.Capacity
@@ -62,9 +65,6 @@ Data.Think = function(self)
 			self:ScanDropOff() 
 		end
 	end
-	
-	
-	
 end
 
 Singularity.Entities.MakeModule(Data)

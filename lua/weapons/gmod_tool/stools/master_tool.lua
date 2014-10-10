@@ -20,11 +20,9 @@ LoadFile("weapons/gmod_tool/jtools/teammanage.lua",1)
 LoadFile("weapons/gmod_tool/jtools/devices.lua",1)
 LoadFile("weapons/gmod_tool/jtools/serversettings.lua",1)
 
---LoadFile("weapons/gmod_tool/jtools/healthscanner.lua",1)
-
---LoadFile("weapons/gmod_tool/jtools/navedit.lua",1)
---LoadFile("weapons/gmod_tool/jtools/weapons.lua",1)
-
+if game.SinglePlayer() then
+	LoadFile("weapons/gmod_tool/jtools/localiser.lua",1)
+end
 
 --Load all the tools we want to display.
 local Path = "weapons/gmod_tool/jtools/addon/"
@@ -35,8 +33,8 @@ for k, File in ipairs(Files) do
 end
 
 TOOL.Category = "Construction"
-TOOL.Name = "Jupiter Omni Tool"
-TOOL.Description = "Jupiter Omni Tool"
+TOOL.Name = "Singularity Omni Tool"
+TOOL.Description = "Singularity Omni Tool"
 
 TOOL.AddToMenu = true -- Tell gmod not to add it. We will do it manually later!
 TOOL.Command = nil

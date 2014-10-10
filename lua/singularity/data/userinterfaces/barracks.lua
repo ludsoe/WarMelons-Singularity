@@ -30,6 +30,38 @@ else
 		self.Loop:SetText("Queue Loop: "..tostring(self.WillLoop))
 	end
 	
+	function VGUI:DoDescription(Dat)
+		if self.DescBoard and IsValid(self.DescBoard) then self.DescBoard:Remove() end
+		
+		self.DescBoard = Singularity.MT.AddModular(self.FM,350,{x=165,y=35},{150,150,150})
+		
+		for k,v in pairs(Dat.Info) do
+			self.DescLines[k] = Singularity.MT.ModAddlabel(self.DescBoard,k..": "..v,5)
+			self.DescLines[k]:SetColor(Color(255,255,255))
+		end
+		
+		if Dat.ResourceCost then
+			local L = Singularity.MT.ModAddlabel(self.DescBoard,"Required Resources:",5)
+			L:SetColor(Color(255,255,255))
+			for k,v in pairs(Dat.ResourceCost) do
+				self.DescLines[k] = Singularity.MT.ModAddlabel(self.DescBoard,k..": "..v,20)
+				self.DescLines[k]:SetColor(Color(255,255,255))
+			end
+		end
+	end
+	
+	function VGUI:SeletedMelon(Type)
+		local Dat = Singularity.Entities.Modules["Melons"][Type]
+		local MD = self.ModelDisplay
+		if not MD or not IsValid(MD) then return end
+		if Type and Dat then
+			MD:SetModel(Dat.M.M) MD:SetCamPos(Vector(0,25,3)) MD:SetLookAt(Vector(0,0,3))
+			self:DoDescription(Dat.E)
+		else
+			MD:SetModel("models/maxofs2d/logo_gmod_b.mdl") MD:SetCamPos(Vector(0,80,50)) MD:SetLookAt(Vector(0,0,10))
+		end
+	end
+	
 	function VGUI:Init()
 		local UnitList = Singularity.Entities.Modules["Melons"]
 		
@@ -37,15 +69,19 @@ else
 		FactoryMenu:Center()
 		FactoryMenu:SetTitle( "Melon Barracks" )
 		FactoryMenu:MakePopup()
+		self.FM = FactoryMenu
+		
 		
 		self.Selected = ""
 		self.WillLoop = false
+		self.DescLines = {}
 		
 		local schematicBox = Singularity.MenuCore.CreateList(FactoryMenu,{x=150,y=160},{x=10,y=35},false,function(V)
 			if V then
 				self.Selected = V
 				self.SelectType = "Build"
 				self.ADD:SetText( "Add: "..V )
+				self:SeletedMelon(V)
 			end
 		end)
 		schematicBox:SetParent(FactoryMenu)
@@ -58,6 +94,7 @@ else
 				self.Selected = V
 				self.SelectType = "Queue"
 				self.ADD:SetText( "Add: "..V )
+				self:SeletedMelon(V)
 			end
 		end)
 		buildque:SetParent(FactoryMenu)
@@ -66,7 +103,7 @@ else
 		self.BQ = buildque
 		
 		------------------
-		local ModelDisplay = Singularity.MenuCore.DisplayModel(FactoryMenu,180,{x=520,y=0},"models/maxofs2d/logo_gmod_b.mdl",80,10)
+		self.ModelDisplay = Singularity.MenuCore.DisplayModel(FactoryMenu,180,{x=520,y=0},"models/maxofs2d/logo_gmod_b.mdl",80,10)
 		
 		local finish = Singularity.MenuCore.CreateButton(FactoryMenu,{x=180,y=60},{x=520,y=325})
 		finish:SetText( "Finish" )

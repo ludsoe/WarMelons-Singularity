@@ -17,11 +17,22 @@ Data.Setup = function(self,Data,MyData)
 	self.IsBarracks = true
 	self.Training = {A=false,S=0,E=0,T=""}
 	
+	self.CanAfford = function(self,Data)
+		if Data.ResourceCost then
+			for k,v in pairs(Data.ResourceCost) do
+				if not self.MelonTeam:CanUseResource(k,v) then
+					return false
+				end
+			end
+		end
+		return true
+	end
+	
 	self.FinishTraining = function(self,Train)
 		
 		local tr = util.TraceLine({start = self:GetPos(),endpos = self:LocalToWorld(Vector(0,0,20)),filter = self} )
 
-		if not tr.Hit then
+		if not tr.Hit and self:CanAfford(Train.E) then	
 			local Data = Train.E
 			local ent = ents.Create( Data.Class )
 			
@@ -39,6 +50,13 @@ Data.Setup = function(self,Data,MyData)
 			Singularity.GivePlyProp(Singularity.GetPropOwner(self),ent)
 			
 			ent:SetOrders(self:GetOrders())
+						
+			if Data.ResourceCost then
+				for k,v in pairs(Data.ResourceCost) do
+					self.MelonTeam:UseResource(k,v)
+				end
+			end
+			
 			return true
 		else
 			return false
@@ -64,12 +82,14 @@ Data.Think = function(self)
 		if table.Count(self.BuildQueue)>0 then
 			local Unit = Singularity.Entities.Modules["Melons"][Name]
 			if Unit then
-				Train.A = true
-				Train.S=CurTime()
-				Train.E=CurTime()+Unit.E.MelonDNA.TrainTime
-				Train.T=Name
-				Train.U=Unit
-				SendTraining(self,Train)
+				if self:CanAfford(Unit.E) then
+					Train.A = true
+					Train.S=CurTime()
+					Train.E=CurTime()+Unit.E.MelonDNA.TrainTime
+					Train.T=Name
+					Train.U=Unit
+					SendTraining(self,Train)
+				end
 			else
 				table.remove(self.BuildQueue,1)
 				SendRemove(self)

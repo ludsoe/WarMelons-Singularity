@@ -44,11 +44,7 @@ function ENT:Compile(Data,ply,Team)
 	self.ModuleData = MyData
 	
 	self.DNA = MyData.MelonDNA
-	
-	if self.BSSetup then
-		self:BSSetup(Data,ply,MyData)
-	end
-	
+
 	if self.IsResource then
 	
 	else
@@ -57,6 +53,10 @@ function ENT:Compile(Data,ply,Team)
 		self.SyncData.Team=self.MelonTeam.name
 		
 		Singularity.SetMaxHealth( self,MyData.MaxHealth )
+	end
+		
+	if self.BSSetup then
+		self:BSSetup(Data,ply,MyData)
 	end
 	
 	--Lets setup our functions now.

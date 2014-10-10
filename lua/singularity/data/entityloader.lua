@@ -24,8 +24,20 @@ function Entities.CompileSetting(Name,Default)
 end
 
 function Entities.GenerateInfo(Data)
-	if Data.Info ~= {} then return Data.Info end
+	--if Data.Info ~= {} then return Data.Info end
 	local Info = {}
+	
+	Info["Health"]=Data.MaxHealth
+	if Data.MelonDNA then
+		local DNA = Data.MelonDNA
+		Info["Move Speed"]= DNA.Speed
+		Info["Move Force"]=DNA.Force
+		Info["Training Time"]=DNA.TrainTime
+		Info["Attack Range"]=DNA.Range
+		Info["Attack Damage"]=DNA.Damage
+		Info["Attack Rate"]=DNA.AttackRate
+		Info["Inventory Capacity"]=DNA.Capacity
+	end
 	
 	return Info
 end
@@ -33,8 +45,8 @@ end
 function Entities.MakeModule(Data)
 	local Name = Data.Name
 	local Type = Data.Type or "Generic"
-	local Info = Entities.GenerateInfo(Data)
-	local Mod = {N=Name,T=Type,E=Data.Class,M=Data.MyModel,Sets={},Info=Info or {},Mods=Data.Extra or {}}
+	local Info = Entities.GenerateInfo(Data) Data.Info = Info
+	local Mod = {N=Name,T=Type,E=Data.Class,M=Data.MyModel,Sets={},Mods=Data.Extra or {}}
 	if Data.Propertys then
 		for k,v in pairs(Data.Propertys) do
 			if v.ID then

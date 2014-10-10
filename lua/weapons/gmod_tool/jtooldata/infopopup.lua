@@ -1,7 +1,7 @@
 local PD = Singularity.PageData
 
-PD.OnSelect=function(Base,Data,Table,Tab)
-	local Info =  Table.Info
+PD.OnSelect=function(Base,Table,Tab)
+	local Info = Table.Info
 	
 	for id, info in pairs( Tab ) do
 		if IsValid(Tab[id]) then

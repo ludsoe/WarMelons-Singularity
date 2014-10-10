@@ -19,6 +19,9 @@ Data.Name = "Swarm Melon"
 Data.MyModel = "models/props_junk/watermelon01.mdl"
 Data.MaxHealth = 50
 
+Data.ResourceCost = {}
+Data.ResourceCost["Melonium"]=20
+
 Data.Setup = function(self,Data,MyData)
 	self:SetMaterial("models/debug/debugwhite")
 end

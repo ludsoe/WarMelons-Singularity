@@ -85,6 +85,7 @@ function ENT:Attack(Ent)
 	local MyPos = self.DNA.AttackPosition or self:GetPos()
 	local Distance = MyPos:Distance(EPos)
 	local CanAttack = self.MelonTeam:CanAttack(Ent)
+	local LOS = self:LineOfSight(EPos,Ent,true)
 	if self:LineOfSight(EPos,Ent) and Distance<self.DNA.Range and CanAttack then
 		if self.Times.Attack < CurTime() then
 			Singularity.DealDamage(Ent,EPos,self.DNA.Damage,self,self)
@@ -93,7 +94,7 @@ function ENT:Attack(Ent)
 			Ent.MelonTeam:MakeEnemy(self.MelonTeam) 
 		end
 	else
-		if Distance>self.DNA.Range*2 or not CanAttack then
+		if Distance>self.DNA.Range*2 or not CanAttack or not LOS then
 			self.Target = nil
 		end
 	end
@@ -107,14 +108,15 @@ function ENT:Heal(Ent)
 	local Distance = MyPos:Distance(EPos)
 	local CanHeal = self.MelonTeam:CanHeal(Ent)
 	local IsDamaged = IsDamaged(Ent)
-	if self:LineOfSight(EPos,Ent,true) and Distance<self.DNA.Range and IsDamaged and CanHeal then
+	local LOS = self:LineOfSight(EPos,Ent,true)
+	if LOS and Distance<self.DNA.Range and IsDamaged and CanHeal then
 		if self.Times.Attack < CurTime() then
 			Singularity.RepairHealth(Ent,self.DNA.Damage)
 			self.Times.Attack=CurTime()+self.DNA.AttackRate
 			self:DrawAttack(MyPos,self.LastTrace)
 		end
 	else
-		if Distance>self.DNA.Range*2 or not CanHeal or not IsDamaged then
+		if Distance>self.DNA.Range*2 or not CanHeal or not IsDamaged or not LOS then
 			self.Target = nil
 		end
 	end
@@ -125,14 +127,15 @@ function ENT:Mine(Ent)
 	if not Ent or not IsValid(Ent) then return end
 	local MyPos = self.DNA.AttackPosition or self:GetPos()
 	local Distance = MyPos:Distance(EPos)
-	if self:LineOfSight(EPos,Ent) and Distance<self.DNA.Range then
+	local LOS = self:LineOfSight(EPos,Ent)
+	if LOS and Distance<self.DNA.Range then
 		if self.Times.Attack < CurTime() then
 			self.Times.Attack=CurTime()+self.DNA.AttackRate
 			self:DrawAttack(MyPos,self.LastTrace)
 			return Ent:Mine(self.DNA.Damage)
 		end
 	else
-		if Distance>self.DNA.Range*2 then
+		if Distance>self.DNA.Range*2 or not LOS then
 			self.Target = nil
 		end
 	end

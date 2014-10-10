@@ -33,7 +33,7 @@ local function MakePage(Base,Page,Tab)
 		Tab[Page].Models:SetModel(Table.M)
 		Tab[Page].Name:SetText(Table.N)
 		
-		PageData.OnSelect(Base,Data,Table,Tab[Page].Labels)
+		PageData.OnSelect(Base,Spawns[Data].E,Tab[Page].Labels)
 		
 		local EntT = Save[Table.N]
 		EntT = {Entity=Table.Sets or {}} or EntT 

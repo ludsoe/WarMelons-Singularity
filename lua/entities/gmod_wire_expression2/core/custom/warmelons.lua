@@ -24,6 +24,13 @@ e2function number entity:wmisbarracks()
 	return 1
 end
 
+e2function number entity:wmisminable()
+	if not IsValid(this) then return 0 end
+	if not this.IsMinable then return 0 end
+	if not this.IsMinable == true then return 0 end
+	return 1
+end
+
 e2function number entity:wmcantakeorders()
 	if not IsValid(this) then return 0 end
 	if not this.MelonOrders then return 0 end
@@ -67,6 +74,11 @@ e2function number entity:wmhasorder()
 	return 0
 end
 
+e2function number entity:wmgethealth()
+	if not IsValid(this) then return 0 end
+	return Singularity.GetHealth( this )
+end
+
 e2function vector entity:wmgetorder()
 	local Vec = {0,0,0}
 	if not IsValid(this) then return Vec end
@@ -100,10 +112,18 @@ e2function array entity:wmgetbuildqueue()
 	return {}
 end
 
-e2function array entity:wmgetmelontypes()
+e2function array wmgetmelontypes()
 	local Types = {}
 	for k, v in pairs(Singularity.Entities.Modules["Melons"]) do
 		Array[#Array + 1] = v
 	end
 	return Types
 end
+
+e2function number wmgetresource(res)
+	local myteam = self.player:GetMTeam().name
+	local Team = Singularity.Teams.Teams[myteam]
+	if not Team then return 0 end
+	return Team:GetResource(res)
+end
+

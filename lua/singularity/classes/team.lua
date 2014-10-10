@@ -9,12 +9,13 @@ local Team = {
 	Members = {},
 	Melons = {Units={},Buildings={},Props={}},
 	Settings = {CanJoin = true, AttackMode = 1},
-	Resources = {Melonium=0,Metal=0},
+	Resources = {Melonium=400,Metal=0},
 	Diplomacy = {},
 	Persist = false
 }
 
 Team.DefaultSettings = Team.Settings
+Team.DefaultResources = Team.Resources
 
 function Team:Setup(name,color)
 	self.name = name
@@ -95,7 +96,8 @@ function Team:Reset()
 	self:CleanupProps()
 	
 	self.Settings = table.Copy(self.DefaultSettings)
-	
+	self.Resources = table.Copy(self.DefaultResources)
+
 	for k, v in pairs(Singularity.Teams.Teams) do
 		v:MakeEnemy(self)
 		self:MakeEnemy(v)
