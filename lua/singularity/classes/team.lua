@@ -9,7 +9,7 @@ local Team = {
 	Members = {},
 	Melons = {Units={},Buildings={},Props={}},
 	Settings = {CanJoin = true, AttackMode = 1},
-	Resources = {Energy=0,Melonium=0,Scrap=0,Crystal=0},
+	Resources = {Melonium=0,Metal=0},
 	Diplomacy = {},
 	Persist = false
 }
@@ -24,11 +24,11 @@ function Team:Setup(name,color)
 	self:SyncData()
 	
 	for k, v in pairs(Teams.Teams) do
-		self:MakeEnemy(v)
+		self:SetRelations(v,"Hostile")
+		v:SetRelations(self,"Hostile")
 	end
 	self:SetRelations(self,"Allied")
 end
-
 
 function Team:SetMaxMelons(Max)
 	self.MaxMelons = Max
@@ -192,6 +192,12 @@ function Team:GetNewLeader()
 	self:SyncData()	
 end
 
+function Team:AddResource(Res,Amt) self.Resources[Res]=self.Resources[Res]+Amt end
+function Team:UseResource(Res,Amt) self.Resources[Res]=self.Resources[Res]-Amt end
+function Team:CanUseResource(Res,Amt) return self.Resources[Res] >= Amt end
+function Team:GetResources() return self.Resources end
+function Team:GetResource(Res) return self.Resources[Res] or 0 end
+
 function Team:RegisterMelon(Ent) self.Melons.Units[Ent:EntIndex()]={E=Ent,Id=Ent:EntIndex()} end
 function Team:RegisterStructure(Ent) self.Melons.Buildings[Ent:EntIndex()]={E=Ent,Id=Ent:EntIndex()} end
 function Team:RegisterProp(Ent) self.Melons.Props[Ent:EntIndex()]={E=Ent,Id=Ent:EntIndex()} end
@@ -239,13 +245,13 @@ function Team:CanPlayerJoin(Ply)
 end
 
 function Team:DiplomacyCheck(Team,Over)
-	if not Team.name then return end
+	if type(Team)=="string" then Team = Teams.Teams[Team] end
 	self.Diplomacy[Team.name] = self.Diplomacy[Team.name] or "Neutral"
 	if not Over then Team:DiplomacyCheck(self,true) end
 end
 
 function Team:CanAttack(Ent)
-	if not Ent.MelonTeam then return false end
+	if not Ent.MelonTeam or Ent:IsPlayer() then return false end
 	if self:GetRelations(Ent.MelonTeam) == "Hostile" then
 		return true
 	end
@@ -253,7 +259,7 @@ function Team:CanAttack(Ent)
 end
 
 function Team:CanHeal(Ent)
-	if not Ent.MelonTeam then return false end
+	if not Ent.MelonTeam or Ent:IsPlayer() then return false end
 	if self:GetRelations(Ent.MelonTeam) == "Allied" then
 		return true
 	end

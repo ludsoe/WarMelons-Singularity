@@ -36,7 +36,7 @@ Data.Setup = function(self,Data,MyData)
 		self.CenterPeice = true
 	else
 		self.IsMinable = true
-		self.Resources["Melonium"]=math.Round(40*Scale)
+		self.Resources["Melonium"]=math.Round(120*Scale)
 	end
 end
 

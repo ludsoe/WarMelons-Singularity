@@ -17,7 +17,7 @@ function ENT:BSSetup(Data,ply,MyData)
 		end
 	end
 	
-	self.MelonTeam:RegisterStructure(self)
+	Team:RegisterStructure(self)
 end
 
 function ENT:BSRemove()

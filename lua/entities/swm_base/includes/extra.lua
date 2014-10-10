@@ -186,7 +186,6 @@ end
 
 function ENT:ScanMinables()
 	if self.Times.Scan < CurTime() then
-		if self.Target and IsValid(self.Target) then return end
 		local entz = ents.FindInSphere(self:GetPos(),self.DNA.Range*4)
 		local C = 9999
 		for k, v in pairs(entz) do
@@ -207,11 +206,10 @@ end
 
 function ENT:ScanDropOff()
 	if self.Times.Scan < CurTime() then
-		if self.Target and IsValid(self.Target) then return end
 		local entz = ents.FindInSphere(self:GetPos(),self.DNA.Range*4)
 		local C = 9999
 		for k, v in pairs(entz) do
-			if v.IsResource and v.IsMinable then
+			if self.MelonTeam:CanHeal(v) and v.IsStorageDepo then
 				if self:LineOfSight(v:LocalToWorld(Vector(0,0,5)),v) then
 					local Dist = v:GetPos():Distance(self:GetPos())
 					if Dist<C then
@@ -224,4 +222,15 @@ function ENT:ScanDropOff()
 		self.Target = Closest
 		self.Times.Scan=CurTime()+0.2
 	end
+end
+
+function ENT:DropOffResources(Ent)
+	for k,v in pairs(self.Inventory) do
+		self.MelonTeam:AddResource(k,v)
+	end
+	self.Inventory={}
+	
+	self:DrawAttack(self:GetPos(),Ent:GetPos())
+
+	Ent:EmitSound("items/battery_pickup.wav")
 end

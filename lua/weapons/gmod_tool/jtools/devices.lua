@@ -91,12 +91,12 @@ Tool.Primary = function(trace,ply,Settings)
 	
 	local Type = Settings.Spawns.T
 	if Type == "Melons" then
-		if not Singularity.Settings["ManualMelonspawn"] then
+		if not Singularity.Settings["ManualMelonspawn"] and not game.SinglePlayer() then
 			ply:SendColorChat("WarMelons",Color(30,150,255),"You Cannot Spawn: "..Settings.Spawns.N.." Right now! Reason: Manual Melon Spawns are Disabled!")
 			return false
 		end
 	elseif Type == "Tactical" or Type == "Strategic" then
-		if Singularity.Settings["EnforceBuildingCap"] then
+		if Singularity.Settings["EnforceBuildingCap"] and not game.SinglePlayer() then
 			if not ply:GetMTeam():CanMakeBuilding() then
 				ply:SendColorChat("WarMelons",Color(30,150,255),"You Cannot Spawn: "..Settings.Spawns.N.." Right now! Reason: You are at Structure Cap!")
 				return false

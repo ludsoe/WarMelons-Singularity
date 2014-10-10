@@ -71,6 +71,8 @@ LoadFile(ModPath.."sentrymedic.lua",1)
 LoadFile(ModPath.."noahcannon.lua",1)
 LoadFile(ModPath.."canister.lua",1)
 
+LoadFile(ModPath.."depot.lua",1)
+
 LoadFile(ModPath.."barracks.lua",1)
 LoadFile(IntPath.."barracks.lua",1)
 
