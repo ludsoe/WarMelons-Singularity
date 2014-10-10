@@ -10,10 +10,10 @@ Data.MelonDNA={
 	Speed=400,
 	Force=600,
 	Range=400,
-	Damage=2,
+	Damage=20,
 	AttackRate=0.5,
 	TrainTime=8,
-	Capacity=26
+	Capacity=100
 }
 
 Data.Name = "Mining Melon"

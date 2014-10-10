@@ -18,10 +18,12 @@ Data.Setup = function(self,Data,MyData)
 	self.Training = {A=false,S=0,E=0,T=""}
 	
 	self.CanAfford = function(self,Data)
-		if Data.ResourceCost then
-			for k,v in pairs(Data.ResourceCost) do
-				if not self.MelonTeam:CanUseResource(k,v) then
-					return false
+		if Singularity.Settings["MelonsReqResources"] then
+			if Data.ResourceCost then
+				for k,v in pairs(Data.ResourceCost) do
+					if not self.MelonTeam:CanUseResource(k,v) then
+						return false
+					end
 				end
 			end
 		end
@@ -50,10 +52,12 @@ Data.Setup = function(self,Data,MyData)
 			Singularity.GivePlyProp(Singularity.GetPropOwner(self),ent)
 			
 			ent:SetOrders(self:GetOrders())
-						
-			if Data.ResourceCost then
-				for k,v in pairs(Data.ResourceCost) do
-					self.MelonTeam:UseResource(k,v)
+			
+			if Singularity.Settings["MelonsReqResources"] then
+				if Data.ResourceCost then
+					for k,v in pairs(Data.ResourceCost) do
+						self.MelonTeam:UseResource(k,v)
+					end
 				end
 			end
 			

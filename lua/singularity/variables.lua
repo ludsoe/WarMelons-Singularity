@@ -11,6 +11,7 @@ Ig["PersistTeamBuildingCap"]=16
 Ig["EnforceBuildingCap"]=true
 Ig["ManualMelonspawn"]=false
 Ig["MelonsDoDamage"]=true
+Ig["MelonsReqResources"]=true
 
 Singularity.SettingNames = {}
 local Ig = Singularity.SettingNames
@@ -23,3 +24,4 @@ Ig["PersistTeamBuildingCap"]="Preset Team Structure Cap"
 Ig["EnforceBuildingCap"]="Melon Building Cap Enforcement"
 Ig["ManualMelonspawn"]="Melon From Tool Spawning"
 Ig["MelonsDoDamage"]="Melons Can Attack"
+Ig["MelonsReqResources"]="Melons Require Resources"

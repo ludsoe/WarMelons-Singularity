@@ -56,7 +56,13 @@ Tool.Open = function(Menu,Tab)
 		Tab[Set]:SetText(Text..tostring(Settings[Set]))
 		Utl:SyncSetting(Set,Settings[Set])
 	end)
-	
+
+	local Set,Text = "MelonsReqResources","Melons Require Resources: "	
+	Tab[Set] = Singularity.MT.ModAddButton(Mod,Text..tostring(Settings[Set]),function() 
+		Settings[Set] = not Settings[Set]
+		Tab[Set]:SetText(Text..tostring(Settings[Set]))
+		Utl:SyncSetting(Set,Settings[Set])
+	end)	
 end --This is clientside only, called when the tool is selected.
 
 Singularity.MT.AddTool("Admin Settings",Tool)
