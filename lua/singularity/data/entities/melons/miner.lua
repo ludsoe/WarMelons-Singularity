@@ -10,10 +10,10 @@ Data.MelonDNA={
 	Speed=400,
 	Force=600,
 	Range=400,
-	Damage=20,
+	Damage=10,
 	AttackRate=0.5,
 	TrainTime=8,
-	Capacity=100
+	Capacity=150
 }
 
 Data.Name = "Mining Melon"
@@ -57,8 +57,8 @@ Data.Think = function(self)
 		end
 	else
 		if self.Target and IsValid(self.Target) and not self.Target.IsMinable then
-			self:ManageMovement(self.Target:LocalToWorld(Vector(0,0,20)))
-			if self:GetPos():Distance(self.Target:GetPos())<120 then
+			self:ManageMovement(self.Target:LocalToWorld(Vector(0,0,30)),self.Target)
+			if self:GetPos():Distance(self.Target:GetPos())<200 then
 				self:DropOffResources(self.Target)
 			end
 		else

@@ -45,12 +45,12 @@ local function Normalize(Vec)
 	return Vec/Length
 end
 
-function ENT:MoveTrace(Target)
+function ENT:MoveTrace(Target,Ent)
 	local Parent = self:GetParent()
 	if self.IgnoreTrace then return false end
 	if not Parent or not IsValid(Parent) then
 		local Start = self:GetPos()
-		local tr = util.TraceLine({start = Start,endpos = Target+Start,filter = self} )
+		local tr = util.TraceLine({start = Start,endpos = Target+Start,filter = {self,Ent}} )
 		if tr.HitWorld then return false end
 		if tr.Hit then
 			return tr.HitPos:Distance(Start)<50
@@ -61,12 +61,12 @@ function ENT:MoveTrace(Target)
 	return true
 end
 
-function ENT:ManageMovement(Pos)
+function ENT:ManageMovement(Pos,Ent)
 	local angle1 = Pos - self:GetPos()
-	if self:GetPos():Distance(Pos)>50 then
+	if self:GetPos():Distance(Pos)>20 then
 		self:GetPhysicsObject():SetDamping(2, 0)
 		if self:GetVelocity():Length() < self.DNA.Speed then
-			if not self:MoveTrace(angle1) then 
+			if not self:MoveTrace(angle1,Ent) then 
 				self:GetPhysicsObject():ApplyForceCenter(Normalize(angle1)*self.DNA.Force)
 			end
 		end

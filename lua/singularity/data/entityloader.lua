@@ -89,7 +89,7 @@ LoadFile(ModPath.."barracks.lua",1)
 LoadFile(IntPath.."barracks.lua",1)
 
 LoadFile(ResPath.."melonium.lua",1)
---LoadFile(ResPath.."metal.lua",1)
+LoadFile(ResPath.."metal.lua",1)
 
 
 
