@@ -10,22 +10,22 @@ LoadFile("singularity/data/entityloader.lua",1)
 
 Singularity.PageData = Singularity.PageData or {}
 
-LoadFile("weapons/gmod_tool/gui_library.lua",1)
-LoadFile("weapons/gmod_tool/tool_funcs.lua",1)
-LoadFile("weapons/gmod_tool/jtooldata/infopopup.lua",1)
+LoadFile("weapons/gmod_tool/wm_gui_library.lua",1)
+LoadFile("weapons/gmod_tool/wm_tool_funcs.lua",1)
+LoadFile("weapons/gmod_tool/wmtooldata/infopopup.lua",1)
 
-LoadFile("weapons/gmod_tool/jtools/settings.lua",1)
-LoadFile("weapons/gmod_tool/jtools/orders.lua",1)
-LoadFile("weapons/gmod_tool/jtools/teammanage.lua",1)
-LoadFile("weapons/gmod_tool/jtools/devices.lua",1)
-LoadFile("weapons/gmod_tool/jtools/serversettings.lua",1)
+LoadFile("weapons/gmod_tool/wmtools/settings.lua",1)
+LoadFile("weapons/gmod_tool/wmtools/orders.lua",1)
+LoadFile("weapons/gmod_tool/wmtools/teammanage.lua",1)
+LoadFile("weapons/gmod_tool/wmtools/devices.lua",1)
+LoadFile("weapons/gmod_tool/wmtools/serversettings.lua",1)
 
 if game.SinglePlayer() then
-	LoadFile("weapons/gmod_tool/jtools/localiser.lua",1)
+	LoadFile("weapons/gmod_tool/wmtools/localiser.lua",1)
 end
 
 --Load all the tools we want to display.
-local Path = "weapons/gmod_tool/jtools/addon/"
+local Path = "weapons/gmod_tool/wmtools/addon/"
 Files = file.Find(Path.."*.lua", "LUA")
 for k, File in ipairs(Files) do
 	Msg("Loading: "..File.."...\n")
@@ -33,8 +33,8 @@ for k, File in ipairs(Files) do
 end
 
 TOOL.Category = "Construction"
-TOOL.Name = "Singularity Omni Tool"
-TOOL.Description = "Singularity Omni Tool"
+TOOL.Name = "MelonWars Omni Tool"
+TOOL.Description = "MelonWars Omni Tool"
 
 TOOL.AddToMenu = true -- Tell gmod not to add it. We will do it manually later!
 TOOL.Command = nil
@@ -76,7 +76,7 @@ if SERVER then
 		end	
 	end
 	
-	util.AddNetworkString('Jupiter_ToolHolster')
+	util.AddNetworkString('Singularity_ToolHolster')
 	function TOOL:Holster()
 		local ply = self:GetOwner()
 		if Selects[ply:Nick()] then 
@@ -84,20 +84,20 @@ if SERVER then
 			if Singularity.MT.Tools[Table.T] and Singularity.MT.Tools[Table.T].Holster then
 				Singularity.MT.Tools[Table.T].Holster(ply,Table.S)
 			end
-			net.Start( "Jupiter_ToolHolster" )
+			net.Start( "Singularity_ToolHolster" )
 			net.Send( ply )
 		end			
 	end
 
-	util.AddNetworkString('Jupiter_ToolMenu')
+	util.AddNetworkString('Singularityr_ToolMenu')
 	function TOOL:Reload()
 		local ply = self:GetOwner()
-		net.Start( "Jupiter_ToolMenu" )
+		net.Start( "Singularityr_ToolMenu" )
 		net.Send( ply )
 	end
 	
-	util.AddNetworkString('Jupiter_ToolSelect')
-	net.Receive("Jupiter_ToolSelect", function(length, client)
+	util.AddNetworkString('Singularity_ToolSelect')
+	net.Receive("Singularity_ToolSelect", function(length, client)
 		local Mode,Settings = net.ReadString(),util.JSONToTable(net.ReadString())
 		Selects[client:Nick()]={T=Mode,S=Settings}
 				
@@ -126,7 +126,7 @@ else
 			Singularity.MT.Tools[Tool].Holster(ply,Singularity.MT.SyncedSettings[Tool])
 		end	
 	end
-	net.Receive("Jupiter_ToolHolster", function() HolsterTool() end)
+	net.Receive("Singularity_ToolHolster", function() HolsterTool() end)
 	
-	net.Receive( "Jupiter_ToolMenu",Singularity.MT.OpenGui)
+	net.Receive( "Singularityr_ToolMenu",Singularity.MT.OpenGui)
 end

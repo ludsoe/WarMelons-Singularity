@@ -24,15 +24,19 @@ Data.ScrapModels = {
 
 Data.Setup = function(self,Data,MyData)
 	self.IsMinable = true
+	self.Times.Regen = CurTime()
 
 	if self.MetalOver then
 		self:SetAngles(self.MetalOver.Angles)
 		self:SetModel(self.MetalOver.Mod)
-		self.Resources["Metal"]=self.Metal
+		self.Resources["Metal"]=self.MetalOver.Metal
+		self.MaxMetal = self.MetalOver.Metal
 	else
 		self:SetAngles(self:LocalToWorldAngles(Angle(0,math.random(-180,180),0)))
 		self:SetModel(table.Random(MyData.ScrapModels))
-		self.Resources["Metal"]=math.Round(math.random(5000,6000))
+		local Metal = math.Round(math.random(5000,6000))
+		self.Resources["Metal"] = Metal
+		self.MaxMetal = Metal
 	end
 end
 
@@ -41,7 +45,15 @@ Data.MyModel = "models/props_vehicles/car004a.mdl"
 
 Data.ThinkSpeed = 0
 Data.Think = function(self)
-
+	local RegenRate = 20
+	if self.Times.Regen < CurTime() then
+		self.Times.Regen = CurTime()+0.5
+		if self.Resources["Metal"]+RegenRate < self.MaxMetal then
+			self.Resources["Metal"] = self.Resources["Metal"]+RegenRate
+		else
+			self.Resources["Metal"] = self.MaxMetal
+		end
+	end
 end
 
 Singularity.Entities.MakeModule(Data)

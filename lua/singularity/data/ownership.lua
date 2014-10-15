@@ -55,4 +55,4 @@ function LoadPP()
 	end
 end
 
-hook.Add("InitPostEntity","LSSOwnerShip", LoadPP)
+hook.Add("InitPostEntity","WarMelons OwnerShip", LoadPP)

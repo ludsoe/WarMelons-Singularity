@@ -18,9 +18,9 @@ function ENT:ZoneCheck(Pos,Size)
     return Clear
 end
 
-function ENT:LeapTrace(Height,Pos)
+function ENT:LeapTrace(Scale)
 	local n = math.Rand(0,360)
-	local d = math.Rand(10,200)
+	local d = math.Rand(10,200)*(Scale or 1)
 	local SPos = self:LocalToWorld(Vector(0,0,80))
 	if Pos then SPos = Pos end
 	local trace = {}
@@ -32,8 +32,8 @@ function ENT:LeapTrace(Height,Pos)
 	return Tr
 end
 
-function ENT:LeapGrowth(O)
-	local tr,tre = self:LeapTrace()
+function ENT:LeapGrowth(Mult)
+	local tr,tre = self:LeapTrace(Mult)
 	local SpreadDist = 50--70
 	if tr.Hit and tr.HitWorld then
 		if not self:ZoneCheck(tr.HitPos,SpreadDist) then

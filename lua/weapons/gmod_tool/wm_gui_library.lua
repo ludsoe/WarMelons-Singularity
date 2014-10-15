@@ -7,7 +7,7 @@ Singularity.MT.ToolBindings = Singularity.MT.ToolBindings or {}
 Singularity.MT.SelectedTool = Singularity.MT.SelectedTool or ""
 Singularity.MT.OldSelected = Singularity.MT.OldSelected or ""
 
-local SettingsName = "jupiteromnitool.txt"
+local SettingsName = "warmelonsomnitool.txt"
 
 function Singularity.MT.SaveSettings() 
 	local Data = {Settings=Singularity.MT.Settings}
@@ -21,8 +21,6 @@ function Singularity.MT.LoadSettings()
 		if File == "" then print("ERROR! File Is Blank!") file.Delete(SettingsName) return end
 		local Data = util.JSONToTable(File)
 		Singularity.MT.Settings = Data.Settings
-		
-		print("Jupiter Settings Loaded!")
 	end
 end
 
@@ -40,7 +38,7 @@ function Singularity.MT.ApplySettings()
 	end
 	
 	local Data = util.TableToJSON(Table.Server) or ""
-	net.Start('Jupiter_ToolSelect')
+	net.Start('Singularity_ToolSelect')
 		net.WriteString(Tool)
 		net.WriteString(Data)
 	net.SendToServer()
@@ -76,7 +74,7 @@ function Singularity.MT.OpenGui()
 	
 	Base = Singularity.MenuCore.CreateFrame({x=700,y=400},true,false,false,true)
 	Base:Center()
-	Base:SetTitle( "Jupiter OmniTool" )
+	Base:SetTitle( "WarMelons OmniTool" )
 	Base:MakePopup()
 	Super.Base = Base
 	

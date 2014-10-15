@@ -1,6 +1,5 @@
 
 function Singularity.MT.CreateDevice(ply, trace, Class, Model, Ang)
-	--if !ply:CheckLimit(self.CleanupGroup) then return end
 	local ent = ents.Create( Class )
 	if not ent:IsValid() then return end
 		
@@ -15,7 +14,7 @@ function Singularity.MT.CreateDevice(ply, trace, Class, Model, Ang)
 	
 	Singularity.GivePlyProp(ply,ent)
 		
-	ply:AddCleanup("Jupiter Device",ent)
+	ply:AddCleanup("WarMelons Device",ent)
 
 	undo.Create("Entity: "..Class)
 		undo.AddEntity(ent)
