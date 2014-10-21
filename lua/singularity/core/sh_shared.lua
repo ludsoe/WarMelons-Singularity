@@ -24,5 +24,10 @@ if SERVER then
 	hook.Add("PhysgunPickup", "PropProtection", PropProtect.PlayerCanTouchSafe)
 end
 
+function Normalize(Vec)
+	local Length = Vec:Length()
+	return Vec/Length
+end
+
 
 

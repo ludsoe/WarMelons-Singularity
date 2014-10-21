@@ -60,24 +60,6 @@ function ENT:DrawAttack(S,E)
 	util.Effect( "attack_beam", effectdata )
 end
 
-function ENT:HoverAtAlt()
-	local MyPos,Pos = self:GetPos(),self:GetPos()
-	Pos.z = self.HoverAlt
-	local angle1 = Pos - MyPos
-	
-	
-	local Dis = math.Clamp((MyPos:Distance(Pos)/100),0,10)
-	local Phys = self:GetPhysicsObject()
-	local Mass = Phys:GetMass()
-	
-	if Dis > 0 then
-		Phys:ApplyForceCenter((Normalize(angle1)*(self.DNA.Force*Mass)*Dis))
-	end
-	if self:GetVelocity():Length() > 5 then
-		Phys:ApplyForceCenter(-(self:GetVelocity()*Vector(0,0,0.9))*Mass)
-	end
-end
-
 function ENT:Attack(Ent)
 	local EPos = Ent:GetPos()
 	if not Ent or not IsValid(Ent) then return end

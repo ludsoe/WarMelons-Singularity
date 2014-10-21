@@ -22,11 +22,7 @@ else
 	
 	function VGUI:SetupQueue(Items) self:SetupList(self.BQ,Items) end
 	function VGUI:ToggleLoop(set)
-		if not set==nil then
-			self.WillLoop = set 
-		else
-			self.WillLoop = not self.WillLoop
-		end
+		self.WillLoop = set or not self.WillLoop or true
 		self.Loop:SetText("Queue Loop: "..tostring(self.WillLoop))
 	end
 	

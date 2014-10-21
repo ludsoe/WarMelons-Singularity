@@ -4,7 +4,8 @@ local Teams,NDat = Singularity.Teams,Utl.NetMan
 local ENT,PLY = FindMetaTable( "Entity" ),FindMetaTable( "Player" )
 
 local Develpers = {
-"STEAM_0:1:21922427"--Spudsoe
+"STEAM_0:1:21922427",--Spudsoe
+"STEAM_0:1:23264416"--Mechanos
 }
 
 if SERVER then
@@ -170,7 +171,7 @@ function PLY:OrderSelection(v,Ent,Pos)
 			
 		end
 	else
-		if v.IsBarracks or v.IsMelon then
+		if v.IsBarracks or v.IsMelon or v.MovementOrderable then
 			v:AddOrder({T="Goto",V=Pos})
 		end
 	end

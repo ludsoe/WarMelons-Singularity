@@ -1,6 +1,6 @@
 local Data = {
-	Type="Melons",
-	Class="swm_melon",
+	Type="Strategic",
+	Class="swm_ent",
 	Wire = {},
 	Extra = {},
 	Info = {}
@@ -8,14 +8,14 @@ local Data = {
 
 Data.MelonDNA={
 	Speed=150,
-	Force=3,
+	Force=4,
 	TrainTime=10
 }
 
-Data.Name = "Lift Melon"
-Data.MyModel = "models/props_junk/watermelon01.mdl"
-Data.MaxHealth = 400
-Data.Weight = 300
+Data.Name = "Hover Engine"
+Data.MyModel = "models/combine_helicopter/helicopter_bomb01.mdl"
+Data.MaxHealth = 1200
+Data.Weight = 1000
 
 Data.ResourceCost = {}
 Data.ResourceCost["Melonium"]=400
@@ -33,8 +33,13 @@ Data.Setup = function(self,Data,MyData)
 	self:SetMaterial("models/debug/debugwhite")
 	
 	self.IgnoreTrace = true
+	self.MovementOrderable = true
 	
 	self.HoverAlt = self:GetPos().z
+	
+	self.OrderFuncs["Goto"]=function(self,Dat)
+		return self:ManageMovement(Dat.V)
+	end
 end
 
 Data.ThinkSpeed = 0

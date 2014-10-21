@@ -39,39 +39,3 @@ function ENT:BSRemove()
 		self.MelonTeam:DeRegisterMelon(self)
 	end
 end
-
-local function Normalize(Vec)
-	local Length = Vec:Length()
-	return Vec/Length
-end
-
-function ENT:MoveTrace(Target,Ent)
-	local Parent = self:GetParent()
-	if self.IgnoreTrace then return false end
-	if not Parent or not IsValid(Parent) then
-		local Start = self:GetPos()
-		local tr = util.TraceLine({start = Start,endpos = Target+Start,filter = {self,Ent}} )
-		if tr.HitWorld then return false end
-		if tr.Hit then
-			return tr.HitPos:Distance(Start)<50
-		else
-			return false
-		end
-	end
-	return true
-end
-
-function ENT:ManageMovement(Pos,Ent)
-	local angle1 = Pos - self:GetPos()
-	if self:GetPos():Distance(Pos)>20 then
-		self:GetPhysicsObject():SetDamping(2, 0)
-		if self:GetVelocity():Length() < self.DNA.Speed then
-			if not self:MoveTrace(angle1,Ent) then 
-				self:GetPhysicsObject():ApplyForceCenter(Normalize(angle1)*self.DNA.Force)
-			end
-		end
-	else
-		return true
-	end
-	return false
-end

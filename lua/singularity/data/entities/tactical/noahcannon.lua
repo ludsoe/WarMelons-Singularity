@@ -14,7 +14,7 @@ local OnHit = function(tr,data)
 	
 	ent:SetModel( "models/props_combine/headcrabcannister01a.mdl" )
 	ent:SetPos( tr.HitPos )
-	ent:SetAngles(-tr.Normal:Angle())
+	ent:SetAngles(tr.Normal:Angle())
 		
 	ent:Spawn() ent:Activate()
 	if tr.Entity and not tr.HitWorld then
@@ -52,14 +52,19 @@ Data.Setup = function(self,Data,MyData)
 		if self:CanFire() then
 			self.NextFire = CurTime()+ReloadTime
 			
-			local Batch = {}
+			local Batch,Rem = {},{}
 			for n, v in pairs( self.StoredMelons ) do
 				if table.Count(Batch)<20 then
 					table.insert(Batch,v)
-					table.remove(self.StoredMelons,n)
+					table.insert(Rem,n)
+					--table.remove(self.StoredMelons,n)
 				else
 					break
 				end
+			end
+			
+			for n, v in pairs( Rem ) do
+				table.remove(self.StoredMelons,v)
 			end
 			
 			local MyData = {

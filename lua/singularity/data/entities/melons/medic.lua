@@ -8,7 +8,7 @@ local Data = {
 
 Data.MelonDNA={
 	Speed=400,
-	Force=600,
+	Force=1,
 	Range=200,
 	Damage=5,
 	AttackRate=0.2,
@@ -18,6 +18,7 @@ Data.MelonDNA={
 Data.Name = "Medic Melon"
 Data.MyModel = "models/props_junk/watermelon01.mdl"
 Data.MaxHealth = 300
+Data.Weight = 300
 
 Data.ResourceCost = {}
 Data.ResourceCost["Melonium"]=120

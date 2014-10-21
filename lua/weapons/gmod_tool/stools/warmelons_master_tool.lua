@@ -41,6 +41,32 @@ TOOL.Command = nil
 
 TOOL.ConfigName = ""
 
+function TOOL:UpdateGhostEntity( ent, player,angle )
+	if !ent or !ent:IsValid() then return end
+	local trace = player:GetEyeTrace()
+		
+	ent:SetAngles( trace.HitNormal:Angle() + (angle or Angle(90,0,0)) )
+	ent:SetPos( trace.HitPos - trace.HitNormal * ent:OBBMins().z )
+	
+	ent:SetNoDraw( false )
+end
+
+function TOOL:MakeGhost(model)
+	if model then
+		if not self.GhostEntity or not IsValid(self.GhostEntity) or self.GhostEntity:GetModel() != model then
+			local trace = self:GetOwner():GetEyeTrace()
+			self:MakeGhostEntity( Model(model), trace.HitPos, trace.HitNormal:Angle() )
+		end
+		self:UpdateGhostEntity( self.GhostEntity, self:GetOwner() )
+	end
+end
+
+function TOOL:RemoveGhost()
+	if IsValid(self.GhostEntity) then
+		self.GhostEntity:Remove()
+	end
+end
+
 if SERVER then
 	local Selects = {}
 	
@@ -70,9 +96,19 @@ if SERVER then
 		local ply = self:GetOwner()
 		if Selects[ply:Nick()] then 
 			local Table = Selects[ply:Nick()]
-			if Singularity.MT.Tools[Table.T] and Singularity.MT.Tools[Table.T].Think then
-				Singularity.MT.Tools[Table.T].Think(ply,Table.S)
+			local Tool = Singularity.MT.Tools[Table.T]
+			
+			if Tool and Tool.Think then
+				Tool.Think(ply,Table.S)
 			end
+			
+			if game.SinglePlayer() then
+				if Table.S.Spawns then
+					self:MakeGhost(Table.S.Spawns.M)
+				else
+					self:RemoveGhost()
+				end
+			end	
 		end	
 	end
 	
@@ -86,6 +122,10 @@ if SERVER then
 			end
 			net.Start( "Singularity_ToolHolster" )
 			net.Send( ply )
+					
+			if game.SinglePlayer() then
+				self:RemoveGhost()
+			end
 		end			
 	end
 
@@ -114,8 +154,24 @@ else
 	function TOOL:Think()
 		local ply = self:GetOwner()
 		local Tool = Singularity.MT.SelectedTool
-		if Tool ~= "" and Singularity.MT.Tools[Tool].Think then
-			Singularity.MT.Tools[Tool].Think(ply,Singularity.MT.SyncedSettings[Tool])
+		if Tool ~= "" then
+			if  Singularity.MT.Tools[Tool].Think then
+				Singularity.MT.Tools[Tool].Think(ply,Table)
+			end
+				
+			if not game.SinglePlayer() then
+				if Table.Server.Spawns then
+					self:MakeGhost(Table.Server.Spawns.M)
+				else
+					self:RemoveGhost()
+				end
+			end
+		end
+	end
+		
+	function TOOL:Holster()
+		if not game.SinglePlayer() then
+			self:RemoveGhost()
 		end
 	end
 	

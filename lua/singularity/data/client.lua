@@ -6,23 +6,11 @@ Utl:HookNet("SingEntDatSync","",function(D)
 	--PrintTable(D.T)
 end)
 
-Utl:HookNet("MelonsSyncOrders","",function(D)
-	if D.E and IsValid(D.E) then
-		D.E.Orders = table.Merge(D.E.Orders or {},D.T)
-	end
-end)
-
 Utl:HookNet("MelonsSyncOrderComplete","",function(D)
 	if D.E and IsValid(D.E) then
 		if D.E.Orders then
 			table.remove(D.E.Orders,1)
 		end
-	end
-end)
-
-Utl:HookNet("MelonsClearOrders","",function(D)
-	if D.E and IsValid(D.E) then
-		D.E.Orders={}
 	end
 end)
 

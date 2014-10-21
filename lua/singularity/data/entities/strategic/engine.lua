@@ -1,42 +1,41 @@
 local Data = {
-	Type="Melons",
-	Class="swm_melon",
+	Type="Strategic",
+	Class="swm_ent",
 	Wire = {},
 	Extra = {},
 	Info = {}
 }
 
 Data.MelonDNA={
-	Speed=400,
-	Force=1,
-	Range=200,
-	Damage=50,
-	AttackRate=1,
-	TrainTime=4
+	Speed=150,
+	Force=3,
+	TrainTime=10
 }
 
-Data.Name = "Soldier Melon"
-Data.MyModel = "models/props_junk/watermelon01.mdl"
-Data.MaxHealth = 300
-Data.Weight = 300
+Data.Name = "Power Engine"
+Data.MyModel = "models/combine_helicopter/helicopter_bomb01.mdl"
+Data.MaxHealth = 1200
+Data.Weight = 1200
 
 Data.ResourceCost = {}
-Data.ResourceCost["Melonium"]=80
+Data.ResourceCost["Melonium"]=300
 
 Data.Setup = function(self,Data,MyData)
 	self:SetMaterial("models/debug/debugwhite")
+	
+	self.IgnoreTrace = true
+	self.MovementOrderable = true
+	
+	self.OrderFuncs["Goto"]=function(self,Dat)
+		return self:ManageMovement(Dat.V)
+	end
 end
 
 Data.ThinkSpeed = 0
 Data.Think = function(self)
 	self:RunOrders()
-	self:ScanEnemys()
-	
+
 	self.SyncData.Health = Singularity.GetHealth( self ).."/"..Singularity.GetMaxHealth( self )
-	
-	if IsValid(self.Target) then
-		self:Attack(self.Target)
-	end	
 end
 
 Singularity.Entities.MakeModule(Data)

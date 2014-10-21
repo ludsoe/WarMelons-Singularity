@@ -63,8 +63,10 @@ end
 --Ship Modules.
 local ModPath = "singularity/data/entities/"
 local IntPath = "singularity/data/userinterfaces/"
-local MelPath = "singularity/data/entities/melons/"
-local ResPath = "singularity/data/entities/resources/"
+local MelPath = ModPath.."melons/"
+local ResPath = ModPath.."resources/"
+local TactPath = ModPath.."tactical/"
+local StraPath = ModPath.."strategic/"
 
 LoadFile(MelPath.."scout.lua",1)
 LoadFile(MelPath.."rapid.lua",1)
@@ -76,21 +78,21 @@ LoadFile(MelPath.."medic.lua",1)
 LoadFile(MelPath.."liftmelon.lua",1)
 LoadFile(MelPath.."miner.lua",1)
 
-LoadFile(ModPath.."sentrybasic.lua",1)
-LoadFile(ModPath.."sentrysniper.lua",1)
-LoadFile(ModPath.."sentrymedic.lua",1)
+LoadFile(TactPath.."sentrybasic.lua",1)
+LoadFile(TactPath.."sentrysniper.lua",1)
+LoadFile(TactPath.."sentrymedic.lua",1)
+LoadFile(TactPath.."noahcannon.lua",1)
 
-LoadFile(ModPath.."noahcannon.lua",1)
-LoadFile(ModPath.."canister.lua",1)
-
-LoadFile(ModPath.."depot.lua",1)
-
-LoadFile(ModPath.."barracks.lua",1)
-LoadFile(IntPath.."barracks.lua",1)
+LoadFile(StraPath.."depot.lua",1)
+LoadFile(StraPath.."barracks.lua",1)
+LoadFile(StraPath.."engine.lua",1)
+LoadFile(StraPath.."hover.lua",1)
 
 LoadFile(ResPath.."melonium.lua",1)
 LoadFile(ResPath.."metal.lua",1)
 
+LoadFile(IntPath.."barracks.lua",1)
+LoadFile(ModPath.."canister.lua",1)
 
 
 

@@ -44,7 +44,11 @@ function ENT:Compile(Data,ply,Team)
 	self.ModuleData = MyData
 	
 	self.DNA = MyData.MelonDNA
-
+	
+	if MyData.Weight then
+		self:GetPhysicsObject():SetMass(MyData.Weight)
+	end
+	
 	if self.IsResource then
 	
 	else
@@ -121,3 +125,4 @@ include("includes/extra.lua")
 include("includes/dupesupport.lua")
 include("includes/networking.lua")
 include("includes/orders.lua")
+include("includes/movement.lua")
