@@ -1,6 +1,11 @@
 local Singularity = Singularity --Localise the global table for speed.
 local Utl = Singularity.Utl --Makes it easier to read the code.
 
+local function Normalize(Vec)
+	local Length = Vec:Length()
+	return Vec/Length
+end
+
 function ENT:MoveTrace(Target,Ent)
 	local Parent = self:GetParent()
 	if self.IgnoreTrace then return false end

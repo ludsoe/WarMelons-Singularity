@@ -11,8 +11,8 @@ local Data = {
 
 Data.MelonDNA={
 	Range=600,
-	Damage=100,
-	AttackRate=0.2
+	Damage=80,
+	AttackRate=0.4
 }
 
 Data.Name = "Basic Sentry"

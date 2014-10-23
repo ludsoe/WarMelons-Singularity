@@ -3,11 +3,15 @@ MelonE2 = {}
 
 function MelonE2.CanCommand(self,ent)
 	local myteam = self.player:GetMTeam().name
-	local enteam = ent.MelonTeam
+	local enteam = ent.MelonTeam.name
 	if not ent.MelonOrders then return false end
 	if self.player:IsAdmin() then return true end
 	if myteam == enteam then return true end
 	return false 
+end
+
+function MelonE2.E2Team(self)
+	return self.player:GetMTeam()
 end
 
 e2function number entity:wmismelon()
@@ -17,11 +21,44 @@ e2function number entity:wmismelon()
 	return 1
 end
 
+e2function number entity:wmhasmelonteam()
+	if not IsValid(this) then return 0 end
+	if not this.MelonTeam then return 0 end
+	if this.MelonTeam then return 1 end
+	return 0
+end
+
+e2function string entity:wmgetteamname()
+	if not IsValid(this) then return "" end
+	if not this.MelonTeam then return "" end
+	if this.MelonTeam then return this.MelonTeam.name or "" end
+	return ""
+end
+
+-- 0 hostile 1 friendly 2 nuetral
+e2function number entity:wmisfriendly()
+	if not IsValid(this) then return 2 end
+	if not this.MelonTeam then return 2 end
+	local R = MelonE2.E2Team(self):GetRelations(this.MelonTeam)
+	if R == "Allied" then
+		return 1
+	elseif R == "Hostile" then
+		return 0
+	end
+	return 2
+end
+
 e2function number entity:wmisbarracks()
 	if not IsValid(this) then return 0 end
 	if not this.IsBarracks then return 0 end
 	if not this.IsBarracks == true then return 0 end
 	return 1
+end
+
+e2function string entity:wmgettype()
+	if not IsValid(this) then return "" end
+	if not this.InitData then return "" end
+	return self.InitData.N or ""
 end
 
 e2function number entity:wmisminable()
@@ -110,6 +147,15 @@ e2function array entity:wmgetbuildqueue()
 		return Array
 	end
 	return {}
+end
+
+e2function void entity:wmclearbuildqueue()
+	if not IsValid(this) then return end
+	if not this.MelonOrders then return end
+	if not this.IsBarracks then return end
+	if MelonE2.CanCommand(self,this) then
+		this:ClearQueue()
+	end
 end
 
 e2function array wmgetmelontypes()

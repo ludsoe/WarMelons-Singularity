@@ -155,6 +155,8 @@ else
 		local ply = self:GetOwner()
 		local Tool = Singularity.MT.SelectedTool
 		if Tool ~= "" then
+			local Table = Singularity.MT.SyncedSettings[Tool]
+
 			if  Singularity.MT.Tools[Tool].Think then
 				Singularity.MT.Tools[Tool].Think(ply,Table)
 			end

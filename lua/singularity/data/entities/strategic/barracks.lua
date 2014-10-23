@@ -67,6 +67,11 @@ Data.Setup = function(self,Data,MyData)
 		end
 	end
 	
+	self.ClearQueue = function(self)
+		self.BuildQueue = {}
+		self.Training{A=false,S=0,E=0,T=""}
+	end
+	
 	self.AddToQueue = function(self,Name)
 		if Singularity.Entities.Modules["Melons"][Name] then
 			SendAdd(self,Name)

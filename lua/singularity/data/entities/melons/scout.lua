@@ -7,9 +7,9 @@ local Data = {
 }
 
 Data.MelonDNA={
-	Speed=600,
+	Speed=800,
 	Force=1.5,
-	Range=120,
+	Range=150,
 	Damage=25,
 	AttackRate=0.5,
 	TrainTime=2
@@ -17,7 +17,7 @@ Data.MelonDNA={
 
 Data.Name = "Swarm Melon"
 Data.MyModel = "models/props_junk/watermelon01.mdl"
-Data.MaxHealth = 50
+Data.MaxHealth = 80
 Data.Weight = 300
 
 Data.ResourceCost = {}
