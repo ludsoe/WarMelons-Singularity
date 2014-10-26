@@ -103,6 +103,7 @@ if SERVER then
 			end
 			
 			if game.SinglePlayer() then
+				if not Table then return end
 				if Table.S.Spawns then
 					self:MakeGhost(Table.S.Spawns.M)
 				else
@@ -162,6 +163,7 @@ else
 			end
 				
 			if not game.SinglePlayer() then
+				if not Table then return end
 				if Table.Server.Spawns then
 					self:MakeGhost(Table.Server.Spawns.M)
 				else
