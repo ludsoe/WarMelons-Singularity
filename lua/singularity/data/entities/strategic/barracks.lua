@@ -69,7 +69,7 @@ Data.Setup = function(self,Data,MyData)
 	
 	self.ClearQueue = function(self)
 		self.BuildQueue = {}
-		self.Training{A=false,S=0,E=0,T=""}
+		self.Training = {A=false,S=0,E=0,T=""}
 	end
 	
 	self.AddToQueue = function(self,Name)
@@ -122,6 +122,13 @@ end
 Data.OnUse = function(self,name,activator,caller)
 	BarracksMenu(activator,self)
 end
+
+Data.HelpType = "Structures"
+
+Data.HelpInfo = [[The Barracks is where you train all your 
+standard melons. To train melons first you must hit 
+Use(aka E) on the barracks and setup a build queue.
+]]
 
 Singularity.Entities.MakeModule(Data)
 

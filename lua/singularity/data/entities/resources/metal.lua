@@ -56,4 +56,10 @@ Data.Think = function(self)
 	end
 end
 
+Data.HelpType = "Resources"
+
+Data.HelpInfo = [[Metal is used in the construction
+of structures.
+]]
+
 Singularity.Entities.MakeModule(Data)

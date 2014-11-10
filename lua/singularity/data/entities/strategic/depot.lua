@@ -30,4 +30,10 @@ Data.Think = function(self)
 	self.SyncData["Inventory:"]=Txt.."]"
 end
 
+Data.HelpType = "Structures"
+
+Data.HelpInfo = [[The Resource depot is where mining melons
+deposit mined resources.
+]]
+
 Singularity.Entities.MakeModule(Data)

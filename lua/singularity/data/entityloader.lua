@@ -1,8 +1,7 @@
 local Singularity = Singularity --MAH SPEED
 local LoadFile = Singularity.LoadFile --Lel Speed.
 
-Singularity.Entities = {}
-Singularity.Entities.Modules = {}
+Singularity.Entities = {Modules = {},WMHelp = {Incomplete={}}}
 
 local Entities = Singularity.Entities
 
@@ -10,6 +9,14 @@ function Entities.RegisterModule(Name,Type,Data,Base)
 	if not Entities.Modules[Type] then
 		Entities.Modules[Type]={}
 	end
+	
+	Base.HelpType = Base.HelpType or "Incomplete"
+	
+	if not Entities.WMHelp[Base.HelpType] then
+		Entities.WMHelp[Base.HelpType] = {}
+	end
+	
+	Entities.WMHelp[Base.HelpType][Name] = {N=Data.N,M=Data.M,I=Base.HelpInfo or "There is no Info on this."}
 	
 	Entities.Modules[Type][Name]={M=Data,E=Base}
 end
@@ -93,6 +100,8 @@ LoadFile(ResPath.."metal.lua",1)
 
 LoadFile(IntPath.."barracks.lua",1)
 LoadFile(ModPath.."canister.lua",1)
+
+LoadFile("singularity/data/helpinfo.lua",1)
 
 
 

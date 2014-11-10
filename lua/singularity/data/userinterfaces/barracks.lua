@@ -21,9 +21,15 @@ else
 	end
 	
 	function VGUI:SetupQueue(Items) self:SetupList(self.BQ,Items) end
+	
 	function VGUI:ToggleLoop(set)
-		self.WillLoop = set or not self.WillLoop or true
+		if set~=nil then 
+			self.WillLoop = set 
+		else 
+			self.WillLoop = not self.WillLoop or true
+		end
 		self.Loop:SetText("Queue Loop: "..tostring(self.WillLoop))
+		print(tostring(self.WillLoop))
 	end
 	
 	function VGUI:DoDescription(Dat)
@@ -56,6 +62,16 @@ else
 		else
 			MD:SetModel("models/maxofs2d/logo_gmod_b.mdl") MD:SetCamPos(Vector(0,80,50)) MD:SetLookAt(Vector(0,0,10))
 		end
+	end
+	
+	function VGUI:SendData(Clear)
+		local Data = {Name="barracks_setup_queue",Val=1,Dat={
+			{N="E",T="E",V=self.Ent},
+			{N="T",T="T",V=self.BQue or {}},
+			{N="B",T="B",V=self.WillLoop},
+			{N="C",T="B",V=Clear}
+		}}
+		NDat.AddData(Data)
 	end
 	
 	function VGUI:Init()
@@ -105,12 +121,7 @@ else
 		finish:SetText( "Finish" )
 		finish.DoClick = function ()
 			if table.Count(self.BQue or {}) > 0 then
-				local Data = {Name="barracks_setup_queue",Val=1,Dat={
-					{N="E",T="E",V=self.Ent},
-					{N="T",T="T",V=self.BQue or {}},
-					{N="B",T="B",V=self.WillLoop}
-				}}
-				NDat.AddData(Data)
+				self:SendData(true)
 			end
 			
 			FactoryMenu:Remove()
@@ -139,12 +150,15 @@ else
 		Clear.DoClick = function ()
 			self.BQue = {}
 			self:SetupList(buildque,self.BQue)
+			
+			self:SendData(true)
 		end
 		
 		self.Loop = Singularity.MenuCore.CreateButton(FactoryMenu,{x=180,y=40},{x=520,y=275})
 		self.Loop:SetText( "Queue Loop: "..tostring(self.WillLoop) )
 		self.Loop.DoClick = function()
 			self:ToggleLoop(not self.WillLoop)
+			self:SendData(false)
 		end
 				
 	end
@@ -182,22 +196,32 @@ Utl:HookNet("barracks_setup_queue","",function(D,P)
 	local Ent = D.E
 
 	if Ent and IsValid(Ent) then
-		Ent.BuildQueue = D.T
-		Ent.WillLoop = D.B
-		
 		if SERVER then		
+			if D.C then
+				Ent:ClearQueue()
+			end
+			
 			NDat.AddDataAll({Name="barracks_setup_queue",Val=1,Dat={
 				{N="E",T="E",V=Ent},
 				{N="T",T="T",V=D.T or {}},
-				{N="B",T="B",V=D.B}
+				{N="B",T="B",V=D.B},
+				{N="C",T="B",V=D.C or false}
 			}})
 		else
 			local Window = Glob.Window
 			if Window and IsValid(Window) and Window.Ent == Ent then
 				Window:ToggleLoop(D.B)
 				Window:SetupQueue(D.T)
+				
+				if D.C then
+					Ent.TrainS = 0
+					Ent.TrainE = 0
+				end
 			end
 		end
+		
+		Ent.BuildQueue = D.T
+		Ent.WillLoop = D.B
 	end
 end)
 

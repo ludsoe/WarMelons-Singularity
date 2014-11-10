@@ -9,6 +9,11 @@ local Data = {
 	Info = {}
 }
 
+local function Normalize(Vec)
+	local Length = Vec:Length()
+	return Vec/Length
+end
+
 Data.Setup = function(self,Data,MyData)
 	self:EmitSound("npc/env_headcrabcanister/explosion.wav")
 	
@@ -87,5 +92,7 @@ Data.Think = function(self)
 	self.SyncData.Health = Singularity.GetHealth( self ).."/"..Singularity.GetMaxHealth( self )	
 	self.SyncData["Loaded Melons"] = table.Count(self.StoredMelons)
 end
+
+Data.HelpType = "Hidden"
 
 Singularity.Entities.MakeModule(Data)

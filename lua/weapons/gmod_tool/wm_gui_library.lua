@@ -18,11 +18,16 @@ end
 function Singularity.MT.LoadSettings()
 	if file.Exists(SettingsName,"DATA") then
 		local File = file.Read(SettingsName,"DATA")
-		if File == "" then print("ERROR! File Is Blank!") file.Delete(SettingsName) return end
+		if File == "" then 
+			print("ERROR! File Is Blank!") file.Delete(SettingsName) return
+		else
+			print("File Has settings!")
+		end
 		local Data = util.JSONToTable(File)
 		Singularity.MT.Settings = Data.Settings
 	end
 end
+Singularity.MT.LoadSettings()
 
 function Singularity.MT.ApplySettings()
 	local Tool = Singularity.MT.SelectedTool

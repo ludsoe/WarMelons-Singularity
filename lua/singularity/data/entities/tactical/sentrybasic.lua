@@ -29,4 +29,11 @@ Data.Think = function(self)
 	end	
 end
 
+Data.HelpType = "Structures"
+
+Data.HelpInfo = [[The Basic Sentry is a defensive unit
+thats highly effective at taking out swarms
+of melons with its rapid fire high damage attacks.
+]]
+
 Singularity.Entities.MakeModule(Data)

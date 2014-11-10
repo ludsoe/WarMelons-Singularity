@@ -92,4 +92,10 @@ Data.Think = function(self)
 	end
 end
 
+Data.HelpType = "Resources"
+
+Data.HelpInfo = [[Melonium is a crystaline resource
+used in the cloning process of melons.
+]]
+
 Singularity.Entities.MakeModule(Data)

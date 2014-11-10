@@ -109,6 +109,10 @@ function ENT:Think()
 			self.Times.Welds = CurTime()+5
 			self:TeamBaseWelds()
 		end
+		
+		if self:WaterLevel() >= 2 then
+			Singularity.DealDamage(self,self:GetPos(),10,self,self)
+		end
 	end
 	
 	self:NextThink(CurTime()+0.1)

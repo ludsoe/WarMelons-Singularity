@@ -29,4 +29,13 @@ Data.Think = function(self)
 	end	
 end
 
+Data.HelpType = "Structures"
+
+Data.HelpInfo = [[The Sniper Sentry is a defensive unit
+specialised towards dealing high damage
+over long ranges. As such its great for
+taking out strong units before they come
+into range of your base.
+]]
+
 Singularity.Entities.MakeModule(Data)

@@ -23,9 +23,14 @@ function LoadPP()
 		local metaply = FindMetaTable("Player")
 
 		function Singularity.GivePlyProp(owner,prop)
-			prop.LSSOwner = owner
-			if owner:IsPlayer() then
-				Debug("Entity: "..tostring(prop).." Given to "..owner:Nick())
+			if type(owner) == "string" then
+				prop.LSSOwner = nil
+				Debug("Entity: "..tostring(prop).." Is now Ownerless ")
+			else
+				prop.LSSOwner = owner
+				if owner:IsPlayer() then
+					Debug("Entity: "..tostring(prop).." Given to "..owner:Nick())
+				end
 			end
 		end
 

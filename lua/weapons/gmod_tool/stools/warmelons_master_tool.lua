@@ -14,11 +14,12 @@ LoadFile("weapons/gmod_tool/wm_gui_library.lua",1)
 LoadFile("weapons/gmod_tool/wm_tool_funcs.lua",1)
 LoadFile("weapons/gmod_tool/wmtooldata/infopopup.lua",1)
 
-LoadFile("weapons/gmod_tool/wmtools/settings.lua",1)
+--LoadFile("weapons/gmod_tool/wmtools/settings.lua",1)
 LoadFile("weapons/gmod_tool/wmtools/orders.lua",1)
 LoadFile("weapons/gmod_tool/wmtools/teammanage.lua",1)
 LoadFile("weapons/gmod_tool/wmtools/devices.lua",1)
 LoadFile("weapons/gmod_tool/wmtools/serversettings.lua",1)
+LoadFile("weapons/gmod_tool/wmtools/help.lua",1)
 
 if game.SinglePlayer() then
 	LoadFile("weapons/gmod_tool/wmtools/localiser.lua",1)

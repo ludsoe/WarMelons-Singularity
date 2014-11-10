@@ -29,4 +29,11 @@ Data.Think = function(self)
 	end	
 end
 
+Data.HelpType = "Structures"
+
+Data.HelpInfo = [[The Medic Sentry is a defensive unit
+specialised towards healing your props
+and melons as they take damage.
+]]
+
 Singularity.Entities.MakeModule(Data)

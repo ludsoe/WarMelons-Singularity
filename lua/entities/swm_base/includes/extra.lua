@@ -60,6 +60,14 @@ function ENT:DrawAttack(S,E)
 	util.Effect( "attack_beam", effectdata )
 end
 
+function ENT:DrawHeal(S,E)
+	self:DrawAttack(S,E)
+	local effectdata = EffectData()
+		effectdata:SetOrigin(E+Vector(0,0,5))
+		effectdata:SetEntity(self)
+	util.Effect( "heal_splash", effectdata )
+end
+
 function ENT:Attack(Ent)
 	local EPos = Ent:GetPos()
 	if not Ent or not IsValid(Ent) then return end
@@ -91,11 +99,11 @@ function ENT:Heal(Ent)
 	local CanHeal = self.MelonTeam:CanHeal(Ent)
 	local IsDamaged = IsDamaged(Ent)
 	local LOS = self:LineOfSight(EPos,Ent,true)
-	if LOS and Distance<self.DNA.Range and IsDamaged and CanHeal then
+	if LOS and Distance<self.DNA.Range and IsDamaged and CanHeal and self:WaterLevel() < 2 then
 		if self.Times.Attack < CurTime() then
 			Singularity.RepairHealth(Ent,self.DNA.Damage)
 			self.Times.Attack=CurTime()+self.DNA.AttackRate
-			self:DrawAttack(MyPos,self.LastTrace)
+			self:DrawHeal(MyPos,self.LastTrace)
 		end
 	else
 		if Distance>self.DNA.Range*2 or not CanHeal or not IsDamaged or not LOS then

@@ -134,4 +134,15 @@ Data.Think = function(self)
 	WireLib.TriggerOutput( self, "Loaded Melons", table.Count(self.StoredMelons) )
 end
 
+Data.HelpType = "Structures"
+
+Data.HelpInfo = [[The Noah Cannon is a strategic super weapon
+capable of firing entire armys of melons across 
+long distances. 
+
+Just order the melons or a barracks onto the 
+cannon and they will load into it. Then select
+and order the cannon to fire it.
+]]
+
 Singularity.Entities.MakeModule(Data)
