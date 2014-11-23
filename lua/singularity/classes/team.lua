@@ -223,9 +223,9 @@ end
 function Team:CanMakeMelon(Barracks)
 	local Count = table.Count(self.Melons.Units)
 	if not self.Persist then
-		return Count < Singularity.Settings["PlayerTeamMelonCap"]
+		return Count < tonumber(Singularity.Settings["PlayerTeamMelonCap"])
 	else
-		return Count < Singularity.Settings["PersistTeamMelonCap"]
+		return Count < tonumber(Singularity.Settings["PersistTeamMelonCap"])
 	end
 	return true
 end
@@ -233,9 +233,9 @@ end
 function Team:CanMakeBuilding()
 	local Count = table.Count(self.Melons.Buildings)
 	if not self.Persist then
-		return Count < Singularity.Settings["PlayerTeamBuildingCap"]
+		return Count < tonumber(Singularity.Settings["PlayerTeamBuildingCap"])
 	else
-		return Count < Singularity.Settings["PersistTeamBuildingCap"]
+		return Count < tonumber(Singularity.Settings["PersistTeamBuildingCap"])
 	end
 	return true
 end

@@ -62,7 +62,9 @@ Data.Think = function(self)
 		if self.Times.Grow < CurTime() then
 			self.Times.Grow = CurTime()+10
 			local X=0
-			while (table.Count(self.Seedlings)<20 or X>=20) do
+			for I = 0, 30 do
+			if table.Count(self.Seedlings)<20 then break end
+			--while (table.Count(self.Seedlings)<20 or X>=20) do
 				local Spawn,Tr = self:LeapGrowth()
 				if Spawn then
 					local Pos,Norm = Tr.HitPos,Tr.HitNormal
@@ -71,9 +73,8 @@ Data.Think = function(self)
 					table.insert(self.Seedlings,Seed)
 					Seed.SourceParent = self
 					Seed:SetSkin(self:GetSkin())
-				else
-					X=X+1
 				end
+				X=X+1
 			end
 		end
 		
