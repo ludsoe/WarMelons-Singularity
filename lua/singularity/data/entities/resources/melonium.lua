@@ -34,6 +34,7 @@ Data.Setup = function(self,Data,MyData)
 	else
 		Scale = math.Clamp((200-self.SourceParent:GetPos():Distance(self:GetPos()))/100,0.3,2)+(math.random(-8,8)*0.01)
 		Found = true
+		Skin = self.SourceParent:GetSkin()
 	end
 	
 	self:SetModelScale(Scale,0)
@@ -50,6 +51,8 @@ Data.Setup = function(self,Data,MyData)
 	else
 		self.IsMinable = true
 		self.Resources["Melonium"]=math.Round(400*Scale)
+		
+		self:SetSkin(Skin)
 	end
 end
 
@@ -61,10 +64,8 @@ Data.Think = function(self)
 	if self.CenterPeice then
 		if self.Times.Grow < CurTime() then
 			self.Times.Grow = CurTime()+10
-			local X=0
 			for I = 0, 30 do
-			if table.Count(self.Seedlings)<20 then break end
-			--while (table.Count(self.Seedlings)<20 or X>=20) do
+				if table.Count(self.Seedlings)>20 then break end
 				local Spawn,Tr = self:LeapGrowth()
 				if Spawn then
 					local Pos,Norm = Tr.HitPos,Tr.HitNormal
@@ -74,7 +75,6 @@ Data.Think = function(self)
 					Seed.SourceParent = self
 					Seed:SetSkin(self:GetSkin())
 				end
-				X=X+1
 			end
 		end
 		
