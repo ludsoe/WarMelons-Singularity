@@ -59,6 +59,13 @@ end
 
 --####	Kill A Destroyed Entity  ####--
 function Singularity.KillEnt(ent,Over)
+	if ent.DMGDontKill then
+		if ent.DeathFunc then
+			ent:DeathFunc()
+		end
+		return
+	end
+	
 	if not ent or not ent:IsValid() or ent:IsPlayer() then
 		if ent:IsPlayer() and ent:Alive() then ent:Kill() end
 		return

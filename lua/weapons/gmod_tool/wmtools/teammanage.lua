@@ -26,7 +26,7 @@ function ViewTeamsPage(Base,Tab)
 		end
 		
 		MyTab.Alliances:Clear()
-		for k,v in pairs(Teams.Teams) do
+		for k,v in pairs(Teams.GetTeamsSafe()) do
 			if Data ~= v.name then
 				MyTab.Alliances:AddLine(k,GetRelations(Teams.Teams[Data],v))
 			end
@@ -42,7 +42,7 @@ function ViewTeamsPage(Base,Tab)
 		MyTab.Selected = Data
 	end	
 	
-	MyTab.TeamList = Singularity.MT.AddList("Teams",Teams.Teams,OnSelect,Base,260)
+	MyTab.TeamList = Singularity.MT.AddList("Teams",Teams.GetTeamsSafe(),OnSelect,Base,260)
 	
 	MyTab.RefreshTeams = Singularity.MenuCore.CreateButton(Base,{x=150,y=40},{x=0,y=270},"Refresh",function() 
 		Teams.RequestTeams()

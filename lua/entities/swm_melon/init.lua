@@ -19,8 +19,9 @@ function ENT:BSSetup(Data,ply)
 		local Ent = Dat.E
 		if not Ent or not IsValid(Ent) then return true end
 		if self:GetPos():Distance(Ent:GetPos())<100 then
-			if Ent.CanEnter and not Ent:CanEnter(self) then return end
+			if Ent.CanEnter and not Ent:CanEnter(self) then return false end
 			table.insert(Ent.StoredMelons,self.InitData.N)
+			--Ent:OnMEnter(self.InitData.N)
 			self:Remove()
 			return true
 		else

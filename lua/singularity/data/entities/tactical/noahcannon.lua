@@ -40,11 +40,18 @@ Data.Setup = function(self,Data,MyData)
 	
 	self.StoredMelons = {}
 	self.WirePos = Vector(0,0,0)
-	
 	self.NextFire = CurTime()
 	
 	self.CanFire = function()
 		return self.NextFire < CurTime() and table.Count(self.StoredMelons)>0
+	end
+	
+	self.CanEnter = function(Melon)
+		return table.Count(self.StoredMelons) < 60
+	end
+	
+	self.OnMEnter = function(Data)
+		table.insert(self.StoredMelons,Data)
 	end
 	
 	self.FireCannon = function(self,Dat)
@@ -56,17 +63,12 @@ Data.Setup = function(self,Data,MyData)
 			for n, v in pairs( self.StoredMelons ) do
 				if table.Count(Batch)<20 then
 					table.insert(Batch,v)
-					table.insert(Rem,n)
-					--table.remove(self.StoredMelons,n)
+					self.StoredMelons[n]=nil
 				else
 					break
 				end
 			end
-			
-			for n, v in pairs( Rem ) do
-				table.remove(self.StoredMelons,v)
-			end
-			
+
 			local MyData = {
 				ShootPos = self:LocalToWorld(Vector(0,0,80)),
 				Direction = self:GetUp(),

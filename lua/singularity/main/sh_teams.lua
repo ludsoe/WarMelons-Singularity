@@ -29,6 +29,9 @@ if SERVER then
 	Teams.CreateTeam("Blue",Color(0,0,255,255),true)
 	Teams.CreateTeam("Purple",Color(255,0,255,255),true)
 	Teams.CreateTeam("Yellow",Color(255,255,0,255),true)
+	Teams.UnOwned = Teams.CreateTeam("UnOwned",Color(255,255,255,255),true) --Hidden unowned team.
+	Teams.UnOwned:SetHidden(true)
+	Teams.UnOwned:Reset()
 	
 	Utl:HookNet("JoinTeam","",function(D,Ply)
 		local Team = Teams.Teams[D.N]
@@ -87,7 +90,7 @@ function Teams.RemakeList()
 	if Teams.Tab.TeamList and IsValid(Teams.Tab.TeamList) then
 		Teams.Tab.TeamList:Clear()
 		
-		for k,v in pairs(Singularity.Teams.Teams) do
+		for k,v in pairs(Teams.GetTeamsSafe()) do
 			Teams.Tab.TeamList:AddLine(k)
 		end
 	end
@@ -108,12 +111,26 @@ function Teams.ReloadAlliances()
 	if not MyTeam then return end
 	--print("Clearing List")
 	MyTab.TeamList:Clear()
-	for k,v in pairs(Singularity.Teams.Teams) do
+	for k,v in pairs(Teams.GetTeamsSafe()) do
 		if MyTeam.name ~= v.name then
 			MyTab.TeamList:AddLine(k,GetRelations(MyTeam,v),GetRelations(v,MyTeam))
 		end
 	end
 	--print("Finished")
+end
+
+--Returns a table of the teams without the hidden ones in it.
+function Teams.GetTeamsSafe()
+	local TeamsSafe = {}
+	for k,v in pairs(Singularity.Teams.Teams) do
+		if v.Hidden == false then
+			--print("Not Hidden")
+			TeamsSafe[k]=v
+		else
+			--print("Hidden")
+		end
+	end
+	return TeamsSafe
 end
 
 Utl:HookNet("TeamRequest","",function(D,Ply)

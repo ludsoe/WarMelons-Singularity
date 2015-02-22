@@ -1,7 +1,8 @@
 
 local Singularity = Singularity
 
-hook.Add( "CanDrive","FUCKCANDRIVE", function( ply, ent ) return false end)
+--This is war-melons, not a anti ass-hole tool
+--hook.Add( "CanDrive","FUCKCANDRIVE", function( ply, ent ) return false end)
 
 if SERVER then
 	Singularity.PropProtect = Singularity.PropProtect or {}

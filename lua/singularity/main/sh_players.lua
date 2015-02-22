@@ -155,7 +155,7 @@ function PLY:SelectMelons(Shift,Use)
 end
 
 function PLY:OrderSelection(v,Ent,Pos)
-	if v.NoahCannon then
+	if v.NoahCannon or v.SuperWeapon then
 		v:AddOrder({T="Fire",V=Pos})
 		return
 	end

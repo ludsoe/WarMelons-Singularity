@@ -49,10 +49,17 @@ function ENT:Compile(Data,ply,Team)
 		self:GetPhysicsObject():SetMass(MyData.Weight)
 	end
 	
+	self.MelonTeam = Singularity.Teams.UnOwned
+	self.SyncData.Team=self.MelonTeam.name
+	
 	if self.IsResource then
 	
 	else
-		self.MelonTeam = Team or ply:GetMTeam()
+		if ply and IsValid(ply) then
+			self.MelonTeam = Team or ply:GetMTeam()
+		else
+			self.MelonTeam = Team or Singularity.Teams.UnOwned
+		end
 		self:SetColor(self.MelonTeam.color)
 		self.SyncData.Team=self.MelonTeam.name
 		
@@ -65,7 +72,8 @@ function ENT:Compile(Data,ply,Team)
 	
 	--Lets setup our functions now.
 	if MyData.Setup then MyData.Setup(self,Data,MyData) end
-
+	
+	self.ModuleRemove = MyData.OnRemove or function() end
 	self.ModuleThink = MyData.Think or function() return true end
 	self.ModuleUse = MyData.OnUse or function() end
 	self.OnKilled = MyData.OnDeath or function() end

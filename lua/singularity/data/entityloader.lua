@@ -89,11 +89,13 @@ LoadFile(TactPath.."sentrybasic.lua",1)
 LoadFile(TactPath.."sentrysniper.lua",1)
 LoadFile(TactPath.."sentrymedic.lua",1)
 LoadFile(TactPath.."noahcannon.lua",1)
+LoadFile(TactPath.."nuke.lua",1)
 
 LoadFile(StraPath.."depot.lua",1)
 LoadFile(StraPath.."barracks.lua",1)
 LoadFile(StraPath.."engine.lua",1)
 LoadFile(StraPath.."hover.lua",1)
+LoadFile(StraPath.."melhq.lua",1)
 
 LoadFile(ResPath.."melonium.lua",1)
 LoadFile(ResPath.."metal.lua",1)

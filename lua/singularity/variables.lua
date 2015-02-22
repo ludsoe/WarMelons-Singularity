@@ -4,7 +4,6 @@ Singularity.DefaultSettings = {}
 local Ig = Singularity.DefaultSettings
 Ig["PlayerTeamMelonCap"]=40
 Ig["PersistTeamMelonCap"]=80
-
 Ig["PlayerTeamBuildingCap"]=8
 Ig["PersistTeamBuildingCap"]=16
 

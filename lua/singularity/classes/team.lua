@@ -9,13 +9,27 @@ local Team = {
 	Members = {},
 	Melons = {Units={},Buildings={},Props={}},
 	Settings = {CanJoin = true, AttackMode = 1},
-	Resources = {Melonium=400,Metal=0},
+	Resources = {Melonium=400,Metal=400},
 	Diplomacy = {},
-	Persist = false
+	Persist = false,
+	Hidden = false
 }
 
 Team.DefaultSettings = Team.Settings
 Team.DefaultResources = Team.Resources
+
+function Team:SetDefaultDiplomacy()
+	for k, v in pairs(Teams.Teams) do
+		if v.Hidden or self.Hidden then
+			v:MakeNeutral(self)
+			self:MakeNeutral(v)
+		else
+			v:MakeEnemy(self)
+			self:MakeEnemy(v)
+		end
+	end
+	self:SetRelations(self,"Allied")
+end
 
 function Team:Setup(name,color)
 	self.name = name
@@ -24,11 +38,7 @@ function Team:Setup(name,color)
 	self:StartCheckTimer()
 	self:SyncData()
 	
-	for k, v in pairs(Teams.Teams) do
-		self:SetRelations(v,"Hostile")
-		v:SetRelations(self,"Hostile")
-	end
-	self:SetRelations(self,"Allied")
+	self:SetDefaultDiplomacy()
 end
 
 function Team:SetMaxMelons(Max)
@@ -37,6 +47,10 @@ end
 
 function Team:LockTeam()
 	self.Settings.CanJoin = true
+end
+
+function Team:SetHidden(Bool)
+	self.Hidden = Bool
 end
 
 function Team:MakePersist()
@@ -98,10 +112,7 @@ function Team:Reset()
 	self.Settings = table.Copy(self.DefaultSettings)
 	self.Resources = table.Copy(self.DefaultResources)
 
-	for k, v in pairs(Singularity.Teams.Teams) do
-		v:MakeEnemy(self)
-		self:MakeEnemy(v)
-	end
+	self:SetDefaultDiplomacy()
 end
 
 function Team:TeamDestroy()
