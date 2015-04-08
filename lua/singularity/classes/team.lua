@@ -8,19 +8,45 @@ local Team = {
 	color = Color(255,255,255,255),
 	Members = {},
 	Melons = {Units={},Buildings={},Props={}},
-	Settings = {CanJoin = true, AttackMode = 1},
+	Settings = {CanJoin = true, AttackMode = 1,
+	Persist = false, Hidden = false, AIMode = false},
 	Resources = {Melonium=400,Metal=400},
 	Diplomacy = {},
-	Persist = false,
-	Hidden = false
+	AIData = {}
 }
 
-Team.DefaultSettings = Team.Settings
-Team.DefaultResources = Team.Resources
+--Default Table Data.
+Team.DefaultSettings = table.Copy(Team.Settings)
+Team.DefaultResources = table.Copy(Team.Resources)
+
+function Team:Update()
+	if self:GetAIMode() then -- Ai is enabled for this team, call the run cycle function in the ai class.
+		self.AIData:RunCycle()
+	end
+end
+
+function Team:GetAIMode()
+	return self.Settings.AIMode
+end
+
+function Team:ChangeSetting(Set,Val,Over)
+	print("Changing Setting: "..tostring(Set).." to "..tostring(Val))
+	if self.Settings[Set] == nil then 
+		return 
+	end
+	
+	self.Settings[Set] = Val
+	
+	if Over then
+		self.DefaultSettings[Set] = Val
+	end
+	
+	self:SyncData()
+end
 
 function Team:SetDefaultDiplomacy()
 	for k, v in pairs(Teams.Teams) do
-		if v.Hidden or self.Hidden then
+		if v:IsHidden() or self:IsHidden() then
 			v:MakeNeutral(self)
 			self:MakeNeutral(v)
 		else
@@ -35,26 +61,25 @@ function Team:Setup(name,color)
 	self.name = name
 	self.color = color
 	
+	self.AIData = table.Copy(Singularity.Teams.AIClass) -- Copy us a clean team ai class.
+	self.AIData.MyTeam = self --Identify with the ai class 
+	
 	self:StartCheckTimer()
 	self:SyncData()
 	
 	self:SetDefaultDiplomacy()
 end
 
-function Team:SetMaxMelons(Max)
-	self.MaxMelons = Max
+function Team:LockTeam(Bool)
+	self.Settings.CanJoin = Bool or true
 end
 
-function Team:LockTeam()
-	self.Settings.CanJoin = true
+function Team:IsHidden()
+	return self.Settings.Hidden
 end
 
-function Team:SetHidden(Bool)
-	self.Hidden = Bool
-end
-
-function Team:MakePersist()
-	self.Persist = true
+function Team:IsPersist()
+	return self.Settings.Persist
 end
 
 function Team:LoopMels(tab,func)
@@ -118,7 +143,10 @@ end
 function Team:TeamDestroy()
 	
 	if game.SinglePlayer and game.SinglePlayer() then return end
-	if self.Persist then self:Reset() return end
+	
+	if self:GetAIMode() then return end --Dont reset if we have a ai in control.
+	
+	if self:IsPersist() then self:Reset() return end
 
 	self:CleanupMelons()
 	self:CleanupStructures()
@@ -135,6 +163,15 @@ function Team:TeamDestroy()
 		
 	Teams.Teams[self.name]=nil
 	Utl:SetupThinkHook(self.name.."MelonCheckHook",0,1,function() end)
+end
+
+function Team:CheckMembers()
+	if table.Count(self.Members) <= 0 then
+		self:SyncData()
+		self:TeamDestroy()
+		return true
+	end
+	return false
 end
 
 function Team:AddMember(Ply)
@@ -171,11 +208,7 @@ function Team:RemoveMember(Ply)
 		self:GetNewLeader()
 	end
 	
-	if table.Count(self.Members) <= 0 then
-		self:SyncData()
-		self:TeamDestroy()
-		return
-	end
+	if self:CheckMembers() then return end
 		
 	for k, v in pairs(self.Members) do
 		v.E:SendColorChat("WMG",self.color,Ply:Nick().." has left you're Team.")
@@ -229,6 +262,7 @@ end
 
 function Team:StartCheckTimer()
 	Utl:SetupThinkHook(self.name.."MelonCheckHook",5,0,function() self:CheckMelons() end)
+	Utl:SetupThinkHook(self.name.."UpdateTick",1,0,function() self:Update() end)
 end
 
 function Team:CanMakeMelon(Barracks)
@@ -315,6 +349,7 @@ function Team:MakeEnemy(Team,Over)
 	self:DiplomacyCheck(Team)
 	
 	if self:GetRelations(Team)=="Hostile" then return end
+	if self:IsHidden() or Team:IsHidden() then return end --Hidden teams cant become hostile.
 	
 	self:SetRelations(Team,"Hostile")
 	

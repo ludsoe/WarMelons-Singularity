@@ -49,7 +49,7 @@ function ENT:Compile(Data,ply,Team)
 		self:GetPhysicsObject():SetMass(MyData.Weight)
 	end
 	
-	self.MelonTeam = Singularity.Teams.UnOwned
+	self.MelonTeam = Team or Singularity.Teams.UnOwned
 	self.SyncData.Team=self.MelonTeam.name
 	
 	if self.IsResource then

@@ -7,6 +7,7 @@ function LoadPP()
 		--Oh good we have a CPPI prop protection installed, we can use it.
 		function Singularity.GivePlyProp(owner,prop)
 			prop:CPPISetOwner(owner)
+			if not owner or not IsValid(owner) then return end --Fail safe incase owner is invalid
 			if owner:IsPlayer() then
 				Debug("Entity: "..tostring(prop).." Given to "..owner:Nick())
 			end
@@ -14,7 +15,7 @@ function LoadPP()
 		
 		function Singularity.GetPropOwner(prop)
 			return prop:CPPIGetOwner()
-		end		
+		end	
 	else
 		--Code better failsafe prop protections later.
 		Debug("No Prop Protections Detected! Defaulting to built in functions.")

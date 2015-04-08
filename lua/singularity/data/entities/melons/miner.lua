@@ -27,12 +27,14 @@ Data.ResourceCost["Melonium"]=200
 Data.Setup = function(self,Data,MyData)
 	self:SetMaterial("models/debug/debugwhite")
 	self.MaxInventory = self.DNA.Capacity
+	
+	self.IsMiner = true
 end
 
 Data.ThinkSpeed = 0
 Data.Think = function(self)
 	self:RunOrders()
-
+	
 	self.SyncData.Health = Singularity.GetHealth( self ).."/"..Singularity.GetMaxHealth( self )
 	
 	local Txt,Total = "[ ",0
@@ -67,5 +69,12 @@ Data.Think = function(self)
 		end
 	end
 end
+
+Data.HelpType = "Melons"
+
+Data.HelpInfo = [[Mining melons are a utility type
+melon capable of mining and hauling resources to
+depots. They have no offensive capability.
+]]
 
 Singularity.Entities.MakeModule(Data)

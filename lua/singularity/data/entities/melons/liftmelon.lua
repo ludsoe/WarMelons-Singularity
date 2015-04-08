@@ -46,4 +46,14 @@ Data.Think = function(self)
 	self.SyncData.Health = Singularity.GetHealth( self ).."/"..Singularity.GetMaxHealth( self )
 end
 
+Data.HelpType = "Melons"
+
+Data.HelpInfo = [[Lift Melons are melons
+with the ability to generate force
+and are capable of moving contraptions.
+
+But Are Also capable of generating lift
+and are generally used when making aircraft.
+]]
+
 Singularity.Entities.MakeModule(Data)

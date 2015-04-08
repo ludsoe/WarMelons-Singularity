@@ -1,6 +1,8 @@
 local Utl = Singularity.Utl --Makes it easier to read the code.
 local NDat = Singularity.Utl.NetMan --Ease link to the netdata table.
 
+local NukeSound = Sound( "ambient/explosions/explode_6.wav" )
+
 local Data = {
 	Type="Tactical",
 	Class="swm_ent",
@@ -11,55 +13,57 @@ local Data = {
 
 function NuclearEffect(Pos)
 	local effectdata = EffectData()
-	effectdata:SetMagnitude( 1 )
+	effectdata:SetMagnitude( 0.2 )
 	effectdata:SetOrigin( Pos )
-	effectdata:SetScale( 23000 )
 					
 	util.Effect( "nuke_explosion", effectdata )
-				
-	local ShakeIt = ents.Create( "env_shake" )
-	ShakeIt:SetName("Shaker")
-	ShakeIt:SetKeyValue("amplitude", "200" )
-	ShakeIt:SetKeyValue("radius", "200" )
-	ShakeIt:SetKeyValue("duration", "5" )
-	ShakeIt:SetKeyValue("frequency", "255" )
-	ShakeIt:SetPos( Pos )
-	ShakeIt:Fire("StartShake", "", 0);
-	ShakeIt:Spawn()
-	ShakeIt:Activate()
-
-	ShakeIt:Fire("kill", "", 6)
+	sound.Play( NukeSound, Pos, 180, math.random( 90, 120 ))
 end
 
 local OnHit = function(tr,data)
 	NuclearEffect(tr.HitPos)
-	PrintTable(data)
-	data.Ignored:EmitSound("ambient/explosions/explode_6.wav")
+	
 	local NewData = { 
 		Pos 					=		tr.HitPos,							--Required--		--Position of the Explosion, World vector
-		ShockDamage	=		2000,					--Optional--		--Amount of Shockwave Damage, if 0 or nil then other Shock vars are not required
+		ShockDamage	=		3000,					--Optional--		--Amount of Shockwave Damage, if 0 or nil then other Shock vars are not required
 		ShockRadius		=		500,												--How far the Shockwave travels in a sphere
-		Ignore			=		data.Weapon,									--Optional--		--Entity that Shrapnel and Shockwaves ignore, Example: A missile entity so that Shrapnel doesn't hit it before it's removed
-		Inflictor				=		data.Weapon,							--Required--		--The weapon or player that is dealing the damage
-		Owner				=		data.Weapon					--Required--		--The player that owns the weapon, or the Player if the Inflictor is a player
+		Inflictor				=		data.Ignore,							--Required--		--The weapon or player that is dealing the damage
+		Owner				=		data.Ignore					--Required--		--The player that owns the weapon, or the Player if the Inflictor is a player
 	}
 	Singularity.WeaponFunc.BlastDamage(NewData)
 end
 
-local ReloadTime = 20 --60
+local ReloadTime = 20
 Data.Setup = function(self,Data,MyData)
 	self.SuperWeapon = true
 	
 	self.WirePos = Vector(0,0,0)
 	self.NextFire = CurTime()
 	
+	self.FireCost = {}
+	self.FireCost["Melonium"]=2000
+	self.FireCost["Metal"]=1000
+	
 	self.CanFire = function()
+		for k,v in pairs(self.FireCost) do
+			if not self.MelonTeam:CanUseResource(k,v) then
+				return false
+			end
+		end
+		
 		return self.NextFire < CurTime()
 	end
 	
 	self.FireCannon = function(self,Dat)
 		local Vec = Dat.V
 		if self:CanFire() then
+		
+			if self.FireCost then
+				for k,v in pairs(self.FireCost) do
+					self.MelonTeam:UseResource(k,v)
+				end
+			end
+			
 			self.NextFire = CurTime()+ReloadTime
 
 			local MyData = {
@@ -71,7 +75,7 @@ Data.Setup = function(self,Data,MyData)
 				Spread=5,
 				Count=1,
 				Model="models/props_trainstation/trashcan_indoor001a.mdl",
-				Weapon = self,
+				Ignore = self,
 				
 				OnHit=OnHit,
 				
@@ -127,8 +131,9 @@ end
 
 Data.HelpType = "Structures"
 
-Data.HelpInfo = [[
-TODO
+Data.HelpInfo = [[The Big Boy is a heavy artillery
+weapon. And is designed to take out heavily armoured
+bases or contraptions.
 ]]
 
 Singularity.Entities.MakeModule(Data)

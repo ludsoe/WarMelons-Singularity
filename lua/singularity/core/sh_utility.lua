@@ -258,7 +258,6 @@ else
 	function Utl:SyncSetting(Name,Value)
 		Utl.NetMan.AddData({Name="SingSettingsSync",Val=1,Dat={{N="T",T="T",V={N=Name,V=Value}}}})
 	end	
-
 end
 
 --[[----------------------------------------------------

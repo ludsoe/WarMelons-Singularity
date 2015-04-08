@@ -5,7 +5,7 @@ function Singularity.DealDamage(ent,position,amount,attacker,inflictor)
 	if not amount or amount==0 then print("Damage is nil") return end
 	if ent.NoDamage or Singularity.IsImmune( ent ) then return end
 	amount=math.floor(math.abs(amount))
-
+		
 	if ent.OnDamage then
 		ent:OnDamage(ent,position,amount,attacker,inflictor)
 	else
@@ -25,6 +25,7 @@ local function random(Table)
 end
 
 local function RealDamage(ent,amount)
+	if ent:IsPlayer() then return end
 	local Health = Singularity.GetHealth( ent )
 	if Health > amount then
 		Singularity.SetHealth( ent,Health-amount )
@@ -59,20 +60,16 @@ end
 
 --####	Kill A Destroyed Entity  ####--
 function Singularity.KillEnt(ent,Over)
-	if ent.DMGDontKill then
-		if ent.DeathFunc then
-			ent:DeathFunc()
-		end
-		return
-	end
+	if ent.Killed then return end  --Prevents a entity from being killed multiple times.
+	ent.Killed = true
+	
+	if ent.DeathFunc then ent:DeathFunc() end	
+	if ent.DMGDontKill then return end
 	
 	if not ent or not ent:IsValid() or ent:IsPlayer() then
 		if ent:IsPlayer() and ent:Alive() then ent:Kill() end
 		return
 	end
-	
-	if ent.Killed then return end  --Prevents a entity from being killed multiple times.
-	ent.Killed = true
 	
 	local Children = ent:GetChildren()
 	for id, chl in pairs( Children ) do
@@ -85,6 +82,7 @@ function Singularity.KillEnt(ent,Over)
 	local effectdata = EffectData()
 		effectdata:SetOrigin(ent:GetPos())
 		effectdata:SetStart(ent:GetPos())
+		effectdata:SetScale(10)
 		util.Effect( "prop_death", effectdata )
 		
 	local Snd = "vehicles/v8/vehicle_impact_heavy" .. tostring( math.random( 1, 4 ) ) .. ".wav"
@@ -148,6 +146,8 @@ function Singularity.IsImmune( entity )
 			return true
 		end
 	end]]
+	if not entity.MelonTeam then return true end --Dont deal damage to teamless props.
+
 	return false
 end
 

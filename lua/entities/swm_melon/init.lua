@@ -33,6 +33,34 @@ function ENT:BSSetup(Data,ply)
 	self.OrderFuncs["Goto"]=function(self,Dat)
 		return self:ManageMovement(Dat.V)
 	end
+	
+	self:PrecacheGibs()
+	
+	self.DeathFunc = function(self)
+		self:GibBreakClient(self:GetVelocity())
+	end
+	
+	self.GeeCheck = 0
+	
+--	self:SetCustomCollisionCheck(true)
+end
+
+function ENT:BSThink()
+	if self.GeeCheck < CurTime() then
+		self.GeeCheck = CurTime()+0.2
+		
+		local Max = 400 --Apparntly 1G is 143, But more testing required.
+		
+		self.OldSpeed = self.OldSpeed or 0
+		local CurSpeed = self:GetVelocity():Length()
+		local GForces = CurSpeed - self.OldSpeed
+		
+		if GForces > Max or GForces < -Max then
+			 Singularity.KillEnt(self)
+		else
+			self.OldSpeed = CurSpeed
+		end
+	end
 end
 
 function ENT:BSRemove()
@@ -40,3 +68,12 @@ function ENT:BSRemove()
 		self.MelonTeam:DeRegisterMelon(self)
 	end
 end
+
+/*
+function ENT:PhysicsCollide(data,physobj)
+	if data.HitEntity:GetClass() == "swm_melon" then
+		--self:SetVelocity(-data.OurOldVelocity*2+data.TheirOldVelocity*0.5)
+		return false
+	end
+end*/
+

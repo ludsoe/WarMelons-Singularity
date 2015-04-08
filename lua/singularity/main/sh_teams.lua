@@ -5,6 +5,7 @@ local NDat = Utl.NetMan --Ease link to the netdata table.
 Singularity.Teams = Singularity.Teams or {}
 local Teams = Singularity.Teams
 
+Singularity.LoadFile("singularity/classes/teamai.lua",1)
 Singularity.LoadFile("singularity/classes/team.lua",1)
 Teams.Teams = {}
 
@@ -16,8 +17,7 @@ if SERVER then
 		
 		Team:Setup(name,color)
 		if persist then 
-			Team:MakePersist() 
-			Team:SetMaxMelons(80)
+			Team:ChangeSetting(Persist,true,true)
 		end
 		
 		Teams.Teams[name]=Team
@@ -30,8 +30,7 @@ if SERVER then
 	Teams.CreateTeam("Purple",Color(255,0,255,255),true)
 	Teams.CreateTeam("Yellow",Color(255,255,0,255),true)
 	Teams.UnOwned = Teams.CreateTeam("UnOwned",Color(255,255,255,255),true) --Hidden unowned team.
-	Teams.UnOwned:SetHidden(true)
-	Teams.UnOwned:Reset()
+	Teams.UnOwned:ChangeSetting("Hidden",true,true)
 	
 	Utl:HookNet("JoinTeam","",function(D,Ply)
 		local Team = Teams.Teams[D.N]
@@ -73,7 +72,18 @@ if SERVER then
 				Team:MakeEnemy(Teams.Teams[D.T2])
 			end
 		end
-	end)	
+	end)
+	
+	Utl:HookNet("SingTeamSettingsSync","",function(D,Ply)
+		print("Received Setting: "..D.T.N.." from "..tostring(Ply:Nick()).." in "..tostring(Ply:GetMTeam().name).." for "..tostring(D.T.T).." Value: "..tostring(D.T.V))
+		local Team = Ply:GetMTeam()
+		--PrintTable(Team)
+		--if Team.name == D.T.T then
+			if Team:GetLeader() == ply or Utl:CheckAdmin( ply ) then 
+				Team:ChangeSetting(D.T.N,D.T.V,false)
+			end
+		--end
+	end)
 else
 	
 	function Teams.RequestTeams(Tab,Tab2)
@@ -123,7 +133,8 @@ end
 function Teams.GetTeamsSafe()
 	local TeamsSafe = {}
 	for k,v in pairs(Singularity.Teams.Teams) do
-		if v.Hidden == false then
+		local Hidden = v.Settings.Hidden
+		if Hidden == false then
 			--print("Not Hidden")
 			TeamsSafe[k]=v
 		else

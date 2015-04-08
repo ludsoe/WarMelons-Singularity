@@ -28,14 +28,33 @@ end --This is clientside only, called when the tool is selected.
 
 Tool.Think = function(ply,Settings)
 	if SERVER then
+		local tr = ply:GetEyeTrace()
+		local Pos,Ent = tr.HitPos,tr.Entity
+		
 		if ply:KeyDown(IN_ATTACK) then
 			ply:SelectMelons(ply:KeyDown(IN_SPEED),ply:KeyDown(IN_USE))
 		end
+		
+		if ply:KeyDown(IN_ATTACK2) then
+			if not ply.OrderGive then
+				ply.OrderGive = true
+				ply.OrderStart = Pos
+				ply.OrderTime = CurTime()+0.1
+				ply.Change = nil
+			else
+				if ply.OrderTime < CurTime() then
+					local PlyPos = ply:GetPos()
+					ply.Change = (Pos:Distance(PlyPos)-ply.OrderStart:Distance(PlyPos))
+					print(tostring(ply.Change))
+				end
+			end
+		else
+			if ply.OrderGive then
+				ply.OrderGive = false
+				ply:OrderMelons(ply.OrderStart+Vector(0,0,(ply.Change or 0)),Ent)
+			end
+		end
 	end
-end
-
-Tool.Secondary = function(trace,ply,Settings)
-	ply:OrderMelons(ply:KeyDown(IN_SPEED),ply:KeyDown(IN_USE))
 end
 
 Tool.Holster = function(ply,Settings)

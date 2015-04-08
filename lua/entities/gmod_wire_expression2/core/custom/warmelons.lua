@@ -1,17 +1,41 @@
 
 MelonE2 = {}
 
+function MelonE2.IsAdmin(ply)
+	return Singularity.Utl:CheckAdmin( ply )
+end
+
 function MelonE2.CanCommand(self,ent)
 	local myteam = self.player:GetMTeam().name
 	local enteam = ent.MelonTeam.name
 	if not ent.MelonOrders then return false end
-	if self.player:IsAdmin() then return true end
+	if MelonE2.IsAdmin(self.player) then return true end
 	if myteam == enteam then return true end
 	return false 
 end
 
 function MelonE2.E2Team(self)
 	return self.player:GetMTeam()
+end
+
+function MelonE2.CreateEntity(ply, position, angle, Class, Model)
+	local ent = ents.Create( Class )
+	if not ent:IsValid() then return end
+		
+	-- Pos/Model/Angle
+	ent:SetModel( Model )
+	ent:SetPos( position )
+	ent:SetAngles( angle )
+	
+	ent:Spawn()
+	ent:Activate()
+	ent:GetPhysicsObject():Wake()
+	
+	Singularity.GivePlyProp(ply,ent)
+	
+	ply:AddCleanup("WarMelons Device",ent)
+	
+	return ent
 end
 
 e2function number entity:wmismelon()
@@ -159,11 +183,47 @@ e2function void entity:wmclearbuildqueue()
 end
 
 e2function array wmgetmelontypes()
-	local Types = {}
+	local Array = {}
 	for k, v in pairs(Singularity.Entities.Modules["Melons"]) do
-		Array[#Array + 1] = v
+		Array[#Array + 1] = k
 	end
-	return Types
+	return Array
+end
+
+e2function array wmgetentityclasses()
+	local Array = {}
+	for k, v in pairs(Singularity.Entities.Modules) do
+		Array[#Array + 1] = k
+	end
+	return Array
+end
+
+e2function array wmgetentitytypes(string class)
+	local Array = {}
+	for k, v in pairs(Singularity.Entities.Modules[class]) do
+		Array[#Array + 1] = k
+	end
+	return Array
+end
+
+e2function entity wmspawnentity(string class, string name, vector vec, angle ang, string wmteam)
+	local ply = self.player
+	if not MelonE2.IsAdmin(ply) then return end --Only allow admins
+	
+	if not Singularity.Entities.Modules[class] then return end
+	local Data = Singularity.Entities.Modules[class][name]
+	
+	--PrintTable(Data)
+	
+	if not Data then return end -- Invalid entity
+	
+	local ent = MelonE2.CreateEntity(ply, Vector(vec[1],vec[2],vec[3]), Angle(ang[1],ang[2],ang[3]), Data.E.Class, Data.M.M)
+	
+	if ent.Compile then
+		ent:Compile(Data.M,ply,Singularity.Teams.Teams[wmteam])
+	end
+	
+	return ent
 end
 
 e2function number wmgetresource(res)
@@ -172,4 +232,93 @@ e2function number wmgetresource(res)
 	if not Team then return 0 end
 	return Team:GetResource(res)
 end
+
+--local Teams = Singularity.Teams
+
+function MelonE2.CreateTeam(Name,c)
+	Singularity.Teams.CreateTeam(Name,Color(c[1],c[2],c[3]),false)
+end
+
+e2function void wmcreateteam(string name, vector color)
+	local ply = self.player
+	if not MelonE2.IsAdmin(ply) then return end --Only allow admins
+	
+	MelonE2.CreateTeam(name,color)
+end
+
+e2function void wmsetteamaimode(string name, number mode)
+	local ply = self.player
+	if not MelonE2.IsAdmin(ply) then return end --Only allow admins
+	
+	if mode > 0 then mode = true else mode = false end
+	
+	local Team = Singularity.Teams.Teams[name]
+	if Team ~= nil then
+		Team:ChangeSetting("AIMode",mode,false)
+	end
+end
+
+e2function void wmsetteamcanjoin(string name, number mode)
+	local ply = self.player
+	if not MelonE2.IsAdmin(ply) then return end --Only allow admins
+	
+	if mode > 0 then mode = true else mode = false end
+	
+	local Team = Singularity.Teams.Teams[name]
+	if Team ~= nil then
+		Team:ChangeSetting("CanJoin",mode,false)
+	end
+end
+
+e2function void wmsetenemy(string name, string name2)
+	local ply = self.player
+	if not MelonE2.IsAdmin(ply) then return end --Only allow admins
+	
+	local Team = Singularity.Teams.Teams[name]
+	local Team2 = Singularity.Teams.Teams[name2]
+	
+	if Team ~= nil and Team2 ~= nil then
+		Team:MakeEnemy(Team2)
+	end
+end
+
+e2function void wmsetneutral(string name, string name2)
+	local ply = self.player
+	if not MelonE2.IsAdmin(ply) then return end --Only allow admins
+	
+	local Team = Singularity.Teams.Teams[name]
+	local Team2 = Singularity.Teams.Teams[name2]
+	
+	if Team ~= nil and Team2 ~= nil then
+		Team:MakeNeutral(Team2)
+	end
+end
+
+e2function void wmsetally(string name, string name2)
+	local ply = self.player
+	if not MelonE2.IsAdmin(ply) then return end --Only allow admins
+	
+	local Team = Singularity.Teams.Teams[name]
+	local Team2 = Singularity.Teams.Teams[name2]
+	
+	if Team ~= nil and Team2 ~= nil then
+		Team:MakeAlly(Team2)
+		Team2:MakeAlly(Team)
+	end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

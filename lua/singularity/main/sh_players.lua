@@ -165,37 +165,40 @@ function PLY:OrderSelection(v,Ent,Pos)
 			if Ent.MelonLoadable then
 				if v.IsBarracks or v.IsMelon then
 					v:AddOrder({T="Enter",V=Ent:GetPos(),E=Ent})
+					return
 				end
 			end
-		else
-			
 		end
-	else
-		if v.IsBarracks or v.IsMelon or v.MovementOrderable then
-			v:AddOrder({T="Goto",V=Pos})
-		end
+	end
+	
+	if v.IsBarracks or v.IsMelon or v.MovementOrderable then
+		v:AddOrder({T="Goto",V=Pos})
 	end
 end
 
-function PLY:OrderMelons(Shift,Use)
-	local tr = self:GetEyeTrace()
-	local Pos,Ent = tr.HitPos,tr.Entity
-	
+function PLY:LoopMelons(Function)
 	if table.Count(self.SelectedMelons) > 0 then
-		--DoSoundthingy
 		for k, v in pairs(self.SelectedMelons) do
 			if v and IsValid(v) then
-				if Use then
-					v:ClearOrders()
-				else
-					if not Shift then v:ClearOrders() end
-					self:OrderSelection(v,Ent,Pos)
-				end
+				Function(self,k,v)
 			else
 				self.SelectedMelons[k]=nil
 			end
 		end
 	end
+end
+
+function PLY:OrderMelons(Pos,Ent)
+	local Shift,Use = self:KeyDown(IN_SPEED),self:KeyDown(IN_USE)
+	
+	self:LoopMelons(function(self,k,v)
+		if Use then
+			v:ClearOrders()
+		else
+			if not Shift then v:ClearOrders() end
+			self:OrderSelection(v,Ent,Pos)
+		end
+	end)
 	
 	self:SyncSelected()
 end

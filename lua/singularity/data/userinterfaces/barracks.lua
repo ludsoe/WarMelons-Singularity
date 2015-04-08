@@ -29,7 +29,7 @@ else
 			self.WillLoop = not self.WillLoop or true
 		end
 		self.Loop:SetText("Queue Loop: "..tostring(self.WillLoop))
-		print(tostring(self.WillLoop))
+		--print(tostring(self.WillLoop))
 	end
 	
 	function VGUI:DoDescription(Dat)

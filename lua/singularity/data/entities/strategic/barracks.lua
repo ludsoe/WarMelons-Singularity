@@ -17,6 +17,10 @@ Data.Setup = function(self,Data,MyData)
 	self.IsBarracks = true
 	self.Training = {A=false,S=0,E=0,T=""}
 	
+	self.IsTraining = function()
+		return self.Training.A
+	end
+	
 	self.CanAfford = function(self,Data)
 		if Singularity.Settings["MelonsReqResources"] then
 			if Data.ResourceCost then

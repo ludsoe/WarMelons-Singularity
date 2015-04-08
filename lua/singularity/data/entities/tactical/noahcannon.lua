@@ -10,6 +10,13 @@ local Data = {
 }
 
 local OnHit = function(tr,data)
+	if not data.Ignore or not IsValid(data.Ignore) then
+		local effectdata = EffectData()
+			effectdata:SetOrigin(tr.HitPos)
+			effectdata:SetStart(tr.HitPos)
+		util.Effect( "explosion", effectdata )
+		return 
+	end --The cannon doesnt exist anymore
 	local ent = ents.Create( "swm_ent" )
 	
 	ent:SetModel( "models/props_combine/headcrabcannister01a.mdl" )
@@ -55,7 +62,8 @@ Data.Setup = function(self,Data,MyData)
 	end
 	
 	self.FireCannon = function(self,Dat)
-		local Vec = Dat.V
+		local Rnd = function() return math.random(-40,40) end
+		local Vec = Dat.V+Vector(Rnd(),Rnd(),Rnd())
 		if self:CanFire() then
 			self.NextFire = CurTime()+ReloadTime
 			
@@ -139,7 +147,7 @@ end
 Data.HelpType = "Structures"
 
 Data.HelpInfo = [[The Noah Cannon is a strategic super weapon
-capable of firing entire armys of melons across 
+capable of firing entire army's of melons across 
 long distances. 
 
 Just order the melons or a barracks onto the 

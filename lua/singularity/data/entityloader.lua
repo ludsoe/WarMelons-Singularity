@@ -84,6 +84,7 @@ LoadFile(MelPath.."enginemelon.lua",1)
 LoadFile(MelPath.."medic.lua",1)
 LoadFile(MelPath.."liftmelon.lua",1)
 LoadFile(MelPath.."miner.lua",1)
+LoadFile(MelPath.."explosive.lua",1)
 
 LoadFile(TactPath.."sentrybasic.lua",1)
 LoadFile(TactPath.."sentrysniper.lua",1)

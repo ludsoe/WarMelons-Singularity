@@ -1,3 +1,7 @@
+local Singularity = Singularity --Localise the global table for speed.
+local Utl = Singularity.Utl --Makes it easier to read the code.
+local NDat = Utl.NetMan 
+
 local function IsDamaged(self)
 	return Singularity.GetHealth( self ) < Singularity.GetMaxHealth( self ) 	
 end
@@ -52,20 +56,33 @@ function ENT:LineOfSight(Vec,Ent,Team,Filter,X)
 	return false
 end
 
-function ENT:DrawAttack(S,E)
-	local effectdata = EffectData()
-		effectdata:SetOrigin(S+Vector(0,0,5))
-		effectdata:SetStart(E+Vector(0,0,0))
-		effectdata:SetEntity(self)
-	util.Effect( "attack_beam", effectdata )
+function ENT:DrawAttack(S,E)	
+	NDat.AddDataAll({
+		Name="SingNetWorkEffect",
+		Val=1,
+		Dat={{N="N",T="S",V="attack_beam"},{N="Entity",T="E",V=self},{N="Origin",T="V",V=S+Vector(0,0,5)},{N="Start",T="V",V=E+Vector(0,0,0)}}
+	})
 end
 
 function ENT:DrawHeal(S,E)
 	self:DrawAttack(S,E)
-	local effectdata = EffectData()
-		effectdata:SetOrigin(E+Vector(0,0,5))
-		effectdata:SetEntity(self)
-	util.Effect( "heal_splash", effectdata )
+
+	NDat.AddDataAll({
+		Name="SingNetWorkEffect",
+		Val=1,
+		Dat={{N="N",T="S",V="heal_splash"},{N="Entity",T="E",V=self},{N="Start",T="V",V=E+Vector(0,0,5)}}
+	})	
+end
+
+function ENT:CanAttack(Ent)
+	local EPos = Ent:GetPos()
+	local MyPos = self.DNA.AttackPosition or self:GetPos()
+	local Distance = MyPos:Distance(EPos)
+	local CanAttack = self.MelonTeam:CanAttack(Ent)
+	if self:LineOfSight(EPos,Ent) and Distance<self.DNA.Range and CanAttack then
+		return true
+	end
+	return false
 end
 
 function ENT:Attack(Ent)
@@ -131,6 +148,26 @@ function ENT:Mine(Ent)
 	end
 end
 
+function ENT:ScanEnemysV2(Range)
+	if not Singularity.Settings["MelonsDoDamage"] then return end
+	local entz = ents.FindInSphere(self:GetPos(),Range)
+	local C = Range*2
+	for k, v in pairs(entz) do
+		if v.MelonTeam and not v:IsPlayer() then
+			if not v.MelonTeam:IsHidden() and self.MelonTeam:CanAttack(v) then
+				if self:LineOfSight(v:GetPos(),v) then
+					local Dist = v:GetPos():Distance(self:GetPos())
+					if Dist<C then
+						C=Dist
+						Closest = v
+					end
+				end
+			end
+		end
+	end
+	return Closest
+end
+
 function ENT:ScanEnemys()
 	if not Singularity.Settings["MelonsDoDamage"] then return end
 	if self.Times.Scan < CurTime() then
@@ -138,7 +175,7 @@ function ENT:ScanEnemys()
 		local C = 9999
 		for k, v in pairs(entz) do
 			if v.MelonTeam and not v:IsPlayer() then
-				if self.MelonTeam:CanAttack(v) then
+				if not v.MelonTeam:IsHidden() and self.MelonTeam:CanAttack(v) then
 					if self:LineOfSight(v:GetPos(),v) then
 						local Dist = v:GetPos():Distance(self:GetPos())
 						if Dist<C then

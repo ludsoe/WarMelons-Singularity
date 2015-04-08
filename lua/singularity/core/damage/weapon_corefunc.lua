@@ -54,7 +54,6 @@ function WF.BlastDamage(Data)
 	else
 		--print("ShrapDamage wasn't a number")
 	end
-	
 	if type(Data.ShockDamage) == "number" then
 		--print("ShockDamage was a number")
 		if Data.ShockDamage > 0 then
@@ -98,6 +97,7 @@ function WF.BlastDamage(Data)
 			for k, v in pairs(targets) do
 				--LDE:DamageShields(v,damage,false)
 				Singularity.DealDamage(v.E,v.P,damage,Data.Inflictor,Data.Inflictor)
+				print("Dealing damage")
 			end
 		end
 	else
@@ -108,7 +108,7 @@ end
 
 ----------------------------------------------------------------------------------------------
 --Projectile Handling------------------------------------------------------------------------
-local Multiplier = 11								--How often we run, was 6 previously, 11 should run about 6 times a second
+local Multiplier = 2								--How often we run, was 6 previously, 11 should run about 6 times a second
 local ProjectileSkip = 1							--So we only run every 6 ticks
 WF.Projectiles = WF.Projectiles or {}	--Where our projectiles are stored
 local RemoveProj = {}							--Table of keys so we can cleanup our main table in a separate loop
@@ -290,8 +290,12 @@ local function ProjectileThink()
 					else --Hit something, execute the attached function,move Projectile, mark for cleanup
 						
 						BulletData.Pos = HitPos
+						local OnHit = BulletData.Data.OnHit
+						local Succ,Error = pcall(OnHit,Trace,BulletData.Data)
 						
-						BulletData.Data.OnHit(Trace,BulletData.Data)
+						if not Succ then
+							print("Error: "..Error)
+						end
 						
 						WF.Projectiles[I] = BulletData
 						RemoveProj[I] = 1
@@ -303,6 +307,8 @@ local function ProjectileThink()
 						local angle = BulletData.Dir:Angle()
 						BulletData.Projectile:SetPos(BulletData.Pos)
 						BulletData.Projectile:SetAngles(angle)
+					else
+						RemoveProj[I] = 1
 					end
 				end
 			end

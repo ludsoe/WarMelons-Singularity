@@ -1,6 +1,14 @@
 local Singularity = Singularity
 local Utl = Singularity.Utl --Makes it easier to read the code.
 
+Utl:HookNet("SingNetWorkEffect","",function(D)
+	local effectdata = EffectData()
+		effectdata:SetOrigin(D.Origin+Vector(0,0,5))
+		effectdata:SetStart(D.Start+Vector(0,0,0))
+		effectdata:SetEntity(D.Entity)
+	util.Effect( D.N, effectdata )
+end)
+
 Utl:HookNet("SingEntDatSync","",function(D)
 	D.E.SyncData = table.Merge(D.E.SyncData or {},D.T)
 	--PrintTable(D.T)

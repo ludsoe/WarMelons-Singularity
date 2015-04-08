@@ -45,8 +45,9 @@ end
 
 Data.HelpType = "Structures"
 
-Data.HelpInfo = [[
-ToDo
+Data.HelpInfo = [[Headquarters are a special type of
+structure that aren't destroyable through the means
+of combat. They are captured and held by teams.
 ]]
 
 Singularity.Entities.MakeModule(Data)
