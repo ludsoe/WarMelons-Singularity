@@ -59,7 +59,11 @@ function AI.GetSector(Pos)
 end
 
 function AI.MakeNodeData(Pos)
-	local Data = {P=Pos,C={}}
+	local Data = {P=Pos,C={},Cost=1}
+	
+	function Data:GetPos()
+		return self.P
+	end
 	
 	return Data
 end
