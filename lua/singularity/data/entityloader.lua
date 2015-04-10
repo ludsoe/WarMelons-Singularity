@@ -85,6 +85,7 @@ LoadFile(MelPath.."medic.lua",1)
 LoadFile(MelPath.."liftmelon.lua",1)
 LoadFile(MelPath.."miner.lua",1)
 LoadFile(MelPath.."explosive.lua",1)
+LoadFile(MelPath.."drone.lua",1)
 
 LoadFile(TactPath.."sentrybasic.lua",1)
 LoadFile(TactPath.."sentrysniper.lua",1)
@@ -103,6 +104,9 @@ LoadFile(ResPath.."metal.lua",1)
 
 LoadFile(IntPath.."barracks.lua",1)
 LoadFile(ModPath.."canister.lua",1)
+LoadFile(ModPath.."ainodegen.lua",1)
+LoadFile(ModPath.."ainode.lua",1)
+LoadFile(ModPath.."pathfinder.lua",1)
 
 LoadFile("singularity/data/helpinfo.lua",1)
 

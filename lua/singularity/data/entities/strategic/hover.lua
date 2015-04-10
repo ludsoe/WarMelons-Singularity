@@ -23,7 +23,7 @@ Data.ResourceCost["Melonium"]=400
 
 Data.Wire.Func = function(self,iname,value)
 	if iname == "Hover Altitude" then
-		self.HoverAlt = value
+		self.HoverAltWire = value
 	end
 end
 
@@ -36,8 +36,10 @@ Data.Setup = function(self,Data,MyData)
 	self.MovementOrderable = true
 	
 	self.HoverAlt = self:GetPos().z
+	self.HoverAltWire = 0
 	
 	self.OrderFuncs["Goto"]=function(self,Dat)
+		self.HoverAlt = Dat.V.z
 		return self:ManageMovement(Dat.V)
 	end
 end

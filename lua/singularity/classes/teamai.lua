@@ -6,17 +6,18 @@ local TeamAi = {
 	MyTeam = {},
 	Squads = {},
 	Miners = {},
-	QueuedMelons = {}
+	QueuedMelons = {},
+	SuperWeps={Noah={},BigBoy={}}
 }
 
 --Available melon types used for attacking.
 TeamAi.AttackMelons = {
-"Soldier Melon",
-"Heavy Melon",
-"Explosive Melon",
-"Sniper Melon",
-"Rapid Melon",
-"Medic Melon"
+	"Soldier Melon",
+	"Heavy Melon",
+	"Explosive Melon",
+	"Sniper Melon",
+	"Rapid Melon",
+	"Medic Melon"
 }
 TeamAi.MinerMelon = "Mining Melon" --Store the Mining melon entity type.
 
@@ -71,6 +72,19 @@ function TeamAi:ManageBuildings()
 			self:ManageBarracks(ent)
 		end
 		
+		if ent.NoahCannon then
+			self.SuperWeps.Noah[ent]=ent
+			
+			if ent.LastOrder or 0 < CurTime() then
+				--print("Issuing Order!")
+				ent.LastOrder = CurTime()+3
+				local Target = self:FindBase(ent:GetPos()) or self:FindTarget(ent:GetPos())
+				if Target and IsValid(Target) then
+					ent:ClearOrders()
+					ent:AddOrder({T="Fire",V=Target:GetPos()})
+				end
+			end
+		end
 		--Add orders for other types of buildings here.
 	end)
 end
@@ -89,32 +103,50 @@ function TeamAi:ManageSquads()
 		--	print("Updating Center")
 			v:UpdateCenter() --Update the Squads center.
 			
+			--print(tostring(v.Type))
+		
 			if v.Status == 1 then
 				local Count = table.Count(v.Melons)
-			--	print("Building Up! ")
-			--	PrintTable(v.Melons)
-				if Count > 10 then
+				--print("Building Up! ")
+				--PrintTable(v.Melons)
+				if Count > v.Cap then
 					v.Status = 2
 				end
 			else
-				if not v.Target or not IsValid(v.Target) then
-			--		print("Finding target!")
-					for i, m in pairs(v.Melons) do
-						v.Target = m:ScanEnemysV2(10000)
-						break
+				if v.Type >= 8 then
+					if not v.Target or not IsValid(v.Target) then
+						v.NoahCheck=(v.NoahCheck or 0)+1
+						if v.NoahCheck>5 then v.Type = 1 end
+						
+						v.Target = self:FindNoah()
+						
+						--print("Noah: "..tostring(v.Target))
+						
+						v:OrderMelons(v.Position)
+						
+						continue
+					end			
+					
+					if v.LastOrder < CurTime() then
+						--print("Issuing Order!")
+						v.LastOrder = CurTime()+3
+						v:OrderMelons(v.Target:GetPos(),v.Target)
 					end
-					
-					v:OrderMelons(v.Position)
-					
-					continue
-				end
-				
-			--	print("Has target")
-				
-				if v.LastOrder < CurTime() then
-				--	print("Issuing Order!")
-					v.LastOrder = CurTime()+3
-					v:OrderMelons(v.Target:GetPos())
+				else
+					if not v.Target or not IsValid(v.Target) then
+						--print("Finding target!")
+						v.Target = self:FindTarget(v.Position)
+
+						v:OrderMelons(v.Position)
+						
+						continue
+					end
+									
+					if v.LastOrder < CurTime() then
+						--print("Issuing Order!")
+						v.LastOrder = CurTime()+3
+						v:OrderMelons(v.Target:GetPos())
+					end
 				end
 			end
 		else
@@ -129,7 +161,9 @@ function TeamAi:CreateSquad()
 		Melons={},
 		Position=Vector(0,0,0),
 		LastOrder = 0,
-		Target = nil
+		Target = nil,
+		Cap = math.random(5,12),
+		Type = math.random(1,12)
 	}
 	
 	function Squad:AddMelon(Melon) 
@@ -152,14 +186,19 @@ function TeamAi:CreateSquad()
 		return table.Count(self.Melons)>0
 	end
 	
-	function Squad:OrderMelons(Pos)
+	function Squad:OrderMelons(Pos,Ent)
 		self:CleanseList()
 		
 		--print("Giving Orders!")
 		
 		for k, v in pairs(self.Melons) do
 			v:ClearOrders()
-			v:AddOrder({T="Goto",V=Pos})
+			
+			if Ent and IsValid(Ent) then
+				v:AddOrder({T="Enter",V=Ent:GetPos(),E=Ent})
+			else
+				v:AddOrder({T="Goto",V=Pos})
+			end
 		end
 		
 	end
@@ -208,7 +247,7 @@ function TeamAi:ManageMelons()
 		else
 			if not ent.AISquad then
 				local S,D = self:ClosestSquad(ent:GetPos())
-				if not S or D>1000 then
+				if not S or D>500 then
 					--print("No Squad nearby, Making new one.")
 					S = self:CreateSquad()
 					S:AddMelon(ent)
@@ -223,9 +262,49 @@ function TeamAi:ManageMelons()
 end
 
 function TeamAi:RunCycle()
+	self:ManageSquads()
 	self:ManageMelons()
 	self:ManageBuildings()
-	self:ManageSquads()
+end
+
+function TeamAi:FindNoah()
+	--PrintTable(self.SuperWeps)
+	
+	for k, v in pairs(self.SuperWeps.Noah) do
+		if v and IsValid(v) then
+			return v
+		else
+			self.SuperWeps.Noah[K]=nil
+		end
+	end
+end
+
+function TeamAi:FindTarget(Pos)
+	local entz = ents.FindInSphere(Pos,30000)
+	for k, v in pairs(entz) do
+		if v.MelonTeam and not v:IsPlayer() then
+			if not v.MelonTeam:IsHidden() and self.MyTeam:CanAttack(v) then
+				return v
+			end
+		end
+	end
+end
+
+function TeamAi:FindBase(Pos)
+	local entz = ents.FindInSphere(Pos,30000)
+	for k, v in pairs(entz) do
+		if v.MelonTeam and not v:IsPlayer() then
+			if not v.MelonTeam:IsHidden() and self.MyTeam:CanAttack(v) then
+				if v.NoahCannon or v.IsBarracks or v.SuperWeapon then
+					return v
+				end
+			end
+		end
+	end
+end
+
+function TeamAi:GetPath(Pos,Pos2)
+
 end
 
 Singularity.Teams.AIClass = TeamAi

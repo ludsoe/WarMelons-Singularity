@@ -70,6 +70,11 @@ Data.Think = function(self)
 	end
 end
 
+--Tell garrys crappy duplicator to not copy the inventory.
+Data.OnEntityCopyFinish = function(self,Data)
+	Data.Inventory = {}
+end
+
 Data.HelpType = "Melons"
 
 Data.HelpInfo = [[Mining melons are a utility type

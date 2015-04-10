@@ -79,7 +79,7 @@ function Singularity.MT.OpenGui()
 	
 	Base = Singularity.MenuCore.CreateFrame({x=700,y=400},true,false,false,true)
 	Base:Center()
-	Base:SetTitle( "WarMelons OmniTool" )
+	Base:SetTitle( "WarMelons OmniTool "..Singularity.Version )
 	Base:MakePopup()
 	Super.Base = Base
 	

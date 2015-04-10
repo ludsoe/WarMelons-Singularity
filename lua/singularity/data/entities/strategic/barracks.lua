@@ -127,6 +127,11 @@ Data.OnUse = function(self,name,activator,caller)
 	BarracksMenu(activator,self)
 end
 
+Data.OnEntityCopyFinish = function(self,Data)
+	Data.BuildQueue = {}
+	Data.Training = {A=false,S=0,E=0,T=""}
+end
+
 Data.HelpType = "Structures"
 
 Data.HelpInfo = [[The Barracks is where you train all your 

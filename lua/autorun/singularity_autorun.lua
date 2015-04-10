@@ -9,7 +9,7 @@ local Singularity = Singularity --Localise the global table for speed.
 Singularity.Settings = Singularity.Settings or {} --Setup our settings table.
 Singularity.SettingsName = "singularitysettings"
 Singularity.SaveDataPath = "singularity/"
-Singularity.Version = "InDev V:32"
+Singularity.Version = "Beta V:53"
 Singularity.DebugMode = "Verbose" 
 Singularity.EnableMenu = true --Debug Menu
 

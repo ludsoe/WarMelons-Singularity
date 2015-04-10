@@ -132,6 +132,10 @@ function Utl:SetupThinkHook(Name,Delay,Repeat,Function)
 	Thinks[Name]={N=Name,S=CurTime(),D=Delay,R=Repeat,F=Function}
 end
 
+function Utl:RemoveThinkHook(Name)
+	Thinks[Name]=nil
+end
+
 --[[----------------------------------------------------
 NonShared Utility Functions.
 ----------------------------------------------------]]--

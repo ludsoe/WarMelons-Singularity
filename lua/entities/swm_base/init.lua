@@ -36,7 +36,7 @@ function ENT:Compile(Data,ply,Team)
 	self:SetNWString("Name", Data.N)
 	
 	self.InitData = Data
-	
+
 	print("Compiling: "..Data.N.." from "..Data.T)
 	
 	--Make a copy of the data pattern.
@@ -49,23 +49,21 @@ function ENT:Compile(Data,ply,Team)
 		self:GetPhysicsObject():SetMass(MyData.Weight)
 	end
 	
-	self.MelonTeam = Team or Singularity.Teams.UnOwned
-	self.SyncData.Team=self.MelonTeam.name
+	if ply and IsValid(ply) then
+		self.MelonTeam = Team or ply:GetMTeam()
+	else
+		self.MelonTeam = Team or Singularity.Teams.UnOwned
+	end
+	
 	
 	if self.IsResource then
-	
+		self.MelonTeam = nil
 	else
-		if ply and IsValid(ply) then
-			self.MelonTeam = Team or ply:GetMTeam()
-		else
-			self.MelonTeam = Team or Singularity.Teams.UnOwned
-		end
+		self.SyncData.Team = self.MelonTeam.name
 		self:SetColor(self.MelonTeam.color)
-		self.SyncData.Team=self.MelonTeam.name
-		
 		Singularity.SetMaxHealth( self,MyData.MaxHealth )
 	end
-		
+	
 	if self.BSSetup then
 		self:BSSetup(Data,ply,MyData)
 	end
@@ -78,7 +76,9 @@ function ENT:Compile(Data,ply,Team)
 	self.ModuleUse = MyData.OnUse or function() end
 	self.OnKilled = MyData.OnDeath or function() end
 	self.OnBreakOff = MyData.OnBreakOff or function() end
-	
+	self.OnBuildDupeData = MyData.OnBuildDupeData or function() end
+	self.OnEntityCopyFinish = MyData.OnEntityCopyFinish or function() end
+		
 	self.ThinkSpeed = MyData.ThinkSpeed or 1
 	
 	if MyData.Wire then
@@ -90,6 +90,8 @@ function ENT:Compile(Data,ply,Team)
 		end
 		self.TriggerInput = MyData.Wire.Func or function() end
 	end
+	
+	self:TransmitData()
 end
 
 function ENT:OnRemove()
@@ -133,8 +135,8 @@ function ENT:AcceptInput(name,activator,caller)
 	end
 end
 
+AddCSLuaFile("includes/dupesupport.lua")
 include("includes/extra.lua")
-include("includes/dupesupport.lua")
 include("includes/networking.lua")
 include("includes/orders.lua")
 include("includes/movement.lua")

@@ -40,7 +40,13 @@ end
 
 function ENT:HoverAtAlt()
 	local MyPos,Pos = self:GetPos(),self:GetPos()
-	Pos.z = self.HoverAlt
+	local HALT = self.HoverAlt
+	
+	if self.HoverAltWire ~= 0 then
+		HALT = self.HoverAltWire
+	end
+	
+	Pos.z = HALT
 	local angle1 = Pos - MyPos
 	
 	local Dis = math.Clamp((MyPos:Distance(Pos)),0,200)

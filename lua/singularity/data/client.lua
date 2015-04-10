@@ -3,9 +3,17 @@ local Utl = Singularity.Utl --Makes it easier to read the code.
 
 Utl:HookNet("SingNetWorkEffect","",function(D)
 	local effectdata = EffectData()
-		effectdata:SetOrigin(D.Origin+Vector(0,0,5))
-		effectdata:SetStart(D.Start+Vector(0,0,0))
-		effectdata:SetEntity(D.Entity)
+		if D.Origin ~= nil then
+			effectdata:SetOrigin(D.Origin+Vector(0,0,5))
+		end
+		
+		if D.Start ~= nil then
+			effectdata:SetStart(D.Start+Vector(0,0,0))
+		end
+		
+		if D.Entity ~= nil then
+			effectdata:SetEntity(D.Entity)
+		end
 	util.Effect( D.N, effectdata )
 end)
 

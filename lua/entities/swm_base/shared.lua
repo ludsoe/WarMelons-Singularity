@@ -8,3 +8,5 @@ ENT.ClientSide = false
 ENT.MelonOrders = true
 
 ENT.TimesTable = {Attack=0,Scan=0,Transmit=0,Welds=0}
+
+include("includes/dupesupport.lua")

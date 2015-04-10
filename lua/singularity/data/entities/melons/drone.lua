@@ -7,19 +7,21 @@ local Data = {
 }
 
 Data.MelonDNA={
-	Speed=150,
-	Force=3,
-	TrainTime=10
+	Speed=800,
+	Force=1.5,
+	Range=200,
+	Damage=40,
+	AttackRate=1.5,
+	TrainTime=5
 }
 
-Data.Name = "Lift Melon"
+Data.Name = "Drone Melon"
 Data.MyModel = "models/props_junk/watermelon01.mdl"
-Data.MaxHealth = 400
+Data.MaxHealth = 120
 Data.Weight = 300
 
 Data.ResourceCost = {}
-Data.ResourceCost["Melonium"]=400
-
+Data.ResourceCost["Melonium"]=120
 
 Data.Wire.Func = function(self,iname,value)
 	if iname == "Hover Altitude" then
@@ -32,34 +34,27 @@ Data.Wire.In = {ID={"Hover Altitude"}}
 Data.Setup = function(self,Data,MyData)
 	self:SetMaterial("models/debug/debugwhite")
 	
-	self.IgnoreTrace = true
-	
 	self.HoverAlt = self:GetPos().z
 	self.HoverAltWire = 0
 	
 	self.OrderFuncs["Goto"]=function(self,Dat)
 		self.HoverAlt = Dat.V.z
 		return self:ManageMovement(Dat.V)
-	end
+	end	
 end
 
 Data.ThinkSpeed = 0
 Data.Think = function(self)
 	self:RunOrders()
+	self:ScanEnemys()
 	
 	self:HoverAtAlt()
 	
 	self.SyncData.Health = Singularity.GetHealth( self ).."/"..Singularity.GetMaxHealth( self )
+	
+	if IsValid(self.Target) then
+		self:Attack(self.Target)
+	end	
 end
-
-Data.HelpType = "Melons"
-
-Data.HelpInfo = [[Lift Melons are melons
-with the ability to generate force
-and are capable of moving contraptions.
-
-But Are Also capable of generating lift
-and are generally used when making aircraft.
-]]
 
 Singularity.Entities.MakeModule(Data)

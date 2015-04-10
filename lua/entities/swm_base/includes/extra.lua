@@ -70,7 +70,7 @@ function ENT:DrawHeal(S,E)
 	NDat.AddDataAll({
 		Name="SingNetWorkEffect",
 		Val=1,
-		Dat={{N="N",T="S",V="heal_splash"},{N="Entity",T="E",V=self},{N="Start",T="V",V=E+Vector(0,0,5)}}
+		Dat={{N="N",T="S",V="heal_splash"},{N="Entity",T="E",V=self},{N="Origin",T="V",V=E+Vector(0,0,5)}}
 	})	
 end
 
@@ -146,26 +146,6 @@ function ENT:Mine(Ent)
 			self.Target = nil
 		end
 	end
-end
-
-function ENT:ScanEnemysV2(Range)
-	if not Singularity.Settings["MelonsDoDamage"] then return end
-	local entz = ents.FindInSphere(self:GetPos(),Range)
-	local C = Range*2
-	for k, v in pairs(entz) do
-		if v.MelonTeam and not v:IsPlayer() then
-			if not v.MelonTeam:IsHidden() and self.MelonTeam:CanAttack(v) then
-				if self:LineOfSight(v:GetPos(),v) then
-					local Dist = v:GetPos():Distance(self:GetPos())
-					if Dist<C then
-						C=Dist
-						Closest = v
-					end
-				end
-			end
-		end
-	end
-	return Closest
 end
 
 function ENT:ScanEnemys()

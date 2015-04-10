@@ -2,9 +2,9 @@ local Singularity = Singularity
 
 Singularity.DefaultSettings = {}
 local Ig = Singularity.DefaultSettings
-Ig["PlayerTeamMelonCap"]=20
-Ig["PersistTeamMelonCap"]=30
-Ig["PlayerTeamBuildingCap"]=5
+Ig["PlayerTeamMelonCap"]=40
+Ig["PersistTeamMelonCap"]=60
+Ig["PlayerTeamBuildingCap"]=6
 Ig["PersistTeamBuildingCap"]=8
 
 Ig["EnforceBuildingCap"]=true
