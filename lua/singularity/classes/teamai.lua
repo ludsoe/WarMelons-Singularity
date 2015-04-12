@@ -191,8 +191,20 @@ function TeamAi:CreateSquad()
 		
 		--print("Giving Orders!")
 		
+		local Path = {}
+		
+		--If Available, generate a path.
+		if table.Count(Singularity.AI.Nodes)>0 then
+			Path = Singularity.PathFinder.FindPath(self.Position,Pos) or {}
+		end
+		
 		for k, v in pairs(self.Melons) do
 			v:ClearOrders()
+			
+			for n, p in pairs(Path) do
+				if n == 1 then continue end
+				v:AddOrder({T="Goto",V=p})
+			end
 			
 			if Ent and IsValid(Ent) then
 				v:AddOrder({T="Enter",V=Ent:GetPos(),E=Ent})

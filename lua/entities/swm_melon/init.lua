@@ -42,6 +42,8 @@ function ENT:BSSetup(Data,ply)
 	
 	self.GeeCheck = 0
 	
+	self.DeathSound = Sound("garrysmod/balloon_pop_cute.wav")
+	
 --	self:SetCustomCollisionCheck(true)
 end
 

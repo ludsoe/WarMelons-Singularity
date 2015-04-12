@@ -107,7 +107,7 @@ function Singularity.BreakOff(ent,mult)
 		ent:OnBreakOff()
 	end
 	
-	ent:EmitSound( Sound( "weapons/stunstick/spark" .. tostring( math.random( 1, 3 ) ) .. ".wav" ) )
+	ent:EmitSound( ent.DeathSound or Sound( "weapons/stunstick/spark" .. tostring( math.random( 1, 3 ) ) .. ".wav" ) )
 	
 	if math.random(1,9)==3 then
 		ent:Ignite(1000,100)--So only a fraction of the props burn.

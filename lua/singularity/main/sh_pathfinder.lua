@@ -5,39 +5,40 @@ Singularity.PathFinder = {}
 local PF = Singularity.PathFinder
 local AI = Singularity.AI
 local Nodes = AI.Nodes
-
-local function heuristic(a, b)
-        //Manhattan distance on a square grid
-        if not a.Cost then a.Cost = 1 end
-        if not b.Cost then b.Cost = 1 end
-        return ((a:GetPos():Distance(b:GetPos()))*(a.Cost*b.Cost))
-end
  
+ --Check Line of sight, and filter out nodes that our melons cant traverse.
+function PF.CheckLOS(node,neighbor)
+	return true
+end
+
+--Override the neighbor_nodes function to use our optimised lists.
+function astar.neighbor_nodes(node,nodes)
+	local Connected = {}
+	local nodes = AI.GetConnected(node)
+	
+	for k, v in pairs(nodes) do
+		if PF.CheckLOS(node,v) then
+			table.insert(Connected,v)
+		end
+	end
+	
+	return Connected
+end
+
 function PF.FindPath(Start,End)
 	local start = AI.ClosestNode(Start)
 	local goal = AI.ClosestNode(End)
-	local frontier = {}
-	table.insert(frontier, start)
-	local came_from = {}
-	local cost_so_far = {}
-	came_from[start] = None
-	cost_so_far[start] = 0
+	if start==nil or goal==nil then return end
 	
-	while #frontier ~= 0 do
-			current = frontier[#frontier]
-			if current == goal then
-					break
-			end
-			for k, next in pairs(current.C) do
-					new_cost = cost_so_far[current] + (next.Cost)
-					if (not table.HasValue(cost_so_far, next)) or (new_cost < cost_so_far[next]) then
-							cost_so_far[next] = new_cost
-							priority = new_cost + heuristic(goal, next)
-							//I'm fucking retarded at tables, but you need to make everything above frontier[priority] move up one keyvalue
-							table.insert(frontier, next)
-							came_from[next] = current
-					end
-			end
-			frontier[#frontier] = nil
+	local Path = astar.path(start,goal,Nodes,false,PF.CheckLOS)
+	
+	if not Path then return end
+	
+	local PathReal = {}
+	
+	for k, v in pairs(Path) do
+		PathReal[k]=v.P
 	end
+	
+	return PathReal
 end

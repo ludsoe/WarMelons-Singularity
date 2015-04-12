@@ -8,11 +8,39 @@ local AI = Singularity.AI
 
 AI.NodeFilter = {}
 AI.Nodes = {}
+AI.Sectors = {}
+AI.NNSettings = {NodeDistance=200,SectorSize=1000}
 AI.DebugMode = false
 
 --The Directions we make the nodes in.
-AI.NodeDistance = 200
-AI.Directions = {Vector(AI.NodeDistance,0,0),Vector(-AI.NodeDistance,0,0),Vector(0,AI.NodeDistance,0),Vector(0,-AI.NodeDistance,0)}
+AI.Directions = {Vector(AI.NNSettings.NodeDistance,0,0),Vector(-AI.NNSettings.NodeDistance,0,0),
+Vector(0,AI.NNSettings.NodeDistance,0),Vector(0,-AI.NNSettings.NodeDistance,0),Vector(AI.NNSettings.NodeDistance,AI.NNSettings.NodeDistance,0),
+Vector(-AI.NNSettings.NodeDistance,-AI.NNSettings.NodeDistance,0),Vector(-AI.NNSettings.NodeDistance,AI.NNSettings.NodeDistance,0),
+Vector(AI.NNSettings.NodeDistance,-AI.NNSettings.NodeDistance,0)
+}
+
+local Map = string.lower(game.GetMap()) --Get the map
+local FileName = "wmainn["..Map.."]"
+
+function AI.ParseNodeFile(Data)
+	if not Data then print("No Save Data Found!") return end
+	local Load = util.JSONToTable(Data)
+	table.Merge(AI.Nodes,Load.Nodes)
+	table.Merge(AI.NNSettings,Load.Settings)
+	print("Successfully Loaded "..tostring(AI.CountNodes()).." Ai Nodes!")
+end
+
+function AI.LoadNodeNetwork()
+	print("Loading Map Nodes!")
+	local Folder = "singularity/main/nodemaps/"
+	AI.ParseNodeFile(file.Read(Folder..FileName..".lua","LUA"))
+end
+
+function AI.SaveNodeNetwork()
+	Data = util.TableToJSON({Nodes=AI.Nodes,Settings=AI.NNSettings})
+	
+	file.Write( FileName..".txt", Data )
+end
 
 function AI.GenerateNode(Pos,Data)
 	local Data = Singularity.Entities.Modules["Resources"]["AI Node"]
@@ -38,11 +66,14 @@ function AI.DoTrace(P1,P2)
 end
 
 function AI.ClosestNode(Pos)
-	local Sector =  AI.GetSector(Pos)
+	local Sector = AI.Nodes[tostring(AI.GetSector(Pos))]
 	
 	local Closest,Dist = nil,9999999
 	
-	for k, v in pairs(AI.Nodes[tostring(Sector)]) do
+	--PrintTable(Sector)
+	
+	for k, v in pairs(Sector) do
+	--	PrintTable(v)
 		local Distance = Pos:Distance(v.P)
 		if Distance<Dist then
 			Dist = Distance
@@ -54,16 +85,26 @@ function AI.ClosestNode(Pos)
 end
 
 function AI.GetSector(Pos)
-	local SectSize = 1000
+	local SectSize = AI.NNSettings.SectorSize
 	return Vector(math.Round(Pos.x/SectSize),math.Round(Pos.y/SectSize),math.Round(Pos.z/SectSize))
+end
+
+function AI.GetConnected(node)
+	local Connected = {}
+	
+	for k, v in pairs(node.C) do
+		local NodeDat = AI.Nodes[v.S][v.N]
+		if NodeDat then
+			table.insert(Connected,NodeDat)
+		end
+	end
+	
+	return Connected	
 end
 
 function AI.MakeNodeData(Pos)
 	local Data = {P=Pos,C={},Cost=1}
-	
-	function Data:GetPos()
-		return self.P
-	end
+	Data.x = Pos.x Data.y = Pos.y
 	
 	return Data
 end
@@ -77,7 +118,7 @@ Gen.Goal = 1
 
 function Gen.CheckClear(Pos,Sector)
 	for k, v in pairs(AI.Nodes[Sector]) do
-		if Pos:Distance(v.P)<AI.NodeDistance*0.9 then
+		if Pos:Distance(v.P)<AI.NNSettings.NodeDistance*0.9 then
 			return false
 		end
 	end
@@ -97,11 +138,11 @@ function AI.NodeGenerate(Pos)
 	AI.Nodes[Sector][tostring(Pos)] = NodeDat-- Our first node.
 	
 	for k, v in pairs(AI.Directions) do
-		local vPos = Pos+v+Vector(0,0,AI.NodeDistance*0.5)
+		local vPos = Pos+v+Vector(0,0,AI.NNSettings.NodeDistance*0.5)
 			
 		--local tr = AI.DoTrace(Pos,vPos,Sector)
 		--if not tr.Hit then
-		local tr = AI.DoTrace(vPos,vPos+Vector(0,0,-AI.NodeDistance*1.8))
+		local tr = AI.DoTrace(vPos,vPos+Vector(0,0,-AI.NNSettings.NodeDistance*1.8))
 		if tr.Hit then
 			local HP = tr.HitPos+Vector(0,0,20)
 			local vSect = tostring(AI.GetSector(HP))
@@ -126,7 +167,7 @@ function AI.NavNodeGenerate()
 	while UnFinished > 0 do
 		local X,XMax = 1, 20
 		
-		if not AI.DebugMode then XMax = 100 end
+		if not AI.DebugMode then XMax = 200 end
 		
 		for k, v in pairs(Gen.UnfinishedNodes) do
 			AI.NodeGenerate(v)
@@ -146,7 +187,7 @@ function AI.NavNodeGenerate()
 	Gen.State = "Connecting"
 		
 	local X,XMax = 1, 20
-	if not AI.DebugMode then XMax = 100 end
+	if not AI.DebugMode then XMax = 2000 end
 	
 	Gen.Prog = 0
 	Gen.Goal,nope = AI.CountNodes()
@@ -158,14 +199,14 @@ function AI.NavNodeGenerate()
 				for d, n in pairs(b) do
 					Gen.Prog = Gen.Prog + 1
 					if v.P == n.P then continue end
-					if v.P:Distance(n.P)<AI.NodeDistance*2 then
+					if v.P:Distance(n.P)<AI.NNSettings.NodeDistance*2 then
 						local tr = AI.DoTrace(v.P,n.P)
 						if not tr.Hit then --Can We Trace to it?
-							table.insert(v.C,n)
+							table.insert(v.C,{S=l,N=d})
 						end
 					end
 					
-					if X>=20 then
+					if X>=XMax then
 						coroutine.wait(0.0001)
 						X=1
 					else
@@ -208,10 +249,12 @@ function AI.GenerateNavNodes(Pos)
 			print("Finished Nav Node Generation! Time Took: "..tostring(SysTime()-AI.GenStart)
 				.."\nGenerated "..tostring(N).." nodes across "..tostring(S).." sectors.")
 			Utl:RemoveThinkHook("AiNodeGenerator")
+			AI.SaveNodeNetwork() --Save the network to file!
 		end 
 	end)
 end
 
+AI.LoadNodeNetwork()--Load any possible netowrks.
 
 
 
