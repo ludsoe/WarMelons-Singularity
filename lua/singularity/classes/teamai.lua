@@ -7,7 +7,8 @@ local TeamAi = {
 	Squads = {},
 	Miners = {},
 	QueuedMelons = {},
-	SuperWeps={Noah={},BigBoy={}}
+	SuperWeps={Noah={},BigBoy={}},
+	SetupProperly = false
 }
 
 --Available melon types used for attacking.
@@ -135,8 +136,12 @@ function TeamAi:ManageSquads()
 				else
 					if not v.Target or not IsValid(v.Target) then
 						--print("Finding target!")
-						v.Target = self:FindTarget(v.Position)
-
+						if v.Type<=4 then
+							v.Target = self:FindTarget(v.Position)
+						else
+							v.Target = self:FindBase(v.Position) or self:FindTarget(v.Position)
+						end
+						
 						v:OrderMelons(v.Position)
 						
 						continue
@@ -164,7 +169,10 @@ function TeamAi:CreateSquad()
 		Target = nil,
 		Cap = math.random(5,12),
 		Type = math.random(1,12),
-		Birth = CurTime()+30
+		Birth = CurTime()+30,
+		PathStatus = "NotExist",
+		PathDatCache = {},
+		Pathing = false
 	}
 	
 	function Squad:AddMelon(Melon) 
@@ -196,15 +204,39 @@ function TeamAi:CreateSquad()
 		
 		--If Available, generate a path.
 		if table.Count(Singularity.AI.Nodes)>0 then
-			Path = Singularity.PathFinder.FindPath(self.Position,Pos)
+			self.PathStatus,Path = Singularity.PathFinder.FindPath(self.PathDatCache.Start or self.Position,self.PathDatCache.Goal or Pos)
+			if self.PathStatus == "Pathing" then
+				if not self.Pathing then
+					self.PathDatCache={Start=self.Position,Goal=Pos}
+					self.PathTimeOut = CurTime()+20
+					self.Pathing = true
+				end	
+				
+				if self.PathTimeOut<CurTime() then
+					self.PathDatCache = {}
+					self.PathStatus = "NotExist"
+					Path = {}
+					self.Pathing = false
+				--	print("Path Timed out....")
+				else
+					return --Path isnt finished yet...
+				end
+			else
+				self.PathDatCache = {}
+				self.Pathing = false
+				--print("Path found!")
+			end
+			Path = Path or {}
 		end
 		
 		for k, v in pairs(self.Melons) do
 			v:ClearOrders()
 			
-			for n, p in pairs(Path) do
-				if n == 1 then continue end
-				v:AddOrder({T="Goto",V=p},true)
+			if table.Count(Path)>0 then
+				for n, p in pairs(Path) do
+					if n == 1 then continue end
+					v:AddOrder({T="Goto",V=p},true)
+				end
 			end
 			
 			if Ent and IsValid(Ent) then
@@ -240,10 +272,12 @@ function TeamAi:ClosestSquad(Position)
 	local C,D = nil,999999999
 	
 	for k, v in pairs(self.Squads) do
-		local Dist = v.Position:Distance(Position)
-		if Dist<D then
-			D = Dist
-			C = v
+		if v.Status == 1 then --Only Give Orders to Groups that are building up.
+			local Dist = v.Position:Distance(Position)
+			if Dist<D then
+				D = Dist
+				C = v
+			end
 		end
 	end
 	
@@ -274,7 +308,18 @@ function TeamAi:ManageMelons()
 	end)
 end
 
+function TeamAi:InstallAi()
+	local MyTeam =  self.MyTeam
+	
+	MyTeam:SetDefaultDiplomacy(false)
+	
+	self.SetupProperly = true
+end
+
 function TeamAi:RunCycle()
+	if not self.SetupProperly then
+		self:InstallAi()
+	end
 	self:ManageSquads()
 	self:ManageMelons()
 	self:ManageBuildings()
@@ -293,31 +338,48 @@ function TeamAi:FindNoah()
 end
 
 function TeamAi:FindTarget(Pos)
-	local entz = ents.FindInSphere(Pos,30000)
-	for k, v in pairs(entz) do
-		if v.MelonTeam and not v:IsPlayer() then
-			if not v.MelonTeam:IsHidden() and self.MyTeam:CanAttack(v) then
-				return v
-			end
-		end
-	end
-end
-
-function TeamAi:FindBase(Pos)
-	local entz = ents.FindInSphere(Pos,30000)
-	for k, v in pairs(entz) do
-		if v.MelonTeam and not v:IsPlayer() then
-			if not v.MelonTeam:IsHidden() and self.MyTeam:CanAttack(v) then
-				if v.NoahCannon or v.IsBarracks or v.SuperWeapon then
-					return v
+	--local entz = ents.FindInSphere(Pos,30000)
+	--for k, v in pairs(entz) do
+	--print("Finding Target!")
+	for ti, t in pairs(Singularity.Teams.Teams) do
+		local MyRelation = self.MyTeam:GetRelations(t)
+		--print(t.name.." "..MyRelation)
+		if MyRelation == "Hostile" and not t:IsHidden() then
+			for k, v in pairs(t.Melons.Units) do
+				local Ent = v.E
+				if not Ent or not IsValid(Ent) then t.Melons.Units[k]=nil continue end
+				if self.MyTeam:CanAttack(Ent) then
+					return Ent
 				end
 			end
 		end
 	end
 end
 
-function TeamAi:GetPath(Pos,Pos2)
-
+function TeamAi:FindBase(Pos)
+	--local entz = ents.FindInSphere(Pos,30000)
+	--for k, v in pairs(entz) do
+	--print("Finding Base!")
+	for ti, t in pairs(Singularity.Teams.Teams) do
+		local MyRelation = self.MyTeam:GetRelations(t)
+		--print(t.name.." "..MyRelation)
+		if MyRelation ~= "Allied" and not t:IsHidden() then
+			for k, v in pairs(t.Melons.Buildings) do
+				local Ent = v.E
+				if not Ent or not IsValid(Ent) then t.Melons.Buildings[k]=nil continue end
+				if self.MyTeam:CanAttack(Ent) then
+					if Ent.NoahCannon or Ent.IsBarracks or Ent.SuperWeapon then
+						return Ent
+					end
+				else
+					if Ent.NoahCannon or Ent.SuperWeapon then
+						self.MyTeam:MakeEnemy(t,false) 
+						return Ent
+					end
+				end
+			end
+		end
+	end
 end
 
 Singularity.Teams.AIClass = TeamAi

@@ -44,14 +44,15 @@ function Team:ChangeSetting(Set,Val,Over)
 	self:SyncData()
 end
 
-function Team:SetDefaultDiplomacy()
+function Team:SetDefaultDiplomacy(Hidden)
 	for k, v in pairs(Teams.Teams) do
-		if v:IsHidden() or self:IsHidden() then
-			v:MakeNeutral(self)
-			self:MakeNeutral(v)
+		if v == self then continue end
+		if v:IsHidden() or self:IsHidden() or self:GetAIMode() or v:GetAIMode() then
+			v:MakeNeutral(self,Hidden)
+			self:MakeNeutral(v,Hidden)
 		else
-			v:MakeEnemy(self)
-			self:MakeEnemy(v)
+			v:MakeEnemy(self,Hidden)
+			self:MakeEnemy(v,Hidden)
 		end
 	end
 	self:SetRelations(self,"Allied")
@@ -67,7 +68,7 @@ function Team:Setup(name,color)
 	self:StartCheckTimer()
 	self:SyncData()
 	
-	self:SetDefaultDiplomacy()
+	self:SetDefaultDiplomacy(true)
 end
 
 function Team:LockTeam(Bool)
@@ -267,7 +268,7 @@ end
 
 function Team:CanMakeMelon(Barracks)
 	local Count = table.Count(self.Melons.Units)
-	if not self.Persist then
+	if not self:IsPersist() then
 		return Count < tonumber(Singularity.Settings["PlayerTeamMelonCap"])
 	else
 		return Count < tonumber(Singularity.Settings["PersistTeamMelonCap"])
@@ -277,7 +278,7 @@ end
 
 function Team:CanMakeBuilding()
 	local Count = table.Count(self.Melons.Buildings)
-	if not self.Persist then
+	if not self:IsPersist() then
 		return Count < tonumber(Singularity.Settings["PlayerTeamBuildingCap"])
 	else
 		return Count < tonumber(Singularity.Settings["PersistTeamBuildingCap"])
@@ -322,7 +323,7 @@ function Team:SetRelations(Team,Rel)
 	self.Diplomacy[Team.name]=Rel
 end
 
-function Team:MakeAlly(Team,Over) 
+function Team:MakeAlly(Team,Hidden) 
 	self:DiplomacyCheck(Team)
 	
 	local Relations = self:GetRelations(Team)
@@ -332,20 +333,24 @@ function Team:MakeAlly(Team,Over)
 		self:SetRelations(Team,"Allied")
 		Team:SetRelations(self,"Allied")
 		
-		Team:MsgMembers("You're now allied with Team: "..self.name)
-		self:MsgMembers("You're now allied with Team: "..Team.name)
+		if not Hidden then
+			Team:MsgMembers("You're now allied with Team: "..self.name)
+			self:MsgMembers("You're now allied with Team: "..Team.name)
+		end
 	else
 		if Relations == "Pending" then return end
 		self:SetRelations(Team,"Pending")
-
-		Team:MsgMembers("Team: "..self.name.." wants to become allied with you!")
-		self:MsgMembers("Alliance Request with Team: "..Team.name.." is pending!")
+		
+		if not Hidden then
+			Team:MsgMembers("Team: "..self.name.." wants to become allied with you!")
+			self:MsgMembers("Alliance Request with Team: "..Team.name.." is pending!")
+		end
 	end
 	
 	self:SyncData()
 end
 
-function Team:MakeEnemy(Team,Over) 
+function Team:MakeEnemy(Team,Hidden) 
 	self:DiplomacyCheck(Team)
 	
 	if self:GetRelations(Team)=="Hostile" then return end
@@ -354,23 +359,27 @@ function Team:MakeEnemy(Team,Over)
 	self:SetRelations(Team,"Hostile")
 	
 	if Team:GetRelations(self)=="Allied" then
-		Team:MakeEnemy(self)
+		Team:MakeEnemy(self,Hidden)
 	end
 	
-	self:MsgMembers("You're now Hostile towards Team: "..Team.name)
-
+	if not Hidden then
+		self:MsgMembers("You're now Hostile towards Team: "..Team.name)
+	end
+	
 	self:SyncData()
 end
 
-function Team:MakeNeutral(Team,Over)
+function Team:MakeNeutral(Team,Hidden)
 	self:DiplomacyCheck(Team)
 	
 	if self:GetRelations(Team)=="Neutral" then return end
 
 	self:SetRelations(Team,"Neutral")
-	Team:MakeNeutral(self)
+	Team:MakeNeutral(self,Hidden)
 	
-	self:MsgMembers("You're now Neutral towards Team: "..Team.name)
+	if not Hidden then
+		self:MsgMembers("You're now Neutral towards Team: "..Team.name)
+	end
 	
 	self:SyncData()
 end

@@ -11,10 +11,9 @@ end
 function ENT:AddOrder(O,I)
 	if self.OrderChange then self.OrderChange(O) end
 	O.ID=math.random(1,3000)
+	O.NoSync = I or false
 	table.insert(self.Orders,O)
-	if not I then
-		QO.QueueOrders(self,self.Orders)
-	end
+	QO.QueueOrders(self,self.Orders)
 end
 
 function ENT:RemoveOrder(ID)

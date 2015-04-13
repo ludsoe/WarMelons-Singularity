@@ -9,8 +9,18 @@ QO.Queued = {}
 QO.Groups = {}
 
 if SERVER then
+	function QO.FilterNoSends(Orders)
+		local Clean = {}
+		for i, o in pairs(Orders) do
+			if not o.NoSync then
+				Clean[i]=o
+			end
+		end
+		return Clean
+	end
+	
 	function QO.QueueOrders(Ent,Orders)
-		QO.Queued[Ent:EntIndex()] = {E=Ent,O=Orders}
+		QO.Queued[Ent:EntIndex()] = {E=Ent,O=QO.FilterNoSends(Orders)}
 	end
 	
 	function QO.IsOrderMatch(O,G)
@@ -56,11 +66,15 @@ if SERVER then
 		QO.CondenseOrders()
 		
 		if table.Count(QO.Groups)<=0 then return end
-		NDat.AddDataAll({
-			Name="MelonGroupOrders",
-			Val=1,
-			Dat={{N="G",T="T",V=QO.Groups}}
-		})
+		for gi, g in pairs(QO.Groups) do
+			if table.Count(g.Orders)>0 then
+				NDat.AddDataAll({
+					Name="MelonGroupOrders",
+					Val=5,
+					Dat={{N="G",T="T",g}}
+				})
+			end
+		end
 		
 		QO.Groups = {}
 	end
@@ -69,14 +83,15 @@ if SERVER then
 else
 
 	Utl:HookNet("MelonGroupOrders","",function(D)
-		for i, g in pairs(D.G) do
-			for ei, e in pairs(g.Ents) do
+		--for i, g in pairs(D.G) do
+			if not D.G then return end -- For some reason we wernt sent a table...
+			for ei, e in pairs(D.G.Ents) do
 				local Ent = Entity(ei)
 				if Ent and IsValid(Ent) then
-					Ent.Orders = table.Copy(g.Orders)
+					Ent.Orders = table.Copy(D.G.Orders)
 				end
 			end
-		end
+		--end
 	end)
 	
 end

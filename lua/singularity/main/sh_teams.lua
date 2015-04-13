@@ -81,6 +81,8 @@ if SERVER then
 		--if Team.name == D.T.T then
 			if Team:GetLeader() == ply or Utl:CheckAdmin( ply ) then 
 				Team:ChangeSetting(D.T.N,D.T.V,false)
+			else
+				print("Is Not Team Leader! Or Admin!")
 			end
 		--end
 	end)

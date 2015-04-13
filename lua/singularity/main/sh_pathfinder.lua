@@ -29,6 +29,29 @@ function PF.FindPath(Start,End)
 	local start,goal = AI.ClosestNode(Start),AI.ClosestNode(End)
 	if start==nil or goal==nil then return end
 	
+	local Status,Path = astar.getpath(start,goal)
+	
+	if Status == "NotExist" then
+		astar.path(start,goal,Nodes,false,PF.CheckLOS)
+		return "Pathing",nil
+	elseif Status == "Finished" then
+		local PathReal = {}
+		
+		for k, v in pairs(Path) do
+			PathReal[k]=v.P
+		end
+		
+		return Status,PathReal		
+	end
+	
+	return Status,nil
+end
+
+/* --Old version
+function PF.FindPath(Start,End)
+	local start,goal = AI.ClosestNode(Start),AI.ClosestNode(End)
+	if start==nil or goal==nil then return end
+	
 	local Path = astar.path(start,goal,Nodes,false,PF.CheckLOS)
 	
 	if not Path then return end
@@ -41,3 +64,4 @@ function PF.FindPath(Start,End)
 	
 	return PathReal
 end
+*/

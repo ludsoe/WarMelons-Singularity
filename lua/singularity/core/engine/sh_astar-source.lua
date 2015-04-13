@@ -22,8 +22,6 @@
 -- TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 -- SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -- ======================================================================
--- Edited By Ludsoe, converted into a garrysmod coroutine.
-
 
 module ( "astar", package.seeall )
 
@@ -114,8 +112,6 @@ end
 -- pathfinding functions
 ----------------------------------------------------------------
 
-local ASterData = {}
-
 function a_star ( start, goal, nodes, valid_node_func )
 
 	local closedset = {}
@@ -129,14 +125,12 @@ function a_star ( start, goal, nodes, valid_node_func )
 	f_score [ start ] = g_score [ start ] + heuristic_cost_estimate ( start, goal )
 
 	while #openset > 0 do
-	
+		if FrameTime()>0.05 then return Path end --We took too long... Just return what ever we had.
+		
 		local current = lowest_f_score ( openset, f_score )
 		if current == goal then
 			local path = unwind_path ( {}, came_from, goal )
 			table.insert ( path, goal )
-			--print("Path Finished! "..FrameTime())
-			ASterData.Status,ASterData.Path="Finished",path
-			coroutine.yield()
 			return path
 		end
 
@@ -144,18 +138,7 @@ function a_star ( start, goal, nodes, valid_node_func )
 		table.insert ( closedset, current )
 		
 		local neighbors = neighbor_nodes ( current, nodes )
-		local DeLag=1
 		for _, neighbor in ipairs ( neighbors ) do 
-				
-			--if FrameTime()>0.04 then
-			if DeLag>300 then
-				DeLag=1
-				ASterData.Status,ASterData.Path="Pathing",nil
-				coroutine.yield()
-			else
-				DeLag=DeLag+1
-			end
-		
 			if not_in ( closedset, neighbor ) then
 			
 				local tentative_g_score = g_score [ current ] + dist_between ( current, neighbor )
@@ -171,31 +154,7 @@ function a_star ( start, goal, nodes, valid_node_func )
 			end
 		end
 	end
-	ASterData.Status,ASterData.Path="Pathing",{}
-	coroutine.yield()
 	return nil -- no valid path
-end
-
-local RunningPaths = {}
-local FinishedPaths = {}
-function PathFinderRun()
-	for k, v in pairs(RunningPaths) do
-		ASterData={Status="Pathing",Path={}}
-		coroutine.resume(v)
-		local Status,Path = ASterData.Status,ASterData.Path
-		if Status == "Finished" then
-			FinishedPaths[k]=Path
-			RunningPaths[k]=nil
-		end
-	end
-end
-
-Singularity.Utl:SetupThinkHook("AStarPathFinder",0,0,function()
-	PathFinderRun()
-end)
-
-function GeneratePKey(S,E)
-	return tostring(S.P).."=>"..tostring(E.P)
 end
 
 ----------------------------------------------------------------
@@ -212,18 +171,6 @@ function distance ( x1, y1, x2, y2 )
 	return dist ( x1, y1, x2, y2 )
 end
 
-function getpath(start,goal)
-	local Key = GeneratePKey(start,goal)
-	local FP = FinishedPaths[Key]
-	if FP then
-		return "Finished",FP
-	elseif RunningPaths[Key] then
-		return "Pathing"
-	end
-	
-	return "NotExist"
-end
-
 function path ( start, goal, nodes, ignore_cache, valid_node_func )
 
 	if not cachedPaths then cachedPaths = {} end
@@ -233,6 +180,5 @@ function path ( start, goal, nodes, ignore_cache, valid_node_func )
 		return cachedPaths [ start ] [ goal ]
 	end
 	
-	--return a_star ( start, goal, nodes, valid_node_func )
-	RunningPaths[GeneratePKey(start,goal)]=coroutine.create(function() a_star ( start, goal, nodes, valid_node_func ) end)
+	return a_star ( start, goal, nodes, valid_node_func )
 end
