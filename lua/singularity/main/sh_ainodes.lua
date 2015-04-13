@@ -185,9 +185,6 @@ function AI.NavNodeGenerate()
 	end
 	
 	Gen.State = "Connecting"
-		
-	local X,XMax = 1, 20
-	if not AI.DebugMode then XMax = 2000 end
 	
 	Gen.Prog = 0
 	Gen.Goal,nope = AI.CountNodes()
@@ -206,11 +203,8 @@ function AI.NavNodeGenerate()
 						end
 					end
 					
-					if X>=XMax then
+					if FrameTime()>0.1 then
 						coroutine.wait(0.0001)
-						X=1
-					else
-						X=X+1 
 					end
 				end
 			end
@@ -234,6 +228,7 @@ function AI.GenerateNavNodes(Pos)
 	AI.GenStart = SysTime()
 	print("Starting Nav Node Generation!")
 	AI.NodeGenerate(Vector(math.Round(Pos.x),math.Round(Pos.y),math.Round(Pos.z)))
+	Gen.State = "Generating"
 	Gen.Thread = coroutine.create(function() AI.NavNodeGenerate() end)
 	
 	Utl:SetupThinkHook("AiNodeGenerator",0,0,function()

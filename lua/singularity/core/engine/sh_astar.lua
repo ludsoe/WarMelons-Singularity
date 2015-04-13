@@ -125,7 +125,8 @@ function a_star ( start, goal, nodes, valid_node_func )
 	f_score [ start ] = g_score [ start ] + heuristic_cost_estimate ( start, goal )
 
 	while #openset > 0 do
-	
+		if FrameTime()>0.05 then return Path end --We took too long... Just return what ever we had.
+		
 		local current = lowest_f_score ( openset, f_score )
 		if current == goal then
 			local path = unwind_path ( {}, came_from, goal )

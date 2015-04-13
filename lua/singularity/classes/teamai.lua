@@ -109,7 +109,7 @@ function TeamAi:ManageSquads()
 				local Count = table.Count(v.Melons)
 				--print("Building Up! ")
 				--PrintTable(v.Melons)
-				if Count > v.Cap then
+				if Count > v.Cap or v.Birth>CurTime() then
 					v.Status = 2
 				end
 			else
@@ -163,7 +163,8 @@ function TeamAi:CreateSquad()
 		LastOrder = 0,
 		Target = nil,
 		Cap = math.random(5,12),
-		Type = math.random(1,12)
+		Type = math.random(1,12),
+		Birth = CurTime()+30
 	}
 	
 	function Squad:AddMelon(Melon) 
@@ -195,7 +196,7 @@ function TeamAi:CreateSquad()
 		
 		--If Available, generate a path.
 		if table.Count(Singularity.AI.Nodes)>0 then
-			Path = Singularity.PathFinder.FindPath(self.Position,Pos) or {}
+			Path = Singularity.PathFinder.FindPath(self.Position,Pos)
 		end
 		
 		for k, v in pairs(self.Melons) do
@@ -203,13 +204,13 @@ function TeamAi:CreateSquad()
 			
 			for n, p in pairs(Path) do
 				if n == 1 then continue end
-				v:AddOrder({T="Goto",V=p})
+				v:AddOrder({T="Goto",V=p},true)
 			end
 			
 			if Ent and IsValid(Ent) then
-				v:AddOrder({T="Enter",V=Ent:GetPos(),E=Ent})
+				v:AddOrder({T="Enter",V=Ent:GetPos(),E=Ent},true)
 			else
-				v:AddOrder({T="Goto",V=Pos})
+				v:AddOrder({T="Goto",V=Pos},true)
 			end
 		end
 		

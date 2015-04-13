@@ -26,8 +26,7 @@ function astar.neighbor_nodes(node,nodes)
 end
 
 function PF.FindPath(Start,End)
-	local start = AI.ClosestNode(Start)
-	local goal = AI.ClosestNode(End)
+	local start,goal = AI.ClosestNode(Start),AI.ClosestNode(End)
 	if start==nil or goal==nil then return end
 	
 	local Path = astar.path(start,goal,Nodes,false,PF.CheckLOS)

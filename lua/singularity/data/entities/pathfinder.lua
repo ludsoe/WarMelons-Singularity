@@ -22,7 +22,7 @@ Data.Setup = function(self,Data,MyData)
 end
 
 Data.OnUse = function(self,name,activator,caller)
-	print("MySector: "..tostring(Singularity.AI.GetSector(self:GetPos())))
+	--print("MySector: "..tostring(Singularity.AI.GetSector(self:GetPos())))
 	self.Path = Singularity.PathFinder.FindPath(self:GetPos(),self.Goal:GetPos())
 	--PrintTable(self.Path)
 end

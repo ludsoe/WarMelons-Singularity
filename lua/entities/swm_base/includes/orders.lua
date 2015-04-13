@@ -8,11 +8,13 @@ function ENT:SetOrders(O)
 	QO.QueueOrders(self,self.Orders)
 end
 
-function ENT:AddOrder(O)
+function ENT:AddOrder(O,I)
 	if self.OrderChange then self.OrderChange(O) end
 	O.ID=math.random(1,3000)
 	table.insert(self.Orders,O)
-	QO.QueueOrders(self,self.Orders)
+	if not I then
+		QO.QueueOrders(self,self.Orders)
+	end
 end
 
 function ENT:RemoveOrder(ID)
