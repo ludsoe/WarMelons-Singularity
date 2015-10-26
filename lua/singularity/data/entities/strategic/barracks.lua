@@ -87,8 +87,9 @@ end
 
 Data.ThinkSpeed = 0
 Data.Think = function(self)
-	self.SyncData.Health = Singularity.GetHealth( self ).."/"..Singularity.GetMaxHealth( self )
-	
+	self.SyncData.HealthRaw = {H=Singularity.GetHealth( self ),M=Singularity.GetMaxHealth( self )}
+	self.SyncData.Health = self.SyncData.HealthRaw.H.."/"..self.SyncData.HealthRaw.M
+
 	local Train = self.Training
 	if not Train.A and self.BuildQueue then
 		local Name = self.BuildQueue[1]
@@ -121,6 +122,16 @@ Data.Think = function(self)
 			end
 		end
 	end
+end
+
+Data.WorldTip2 = function(self,Info)
+	self.BuildQueue = self.BuildQueue or {}
+	table.insert(Info,{Type="Label",Value="Training: "..(self.BuildQueue[1] or "None")})
+	
+	local P,V = self.TrainS or 0 , self.TrainE or 1
+	local Prog = (P-CurTime())/(P-V)
+	table.insert(Info,{Type="Percentage",Text="Progress: "..math.Round(math.Clamp(Prog,0,1)*100),Value=Prog})
+	return true
 end
 
 Data.OnUse = function(self,name,activator,caller)

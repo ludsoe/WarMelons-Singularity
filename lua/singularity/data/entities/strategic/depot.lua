@@ -19,8 +19,9 @@ end
 
 Data.ThinkSpeed = 0
 Data.Think = function(self)
-	self.SyncData.Health = Singularity.GetHealth( self ).."/"..Singularity.GetMaxHealth( self )
-	
+	self.SyncData.HealthRaw = {H=Singularity.GetHealth( self ),M=Singularity.GetMaxHealth( self )}
+	self.SyncData.Health = self.SyncData.HealthRaw.H.."/"..self.SyncData.HealthRaw.M
+
 	if not self.MelonTeam then return end
 	local Resources = self.MelonTeam:GetResources()
 	local Txt="["

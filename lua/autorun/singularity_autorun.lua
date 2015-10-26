@@ -9,7 +9,7 @@ local Singularity = Singularity --Localise the global table for speed.
 Singularity.Settings = Singularity.Settings or {} --Setup our settings table.
 Singularity.SettingsName = "singularitysettings"
 Singularity.SaveDataPath = "singularity/"
-Singularity.Version = "Beta V:58"
+Singularity.Version = "Beta V:60"
 Singularity.DebugMode = "Verbose" 
 Singularity.EnableMenu = true --Debug Menu
 
@@ -20,7 +20,8 @@ local CoreF,DataF,MainF = "singularity/core/","singularity/data/","singularity/m
 
 --Shared
 LoadFile("singularity/variables.lua",1)
-LoadFile("singularity/menusys.lua",1)
+--LoadFile("singularity/menusys.lua",1)
+LoadFile("singularity/sh_vguiease.lua",1)
 LoadFile("singularity/debug.lua",1)
 LoadFile(CoreF.."sh_utility.lua",1)
 LoadFile(CoreF.."engine/sh_networking.lua",1)

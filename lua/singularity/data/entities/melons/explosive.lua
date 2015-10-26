@@ -32,7 +32,8 @@ Data.Think = function(self)
 	self:RunOrders()
 	self:ScanEnemys()
 	
-	self.SyncData.Health = Singularity.GetHealth( self ).."/"..Singularity.GetMaxHealth( self )
+	self.SyncData.HealthRaw = {H=Singularity.GetHealth( self ),M=Singularity.GetMaxHealth( self )}
+	self.SyncData.Health = self.SyncData.HealthRaw.H.."/"..self.SyncData.HealthRaw.M
 	
 	if IsValid(self.Target) then
 		if self:CanAttack(self.Target) then

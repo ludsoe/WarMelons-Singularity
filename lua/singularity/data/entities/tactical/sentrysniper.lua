@@ -21,7 +21,8 @@ Data.MaxHealth = 1000
 
 Data.ThinkSpeed = 0
 Data.Think = function(self)
-	self.SyncData.Health = Singularity.GetHealth( self ).."/"..Singularity.GetMaxHealth( self )
+	self.SyncData.HealthRaw = {H=Singularity.GetHealth( self ),M=Singularity.GetMaxHealth( self )}
+	self.SyncData.Health = self.SyncData.HealthRaw.H.."/"..self.SyncData.HealthRaw.M
 	self:ScanEnemys()
 		
 	if IsValid(self.Target) then

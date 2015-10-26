@@ -23,7 +23,7 @@ end
 
 Data.OnUse = function(self,name,activator,caller)
 	--print("MySector: "..tostring(Singularity.AI.GetSector(self:GetPos())))
-	self.Path = Singularity.PathFinder.FindPath(self:GetPos(),self.Goal:GetPos())
+	self.Path.Status,self.Path.Nodes = Singularity.PathFinder.FindPath(self:GetPos(),self.Goal:GetPos())
 	--PrintTable(self.Path)
 end
 
@@ -32,8 +32,12 @@ Data.MyModel = "models/Combine_Helicopter/helicopter_bomb01.mdl"
 
 Data.ThinkSpeed = 0.5
 Data.Think = function(self)
-	for x, n in pairs(self.Path) do
-		self:DrawAttack(self.Path[x-1] or self:GetPos(),n)
+	if self.Path.Status == "Finished" then
+		for x, n in pairs(self.Path.Nodes) do
+			self:DrawAttack(self.Path.Nodes[x-1] or self:GetPos(),n)
+		end
+	else
+		print(tostring(self.Path.Status))
 	end
 end
 

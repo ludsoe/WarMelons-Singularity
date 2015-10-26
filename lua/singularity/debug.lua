@@ -4,6 +4,7 @@ Jupiter Debug Core -Allows Easy Debugging.
 
 local Singularity = Singularity --Localise the global table for speed.
 Singularity.DebugLogs = Singularity.DebugLogs or {}
+Singularity.MenuCore.SuperMenu = {}
 
 local DebugLogging = Singularity.EnableMenu
 local DebugTypes = {Verbose=3,Basic=2,None=1}

@@ -24,3 +24,15 @@ Ig["EnforceBuildingCap"]="Melon Building Cap Enforcement"
 Ig["ManualMelonspawn"]="Melon From Tool Spawning"
 Ig["MelonsDoDamage"]="Melons Can Attack"
 Ig["MelonsReqResources"]="Melons Require Resources"
+
+if CLIENT then
+	Singularity.GradientTex = surface.GetTextureID( "gui/center_gradient" )
+
+	Singularity.GuiThemeColor = {
+		BG = Color(50,50,50,150), --BackGround Color
+		FG = Color(0,0,0,150), --ForeGround Color
+		GC = Color(255, 255, 255, 15), --Gradient Color
+		GHO = Color(0,40,150,10),--Gradient Hover Over Color
+		Text = Color(0,220,60,200) --Text Color
+	}
+end

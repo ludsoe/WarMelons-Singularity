@@ -31,7 +31,8 @@ end
 
 Data.ThinkSpeed = 0
 Data.Think = function(self)
-	self.SyncData.Health = Singularity.GetHealth( self ).."/"..Singularity.GetMaxHealth( self )
+	self.SyncData.HealthRaw = {H=Singularity.GetHealth( self ),M=Singularity.GetMaxHealth( self )}
+	self.SyncData.Health = self.SyncData.HealthRaw.H.."/"..self.SyncData.HealthRaw.M
 end
 
 Data.OnUse = function(self,name,activator,caller)

@@ -9,7 +9,8 @@ function ENT:Compile(T,N)
 	--Make a copy of the data pattern.
 	local MyData = table.Copy(Singularity.Entities.Modules[T][N].E)
 	self.ModuleData = MyData
-	self.BubbleData = MyData.WorldTip
+	self.GetStatusInfo = MyData.WorldTip or self.GetStatusInfo
+	self.ExtraData = MyData.WorldTip2 or self.ExtraData
 	
 	self.CThink = MyData.ClientThink or function() end
 	self.ClientSide = true
@@ -31,6 +32,7 @@ function ENT:Think()
 	end
 end
 
+--[[
 function ENT:BubbleFunc(Txt,Core,Trace,Pos)
 	for n, v in pairs( self.BubbleData or {} ) do
 		Txt=Txt.."\n"..n..": "..tostring(self:GetNWFloat(v))
@@ -46,6 +48,7 @@ function ENT:WorldBubble(Trace,Pos)
 	--Add Stuff Here related to what the ship Module Displays.
 	return txt
 end
+]]
 
 function ENT:AmISelected()
 	local Melon = GetSelectedMelons()[self:EntIndex()]
@@ -78,4 +81,44 @@ function ENT:DrawOrders()
 			end
 		end
 	end
+end
+
+function ENT:GetBaseInfo(Info)	
+	table.insert(Info,{Type="Label",Value=(self.DisplayName or self.ModName)})
+	
+	return true
+end
+
+function ENT:GetStatusInfo(Info) return false end
+function ENT:ExtraData(Info) return false end 
+
+function ENT:Draw( DrawModel )
+	local TR = LocalPlayer():GetEyeTrace()
+	if TR.Entity == self and EyePos():Distance( TR.HitPos ) < 512 then
+		self.SyncData = self.SyncData or {}
+		Singularity.MenuCore.RenderWorldTip(self,function(ent)
+			local Info = {}
+			
+			self:GetBaseInfo(Info) 
+			table.insert(Info,{Type="Label",Value=""})
+			
+			if self:GetStatusInfo(Info) then table.insert(Info,{Type="Label",Value=""}) end
+			if self:ExtraData(Info) then table.insert(Info,{Type="Label",Value=""}) end
+			
+			self:FactionData(Info)
+			
+			return Info
+		end)
+	end
+	
+	if DrawModel then self:DrawModel() end
+end
+
+function ENT:FactionData(Info)
+	local playername = self.SyncData.Team or ""
+	if playername == "" then
+		playername = "World"
+	end
+	
+	table.insert(Info,{Type="Label",Value="(" .. playername ..")"})
 end
