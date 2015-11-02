@@ -25,10 +25,23 @@ Data.Think = function(self)
 	if not self.MelonTeam then return end
 	local Resources = self.MelonTeam:GetResources()
 	local Txt="["
+	local F,MF=1,table.Count(Resources)
 	for k,v in pairs(Resources) do
-		Txt=Txt..k..": "..v..", "
+		Txt=Txt..k..": "..v
+		if F < MF then 
+			Txt=Txt..", " 
+			F=F+1
+		end
 	end
 	self.SyncData["Inventory:"]=Txt.."]"
+end
+
+Data.ClientSetup = function(self)
+	self.SyncData["Inventory:"] = "[]"
+end
+
+Data.WorldTip2 = function(self,Info)
+	table.insert(Info,{Type="Label",Value="Inventory: "..self.SyncData["Inventory:"]})
 end
 
 Data.HelpType = "Structures"

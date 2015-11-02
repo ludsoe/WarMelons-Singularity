@@ -74,11 +74,12 @@ if SERVER then
 		end
 	end)
 	
-	Utl:HookNet("SingTeamSettingsSync","",function(D,Ply)
-		print("Received Setting: "..D.T.N.." from "..tostring(Ply:Nick()).." in "..tostring(Ply:GetMTeam().name).." for "..tostring(D.T.T).." Value: "..tostring(D.T.V))
-		local Team = Ply:GetMTeam()
+	Utl:HookNet("SingTeamSettingsSync","",function(D,ply)
+		print("Received Setting: "..D.T.N.." from "..tostring(ply:Nick()).." in "..tostring(ply:GetMTeam().name).." for "..tostring(D.T.T).." Value: "..tostring(D.T.V))
+		local Team = ply:GetMTeam()
 		--PrintTable(Team)
 		--if Team.name == D.T.T then
+			print(tostring(Team:GetLeader()).." "..tostring(ply))
 			if Team:GetLeader() == ply or Utl:CheckAdmin( ply ) then 
 				Team:ChangeSetting(D.T.N,D.T.V,false)
 			else

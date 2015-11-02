@@ -124,8 +124,11 @@ Data.Think = function(self)
 	end
 end
 
+Data.ClientSetup = function(self)
+	self.BuildQueue = {}
+end
+
 Data.WorldTip2 = function(self,Info)
-	self.BuildQueue = self.BuildQueue or {}
 	table.insert(Info,{Type="Label",Value="Training: "..(self.BuildQueue[1] or "None")})
 	
 	local P,V = self.TrainS or 0 , self.TrainE or 1

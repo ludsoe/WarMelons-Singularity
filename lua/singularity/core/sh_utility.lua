@@ -273,6 +273,7 @@ function Utl:CheckAdmin( entity )
 	if not entity:IsPlayer() then return false end
 	
 	if entity.WarMelonDeveloper then return true end
+	if game.SinglePlayer() then return true end
 	
 	return entity:IsAdmin()
 end

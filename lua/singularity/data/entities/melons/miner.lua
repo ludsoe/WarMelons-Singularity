@@ -71,6 +71,14 @@ Data.Think = function(self)
 	end
 end
 
+Data.ClientSetup = function(self)
+	self.SyncData["Inventory:"] = "[]"
+end
+
+Data.WorldTip2 = function(self,Info)
+	table.insert(Info,{Type="Label",Value="Inventory: "..self.SyncData["Inventory:"]})
+end
+
 --Tell garrys crappy duplicator to not copy the inventory.
 Data.OnEntityCopyFinish = function(self,Data)
 	Data.Inventory = {}

@@ -63,6 +63,8 @@ function ENT:BSThink()
 			self.OldSpeed = CurSpeed
 		end
 	end
+	
+	self.SyncData["MyTarget"] = tostring(self.Target)
 end
 
 function ENT:BSRemove()
