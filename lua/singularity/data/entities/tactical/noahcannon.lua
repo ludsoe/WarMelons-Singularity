@@ -145,6 +145,12 @@ Data.Think = function(self)
 	WireLib.TriggerOutput( self, "Loaded Melons", table.Count(self.StoredMelons) )
 end
 
+Data.WorldTip2 = function(self,Info)
+	table.insert(Info,{Type="Label",Value="Loaded Melons: "..tostring(self.SyncData["Loaded Melons"])})
+	table.insert(Info,{Type="Label",Value="Weapon Ready: "..tostring(self.SyncData["Canister Ready"])})
+	return true
+end
+
 Data.HelpType = "Structures"
 
 Data.HelpInfo = [[The Noah Cannon is a strategic super weapon

@@ -7,17 +7,17 @@ local AI = Singularity.AI
 local Nodes = AI.Nodes
  
  --Check Line of sight, and filter out nodes that our melons cant traverse.
-function PF.CheckLOS(node,neighbor)
+function PF.CheckLOS(node,neighbor,MelonData)
 	return true
 end
 
 --Override the neighbor_nodes function to use our optimised lists.
-function astar.neighbor_nodes(node,nodes)
+function astar.neighbor_nodes(node,nodes,MelonData)
 	local Connected = {}
 	local nodes = AI.GetConnected(node)
 	
 	for k, v in pairs(nodes) do
-		if PF.CheckLOS(node,v) then
+		if PF.CheckLOS(node,v,MelonData) then
 			table.insert(Connected,v)
 		end
 	end
@@ -25,14 +25,14 @@ function astar.neighbor_nodes(node,nodes)
 	return Connected
 end
 
-function PF.FindPath(Start,End)
+function PF.FindPath(Start,End,MelonData)
 	local start,goal = AI.ClosestNode(Start),AI.ClosestNode(End)
 	if start==nil or goal==nil then return end
 	
 	local Status,Path = astar.getpath(start,goal)
 	
 	if Status == "NotExist" then
-		astar.path(start,goal,Nodes,false,PF.CheckLOS)
+		astar.path(start,goal,Nodes,false,PF.CheckLOS,MelonData)
 		return "Pathing",nil
 	elseif Status == "Finished" then
 		local PathReal = {}

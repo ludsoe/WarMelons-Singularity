@@ -130,6 +130,11 @@ Data.Think = function(self)
 	WireLib.TriggerOutput( self, "Weapon Ready", Ready )
 end
 
+Data.WorldTip2 = function(self,Info)
+	table.insert(Info,{Type="Label",Value="Weapon Ready: "..tostring(self.SyncData["Weapon Ready"])})
+	return true
+end
+
 Data.HelpType = "Structures"
 
 Data.HelpInfo = [[The Big Boy is a heavy artillery

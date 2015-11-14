@@ -14,6 +14,7 @@ local function Normalize(Vec)
 	return Vec/Length
 end
 
+/*
 function ShouldEntitiesCollide( ent1, ent2 )
 	if ent1:IsWorld() or ent2:IsWorld() then return true end --World check
 	if ent1 == ent2 then return false end --No self collisions!
@@ -40,3 +41,4 @@ function ShouldEntitiesCollide( ent1, ent2 )
 	end
 end
 hook.Add( "ShouldCollide", "MelonCollisionFix", ShouldEntitiesCollide )
+*/

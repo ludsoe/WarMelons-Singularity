@@ -103,7 +103,7 @@ function AI.GetConnected(node)
 end
 
 function AI.MakeNodeData(Pos)
-	local Data = {P=Pos,C={},Cost=1}
+	local Data = {P=Pos,C={},Cost=1,Extra={Water=false}}
 	Data.x = Pos.x Data.y = Pos.y
 	
 	return Data
@@ -165,7 +165,7 @@ end
 function AI.NavNodeGenerate()
 	local UnFinished = table.Count(Gen.UnfinishedNodes)
 	while UnFinished > 0 do
-		local X,XMax = 1, 20
+		local X,XMax = 1, 100
 		
 		if not AI.DebugMode then XMax = 200 end
 		
@@ -173,8 +173,8 @@ function AI.NavNodeGenerate()
 			AI.NodeGenerate(v)
 			Gen.UnfinishedNodes[k]=nil
 			
-			if X>=20 then
-				coroutine.wait(0.0001)
+			if X>=XMax then
+				coroutine.yield()
 				X=1
 			else
 				X=X+1 
@@ -189,9 +189,15 @@ function AI.NavNodeGenerate()
 	Gen.Prog = 0
 	Gen.Goal,nope = AI.CountNodes()
 	Gen.Goal = Gen.Goal*Gen.Goal
+	Gen.Extra = 0
+	Gen.Extra2 = 0
+	Gen.LoopStart = SysTime()
 	
+	local LagPauseCheck = 0
 	for k, m in pairs(AI.Nodes) do
+		Gen.Extra = Gen.Extra+1
 		for s, v in pairs(m) do
+			Gen.Extra2 = Gen.Extra2+1
 			for l, b in pairs(AI.Nodes) do
 				for d, n in pairs(b) do
 					Gen.Prog = Gen.Prog + 1
@@ -203,12 +209,24 @@ function AI.NavNodeGenerate()
 						end
 					end
 					
-					if FrameTime()>0.1 then
-						coroutine.wait(0.0001)
+					if LagPauseCheck>=20000 then
+						LagPauseCheck=0
+						Gen.LoopPause = SysTime()
+						coroutine.yield()
+					else
+						LagPauseCheck=LagPauseCheck+1
 					end
 				end
 			end
-		end
+			
+			local HasWater = bit.band( util.PointContents( v.P ), CONTENTS_WATER ) == CONTENTS_WATER
+			v.Extra["Water"]=HasWater
+			
+			if HasWater then
+				v.Cost = 1.5
+			end
+			
+		end		
 	end
 
 	Gen.State = "Finished"
@@ -236,7 +254,9 @@ function AI.GenerateNavNodes(Pos)
 			if Gen.State == "Generating" then
 				print("Unfinished Nodes: "..tostring(table.Count(Gen.UnfinishedNodes)))
 			else
-				print("Building Node Networks.... "..tostring(Gen.Prog).." / "..tostring(Gen.Goal))
+				local Change = Gen.LoopPause-(Gen.SavedPause or SysTime())
+				Gen.SavedPause = Gen.LoopPause
+				print("Percent: "..((Gen.Prog/Gen.Goal)*100).." Building Node Networks.... "..tostring(Gen.Prog).." / "..tostring(Gen.Goal).." Working... Sector: "..tostring(Gen.Extra).." Node: "..tostring(Gen.Extra2).." TimeChange: "..Change)
 			end
 			coroutine.resume(Gen.Thread)
 		else

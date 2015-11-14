@@ -53,7 +53,7 @@ function heuristic_cost_estimate ( nodeA, nodeB )
 	return dist ( nodeA.x, nodeA.y, nodeB.x, nodeB.y )
 end
 
-function is_valid_node ( node, neighbor )
+function is_valid_node ( node, neighbor, MelonData )
 
 	return true
 end
@@ -70,11 +70,11 @@ function lowest_f_score ( set, f_score )
 	return bestNode
 end
 
-function neighbor_nodes ( theNode, nodes )
+function neighbor_nodes ( theNode, nodes, MelonData )
 
 	local neighbors = {}
 	for _, node in ipairs ( nodes ) do
-		if theNode ~= node and is_valid_node ( theNode, node ) then
+		if theNode ~= node and is_valid_node ( theNode, node, MelonData ) then
 			table.insert ( neighbors, node )
 		end
 	end
@@ -116,7 +116,7 @@ end
 
 local ASterData = {}
 
-function a_star ( start, goal, nodes, valid_node_func )
+function a_star ( start, goal, nodes, valid_node_func, MelonData )
 
 	local closedset = {}
 	local openset = { start }
@@ -143,7 +143,7 @@ function a_star ( start, goal, nodes, valid_node_func )
 		remove_node ( openset, current )		
 		table.insert ( closedset, current )
 		
-		local neighbors = neighbor_nodes ( current, nodes )
+		local neighbors = neighbor_nodes ( current, nodes, MelonData )
 		local DeLag=1
 		for _, neighbor in ipairs ( neighbors ) do 
 				
@@ -224,7 +224,7 @@ function getpath(start,goal)
 	return "NotExist"
 end
 
-function path ( start, goal, nodes, ignore_cache, valid_node_func )
+function path ( start, goal, nodes, ignore_cache, valid_node_func, MelonData )
 
 	if not cachedPaths then cachedPaths = {} end
 	if not cachedPaths [ start ] then
@@ -234,5 +234,5 @@ function path ( start, goal, nodes, ignore_cache, valid_node_func )
 	end
 	
 	--return a_star ( start, goal, nodes, valid_node_func )
-	RunningPaths[GeneratePKey(start,goal)]=coroutine.create(function() a_star ( start, goal, nodes, valid_node_func ) end)
+	RunningPaths[GeneratePKey(start,goal)]=coroutine.create(function() a_star ( start, goal, nodes, valid_node_func, MelonData ) end)
 end
