@@ -13,7 +13,7 @@ Data.MelonDNA={
 }
 
 Data.Name = "Hover Engine"
-Data.MyModel = "models/combine_helicopter/helicopter_bomb01.mdl"
+Data.MyModel = "models/props_c17/TrapPropeller_Engine.mdl"
 Data.MaxHealth = 1200
 Data.Weight = 1000
 
