@@ -92,6 +92,8 @@ function ENT:Compile(Data,ply,Team)
 	end
 	
 	self:TransmitData()
+	
+	Singularity.MelonThink.RegisterThinker(self)--Stick ourselfs into the optimized think lists.
 end
 
 function ENT:OnRemove()
@@ -104,7 +106,7 @@ function ENT:OnRemove()
 	end
 end
 
-function ENT:Think()
+function ENT:SlowThink()
 	if not self.ModuleThink then return end
 	self:ModuleThink()
 	
@@ -124,10 +126,16 @@ function ENT:Think()
 			Singularity.DealDamage(self,self:GetPos(),10,self,self)
 		end
 	end
+end
+
+/*
+function ENT:Think()
+
 	
 	self:NextThink(CurTime()+0.1)
 	return true
 end
+*/
 
 function ENT:AcceptInput(name,activator,caller)
 	if self.ModuleUse then

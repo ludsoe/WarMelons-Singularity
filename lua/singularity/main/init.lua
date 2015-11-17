@@ -11,6 +11,7 @@ Singularity.LoadFile(MainF.."sh_teams.lua",1)
 Singularity.LoadFile(MainF.."sh_players.lua",1)
 Singularity.LoadFile(MainF.."sh_ainodes.lua",1)
 Singularity.LoadFile(MainF.."sh_pathfinder.lua",1)
+Singularity.LoadFile(MainF.."melonthink.lua",1)
 
 if SERVER then
 	Utl:HookNet("ClearAllMelons","",function(D,ply)
