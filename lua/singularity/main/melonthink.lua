@@ -32,6 +32,7 @@ function IThink.Think()
 			if LagPrevent < 20 then
 				LagPrevent=LagPrevent+1
 			else
+				LagPrevent=0
 				coroutine.yield()
 			end
 		else
