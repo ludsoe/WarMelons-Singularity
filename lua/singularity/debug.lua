@@ -44,16 +44,16 @@ end
 if not DebugLogging then return end
 
 if SERVER then
-	util.AddNetworkString('Jupiter_Debug_MSG')
+	util.AddNetworkString('WM_Debug_MSG')
 
 	function Singularity.MenuCore.OpenPanel( ply )
-		ply:ConCommand( "openjupitermenu" )
+		ply:ConCommand( "wmdebug" )
 	end
 	--hook.Add( "ShowSpare2", "bindtoSpare2", Singularity.MenuCore.OpenPanel )
 
 	function SendDebugTypes(ply)
 		for k, log in pairs(DebugLogs) do
-			net.Start( "Jupiter_Debug_MSG" )
+			net.Start( "WM_Debug_MSG" )
 				net.WriteString("Types")
 				net.WriteString(k)
 			net.Send( ply )		
@@ -64,7 +64,7 @@ if SERVER then
 		local num = 1
 		for k, log in pairs(DebugLogs[Type] or {}) do
 			timer.Simple((num*0.1)+0.01, function() 
-				net.Start( "Jupiter_Debug_MSG" )
+				net.Start( "WM_Debug_MSG" )
 					net.WriteString("Logs")
 					net.WriteString(log.C)
 					net.WriteString(log.M)
@@ -75,7 +75,7 @@ if SERVER then
 		end
 	end
 	
-	net.Receive("Jupiter_Debug_MSG", function(length, client)
+	net.Receive("WM_Debug_MSG", function(length, client)
 		local Type = net.ReadString()
 		if Type == "Types" then
 			SendDebugTypes(client)
@@ -88,8 +88,9 @@ else
 	local Logs = {}
 	local Super = {}
 	
-	function SelectType(Type)
-		net.Start('Jupiter_Debug_MSG')
+	function SelectType(L)
+		local Type = L:GetValue(1)
+		net.Start('WM_Debug_MSG')
 			net.WriteString("Logs")
 			net.WriteString(Type)
 		net.SendToServer()
@@ -103,7 +104,7 @@ else
 		Super = {}
 		Super.Base = Singularity.MenuCore.CreateFrame({x=700,y=500},true,true,false,true)
 		Super.Base:Center()
-		Super.Base:SetTitle( "Singularity Debug Logger" )
+		Super.Base:SetTitle( "Warmelons Debug Logger" )
 		Super.Base:MakePopup()
 		
 		local menupage = Singularity.MenuCore.CreateList(Super.Base,{x=150,y=460},{x=10,y=30},false,SelectType)
@@ -115,13 +116,13 @@ else
 		menupage:AddColumn("Logs") -- Add column
 		Super.LogDisplay = menupage
 		
-		net.Start('Jupiter_Debug_MSG')
+		net.Start('WM_Debug_MSG')
 			net.WriteString("Types")
 		net.SendToServer()
 	
 		Singularity.MenuCore.SuperMenu.Menu = Super
 	end
-	concommand.Add( "openjupitermenu", Singularity.MenuCore.SuperMenu.MenuOpen )
+	concommand.Add( "wmdebug", Singularity.MenuCore.SuperMenu.MenuOpen )
 	
 	function AddType(Type)
 		if Super.LogTypes and IsValid(Super.LogTypes) then
@@ -137,7 +138,7 @@ else
 		end
 	end
 	
-	net.Receive("Jupiter_Debug_MSG", function(length, client)
+	net.Receive("WM_Debug_MSG", function(length, client)
 		local Type = net.ReadString()
 		if Type == "Types" then
 			AddType(net.ReadString())

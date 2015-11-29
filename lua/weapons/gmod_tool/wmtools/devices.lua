@@ -27,7 +27,7 @@ local function MakePage(Base,Page,Tab)
 	local Save = Tab.Save[Page] or ToolProps
 	local Spawns = Singularity.Entities.Modules[Page] or {}
 	
-	local OnSelect = function(Data)
+	local OnSelect = function(Data)		
 		if not Spawns[Data] then return end
 		local Table=Spawns[Data].M
 		Tab[Page].Models:SetModel(Table.M)
@@ -47,7 +47,7 @@ local function MakePage(Base,Page,Tab)
 	
 	Tab[Page].Name = Singularity.MenuCore.CreateText(Base,{x=170,y=120},"Select a Entity!",Color(0,0,0,255))
 	
-	local List = Singularity.MenuCore.CreateList(Base,{x=150,y=325},{x=0,y=0},false,OnSelect)
+	local List = Singularity.MenuCore.CreateList(Base,{x=150,y=325},{x=0,y=0},false,function(L) OnSelect(L:GetValue(1)) end)
 	List:AddColumn("Selection") -- Add column
 
 	for k,v in pairs(Spawns) do

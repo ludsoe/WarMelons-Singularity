@@ -88,7 +88,8 @@ else
 		self.WillLoop = false
 		self.DescLines = {}
 		
-		local schematicBox = Singularity.MenuCore.CreateList(FactoryMenu,{x=150,y=160},{x=10,y=35},false,function(V)
+		local schematicBox = Singularity.MenuCore.CreateList(FactoryMenu,{x=150,y=160},{x=10,y=35},false,function(L)
+			local V = L:GetValue(1)
 			if V then
 				self.Selected = V
 				self.SelectType = "Build"
@@ -101,7 +102,8 @@ else
 		
 		self:SetupList(schematicBox,UnitList,1)	
 			
-		local buildque = Singularity.MenuCore.CreateList(FactoryMenu,{x=150,y=160},{x=10,y=200},false,function(V)
+		local buildque = Singularity.MenuCore.CreateList(FactoryMenu,{x=150,y=160},{x=10,y=200},false,function(L)
+			local V = L:GetValue(1)
 			if V then
 				self.Selected = V
 				self.SelectType = "Queue"

@@ -53,7 +53,7 @@ function ViewTeamsPage(Base,Tab)
 		MyTab.Selected = Data
 	end	
 	
-	MyTab.TeamList = Singularity.MT.AddList("Teams",Teams.GetTeamsSafe(),OnSelect,Base,260)
+	MyTab.TeamList = Singularity.MT.AddList("Teams",Teams.GetTeamsSafe(),function(L) OnSelect(L:GetValue(1)) end,Base,260)
 	
 	MyTab.RefreshTeams = GI.CreateButton(Base,{x=150,y=40},{x=0,y=270},"Refresh",function() 
 		Teams.RequestTeams()
@@ -101,7 +101,7 @@ function AlliancePage(Base,Tab)
 
 	local OnSelect = function(Data) MyTab.Selected = Data end	
 	
-	MyTab.TeamList = GI.CreateList(Base,{x=300,y=310},{x=5,y=5},false,OnSelect)
+	MyTab.TeamList = GI.CreateList(Base,{x=300,y=310},{x=5,y=5},false,function(L) OnSelect(L:GetValue(1)) end)
 	MyTab.TeamList:AddColumn("Team") -- Add column
 	MyTab.TeamList:AddColumn("Our Stance") -- Add column
 	MyTab.TeamList:AddColumn("Their Stance") -- Add column

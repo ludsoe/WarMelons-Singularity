@@ -7,7 +7,9 @@ local function MakePage(Base,Page,Tab)
 	
 	local Spawns = Singularity.Entities.WMHelp[Page] or {}
 	
-	local OnSelect = function(Data)
+	local OnSelect = function(L)
+		local Data = L:GetValue(1)
+		
 		if not Spawns[Data] then return end
 		local Table=Spawns[Data]
 		Tab[Page].Models:SetModel(Table.M)

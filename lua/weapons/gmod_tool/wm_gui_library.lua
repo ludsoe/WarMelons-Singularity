@@ -83,8 +83,8 @@ function Singularity.MT.OpenGui()
 	Base:MakePopup()
 	Super.Base = Base
 	
-	local OnSelect = function(Data)
-		if Singularity.MT.GuiMenu.Panel and Singularity.MT.GuiMenu.Panel:IsValid() then Singularity.MT.GuiMenu.Panel:Remove() end
+	local OnSelect = function(Data)		
+		if Singularity.MT.GuiMenu.Panel and IsValid(Singularity.MT.GuiMenu.Panel) then Singularity.MT.GuiMenu.Panel:Remove() end
 		local Panel = Singularity.MenuCore.CreatePanel(Singularity.MT.GuiMenu.Base,{x=520,y=355},{x=170,y=35})
 		Panel.Offset = 0
 		Singularity.MT.GuiMenu.Panel = Panel
@@ -92,7 +92,7 @@ function Singularity.MT.OpenGui()
 		Singularity.MT.Tools[Data].Open(Panel,Singularity.MT.GetSettings(Data))
 	end
 	
-	local menupage = Singularity.MenuCore.CreateList(Base,{x=150,y=300},{x=10,y=35},false,OnSelect)
+	local menupage = Singularity.MenuCore.CreateList(Base,{x=150,y=300},{x=10,y=35},false,function(L) OnSelect(L:GetValue(1)) end)
 	menupage:AddColumn("Tool Mode") -- Add column
 	Super.Pages = menupage
 

@@ -2,6 +2,10 @@
 ---------------Jupiter Omni Tool Core----------------------
 -----------------------------------------------------------
 
+local LineBar = "--------------------------------------------------------------------------------------"
+print(LineBar.." \n".."		WarMelons OmniTool Loading!".." \n"..LineBar)
+local StartTime = SysTime()
+
 include("singularity/load.lua")
 if SERVER then AddCSLuaFile("singularity/load.lua") end
 local LoadFile = Singularity.LoadFile --Lel Speed.
@@ -158,11 +162,10 @@ else
 		local Tool = Singularity.MT.SelectedTool
 		if Tool ~= "" then
 			local Table = Singularity.MT.SyncedSettings[Tool]
-
-			if  Singularity.MT.Tools[Tool].Think then
+			if Singularity.MT.Tools[Tool].Think then
 				Singularity.MT.Tools[Tool].Think(ply,Table)
 			end
-				
+			
 			if not game.SinglePlayer() then
 				if not Table then return end
 				if Table.Server.Spawns then
@@ -191,3 +194,5 @@ else
 	
 	net.Receive( "Singularityr_ToolMenu",Singularity.MT.OpenGui)
 end
+
+print(LineBar.." \n".."Warmelons OmniTool Finished! Took "..(SysTime()-StartTime).."'s to load.".." \n"..LineBar)

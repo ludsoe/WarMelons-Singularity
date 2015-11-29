@@ -243,17 +243,15 @@ if(CLIENT)then
 			Derma:SetSize( Size.x, Size.y )
 			Derma:SetMultiSelect(Multi)
 			if Func then 
-				Derma.OldThink = Derma.Think or function() end
-				Derma.Think = function(self) 	
-					if self:GetSelected() and self:GetSelected()[1] then 
-						local selectedValue = self:GetSelected()[1]:GetValue(1) 
-						if selectedValue ~= self.Selected then 
-							self.Selected = selectedValue
-							Func(selectedValue)
-						end
-					end 
-					self:OldThink() 
-				end 
+				function Derma:OnClickLine(line,isselected)
+					Func(line,isselected)
+					if isselected then
+						if not self:GetMultiSelect() then self:ClearSelection() end
+						self:SelectItem(line)
+					else
+						self:ClearSelection()
+					end
+				end
 			end
 		return Derma
 	end	
