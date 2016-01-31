@@ -22,23 +22,26 @@ end
 
 function IThink.Think()
 	local LagPrevent = 0
-	for k, v in pairs(IThink.Melons) do
-		if IsValid(v.E) then
-			if v.E.SlowThink and v.T < CurTime() then
-				v.E:SlowThink(IThink.Entities)
-				v.T = CurTime()+0.1
-			end
-			
-			if LagPrevent < 20 then
-				LagPrevent=LagPrevent+1
+	local status, error = pcall(function()
+		for k, v in pairs(IThink.Melons) do
+			if IsValid(v.E) then
+				if v.E.SlowThink and v.T < CurTime() then
+					v.E:SlowThink(IThink.Entities)
+					v.T = CurTime()+0.1
+				end
+				
+				if LagPrevent < 20 then
+					LagPrevent=LagPrevent+1
+				else
+					LagPrevent=0
+					coroutine.yield()
+				end
 			else
-				LagPrevent=0
-				coroutine.yield()
+				IThink.Melons[k]=nil--Remove from the table
 			end
-		else
-			IThink.Melons[k]=nil--Remove from the table
 		end
-	end
+	end)
+	if error then Singularity.Debug(error,2,"MelonThink Error") end
 	
 	coroutine.yield()--Make sure it doesnt loop endlessly in a single think.
 	IThink.Think()--Restart the Loop....
