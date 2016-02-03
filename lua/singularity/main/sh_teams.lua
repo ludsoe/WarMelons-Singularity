@@ -149,10 +149,16 @@ end
 
 Utl:HookNet("TeamRequest","",function(D,Ply)
 	if SERVER then
+		local TeamNetDat = {}
+		
+		for k,v in pairs(Singularity.Teams.Teams) do
+			TeamNetDat[k] = v:GetNetData()
+		end
+		
 		local Send = {
 			Name="TeamRequest",
 			Val=1,
-			Dat={{N="T",T="T",V=Teams.Teams}}
+			Dat={{N="T",T="T",V=TeamNetDat}}
 		}
 		NDat.AddData(Send,Ply)	
 	else

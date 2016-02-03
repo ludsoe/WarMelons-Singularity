@@ -118,7 +118,10 @@ hook.Add("Think","SingularityMainLoop",function()
 				if(Remove)then Thinks[I]=nil end --Removing ended functions.
 			end
 		end
-	end,ErrorNoHalt)
+	end,function(err)
+		print("Error: "..err)
+		debug.Trace()
+	end)
 end)
 
 --Function for easily adding into the main think loop.

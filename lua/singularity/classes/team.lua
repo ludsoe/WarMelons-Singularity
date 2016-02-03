@@ -400,19 +400,20 @@ function Team:SyncMember(Ply)
 	},Ply)
 end
 
+function Team:GetNetData()
+
+	return {Leader=self.Leader,Settings=self.Settings,Members=self.Members,color=self.color,name=self.name,Diplomacy=self.Diplomacy}
+end
+
 function Team:SyncData()
 	NDat.AddDataAll({
 		Name="TeamSyncMsg",
 		Val=1,
-		Dat={{N="N",T="S",V=self.name},{N="T",T="T",V=self}}
+		Dat={{N="N",T="S",V=self.name},{N="T",T="T",V=self:GetNetData()}}
 	})
 end
 
 Singularity.Teams.Class = Team
-
-
-
-
 
 
 

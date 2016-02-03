@@ -15,19 +15,25 @@ NDat.NetDTRead = {S=net.ReadString,E=function(V) return Entity(net.ReadFloat()) 
 	
 --Actually sends the data out.
 function NDat.SendData(Data,Name,ply)
-	net.Start("sing_basenetmessage")
-		net.WriteString(Name)
-		net.WriteFloat(table.Count(Data.Dat))
-		for I, S in pairs( Data.Dat ) do --Loop all the variables.
-			net.WriteString(S.N)--Get the variable name.
-			net.WriteString(S.T)
-			NDat.NetDTWrite[S.T](S.V)
+	xpcall(function()
+		net.Start("sing_basenetmessage")
+			net.WriteString(Name)
+			net.WriteFloat(table.Count(Data.Dat))
+			for I, S in pairs( Data.Dat ) do --Loop all the variables.
+				net.WriteString(S.N)--Get the variable name.
+				net.WriteString(S.T)
+				NDat.NetDTWrite[S.T](S.V)
+			end
+		if SERVER then
+			net.Send(ply)
+		else
+			net.SendToServer()
 		end
-	if SERVER then
-		net.Send(ply)
-	else
-		net.SendToServer()
-	end
+	end,function(err)
+		print("NetMsg: "..Name)
+		print("Error: "..err)
+		debug.Trace()
+	end)
 end
 
 function Utl:HookNet(MSG,ID,Func) NDat.NHook[MSG] = Func end
