@@ -195,7 +195,9 @@ if(SERVER)then
 	function Utl:SyncSettings(Ply)
 		local Data ={
 			Name="SingSettingsSync",Val=1,
-			Dat={{N="T",T="T",V=Singularity.Settings}}
+			Dat={
+				T=Singularity.Settings
+			}
 		}
 		if Ply then
 			Utl.NetMan.AddData(Data,Ply)
@@ -263,7 +265,7 @@ else
 	end)
 
 	function Utl:SyncSetting(Name,Value)
-		Utl.NetMan.AddData({Name="SingSettingsSync",Val=1,Dat={{N="T",T="T",V={N=Name,V=Value}}}})
+		Utl.NetMan.AddData({Name="SingSettingsSync",Val=1,Dat={T={N=Name,V=Value}}})
 	end	
 end
 

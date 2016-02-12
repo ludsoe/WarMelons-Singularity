@@ -95,7 +95,7 @@ function PLY:SyncSelected()
 		local Send = {
 			Name="SelectedMelons",
 			Val=1,
-			Dat={{N="E",T="E",V=self},{N="T",T="T",V=Transmit}}
+			Dat={E=self,T=Transmit}
 		}
 		NDat.AddData(Send,self)
 	end

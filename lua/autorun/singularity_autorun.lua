@@ -7,12 +7,12 @@ local LineBar = "---------------------------------------------------------------
 print(LineBar.." \n".."		WarMelons AutoRun Core Loading!".." \n"..LineBar)
 local StartTime = SysTime()
 
-Singularity = {} --Create our Global Table.
+Singularity = Singularity or {} --Create our Global Table. (Or reuse it if it exists.... It happens...)
 local Singularity = Singularity --Localise the global table for speed.
 Singularity.Settings = Singularity.Settings or {} --Setup our settings table.
 Singularity.SettingsName = "singularitysettings"
 Singularity.SaveDataPath = "singularity/"
-Singularity.Version = "Beta V:71"
+Singularity.Version = "Beta V:75.2"
 Singularity.DebugMode = "Verbose" 
 Singularity.EnableMenu = true --Debug Menu
 

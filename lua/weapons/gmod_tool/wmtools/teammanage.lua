@@ -69,7 +69,7 @@ function ViewTeamsPage(Base,Tab)
 			if SelTeam.Members[LocalPlayer():Nick()] then
 				NDat.AddData({Name="LeaveTeam",Val=1,Dat={}})
 			else
-				NDat.AddData({Name="JoinTeam",Val=1,Dat={{N="N",T="S",V=Data}}})
+				NDat.AddData({Name="JoinTeam",Val=1,Dat={N=Data}})
 			end
 			Teams.RequestTeams()
 		end
@@ -112,7 +112,7 @@ function AlliancePage(Base,Tab)
 	GI.CreateButton(Base,{x=190,y=40},{x=310,y=5},"Alliance",function() 
 		local Data = MyTab.Selected
 		if Data then
-			NDat.AddData({Name="ReqTeamAlly",Val=1,Dat={{N="T1",T="S",V=MyTab.MyTeam.name},{N="T2",T="S",V=Data}}})
+			NDat.AddData({Name="ReqTeamAlly",Val=1,Dat={T1=MyTab.MyTeam.name,T2=Data}})
 		end
 		
 		Teams.RequestTeams()
@@ -121,7 +121,7 @@ function AlliancePage(Base,Tab)
 	GI.CreateButton(Base,{x=190,y=40},{x=310,y=50},"Neutral",function() 
 		local Data = MyTab.Selected
 		if Data then
-			NDat.AddData({Name="ReqTeamNeutral",Val=1,Dat={{N="T1",T="S",V=MyTab.MyTeam.name},{N="T2",T="S",V=Data}}})
+			NDat.AddData({Name="ReqTeamNeutral",Val=1,Dat={T1=MyTab.MyTeam.name,T2=Data}})
 		end		
 		
 		Teams.RequestTeams()
@@ -130,7 +130,7 @@ function AlliancePage(Base,Tab)
 	GI.CreateButton(Base,{x=190,y=40},{x=310,y=95},"Hostile",function() 
 		local Data = MyTab.Selected
 		if Data then
-			NDat.AddData({Name="ReqTeamHostile",Val=1,Dat={{N="T1",T="S",V=MyTab.MyTeam.name},{N="T2",T="S",V=Data}}})
+			NDat.AddData({Name="ReqTeamHostile",Val=1,Dat={T1=MyTab.MyTeam.name,T2=Data}})
 		end		
 		
 		Teams.RequestTeams()
@@ -190,7 +190,7 @@ function Utl:SyncTeamSetting(Name,Team,Value)
 	print("Sending Team Setting Change: "..tostring(Name).." "..tostring(Value).." For team "..tostring(Team))
 	Utl.NetMan.AddData({
 		Name="SingTeamSettingsSync",Val=1,Dat={
-			{N="T",T="T",V={N=Name,T=Team,V=Value}}	
+			T={N=Name,T=Team,V=Value}	
 		}
 	})
 end	

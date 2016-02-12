@@ -12,17 +12,28 @@ local BoolNum = function(V) if V>0 then return true else return false end end --
 
 NDat.NetDTWrite = {S=net.WriteString,E=function(V) net.WriteFloat(V:EntIndex()) end,F=net.WriteFloat,V=net.WriteVector,A=net.WriteAngle,B=function(V) net.WriteFloat(NumBool(V)) end,T=function(T) net.WriteString(util.TableToJSON(T)) end}
 NDat.NetDTRead = {S=net.ReadString,E=function(V) return Entity(net.ReadFloat()) end,F=net.ReadFloat,V=net.ReadVector,A=net.ReadAngle,B=function() return BoolNum(net.ReadFloat()) end,T=function() return util.JSONToTable(net.ReadString()) or {} end}
-	
+NDat.Types = {string="S",Player="E",Entity="E",number="F",vector="V",angle="A",boolean="B",table="T"}
+
 --Actually sends the data out.
 function NDat.SendData(Data,Name,ply)
+	if not Data.Dat then error("Netcode Failure! Missing Dat table. ["..tostring(Name).."]") return end --Damn Missing Dat table....
 	xpcall(function()
 		net.Start("sing_basenetmessage")
 			net.WriteString(Name)
 			net.WriteFloat(table.Count(Data.Dat))
 			for I, S in pairs( Data.Dat ) do --Loop all the variables.
-				net.WriteString(S.N)--Get the variable name.
-				net.WriteString(S.T)
-				NDat.NetDTWrite[S.T](S.V)
+				local Type = NDat.Types[type(S)]
+				
+				if Type then
+					net.WriteString(I)--Get the variable name.
+					net.WriteString(Type)--Automagically grab the type.
+					NDat.NetDTWrite[Type](S)
+				else
+					print("Unknown Type Entered! "..type(S))
+				end
+				--net.WriteString(S.N)--Get the variable name.
+				--net.WriteString(S.T)
+				--NDat.NetDTWrite[S.T](S.V)
 			end
 		if SERVER then
 			net.Send(ply)
@@ -86,7 +97,7 @@ if(SERVER)then
 		local T=NDat.Data[ply:Nick()]
 		if not T then return end
 		for I, S in pairs( Data.Dat ) do
-			if S.V == nil or S.T == nil or S.N == nil then 
+			if S == nil then 
 				Data.Dat[I]=nil
 			end
 		end

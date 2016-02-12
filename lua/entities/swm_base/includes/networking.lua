@@ -27,7 +27,10 @@ function ENT:TransmitData()
 		NDat.AddDataAll({
 			Name="SingEntDatSync",
 			Val=2,
-			Dat={{N="E",T="E",V=self},{N="T",T="T",V=Transmit}}
+			Dat={
+				E=self,
+				T=Transmit
+			}
 		})
 	end
 end
@@ -44,7 +47,10 @@ function ENT:TransmitAllData(Ply)
 	local Send = {
 		Name="SingEntDatSync",
 		Val=4,
-		Dat={{N="E",T="E",V=self},{N="T",T="T",V=Transmit}}
+		Dat={
+			E=self,
+			T=Transmit
+		}
 	}
 	NDat.AddData(Send,Ply)
 end

@@ -158,29 +158,29 @@ Singularity.Entities.MakeModule(Data)
 if SERVER then
 	function BarracksMenu(Ply,self)
 		local Data = {Name="open_barracks",Val=1,Dat={
-			{N="E",T="E",V=self}
+			E=self
 		}}
 		NDat.AddData(Data,Ply)
 	end
 	
 	function SendRemove(self)
 		NDat.AddDataAll({Name="barracks_queue_remove",Val=1,Dat={
-			{N="E",T="E",V=self}
+			E=self
 		}})
 	end
 	
 	function SendAdd(self,Name)
 		NDat.AddDataAll({Name="barracks_queue_add",Val=1,Dat={
-			{N="E",T="E",V=self},
-			{N="S",T="S",V=Name},
+			E=self,
+			S=Name
 		}})
 	end
 	
 	function SendTraining(self,Train)
 		NDat.AddDataAll({Name="barracks_start_training",Val=1,Dat={
-			{N="E",T="E",V=self},
-			{N="Sta",T="F",V=Train.S},
-			{N="End",T="F",V=Train.E}
+			E=self,
+			Sta=Train.S,
+			End=Train.E
 		}})		
 	end
 end

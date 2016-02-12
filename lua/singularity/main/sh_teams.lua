@@ -7,7 +7,7 @@ local Teams = Singularity.Teams
 
 Singularity.LoadFile("singularity/classes/teamai.lua",1)
 Singularity.LoadFile("singularity/classes/team.lua",1)
-Teams.Teams = {}
+Teams.Teams = Teams.Teams or {}
 
 --General Functions
 if SERVER then
@@ -158,7 +158,7 @@ Utl:HookNet("TeamRequest","",function(D,Ply)
 		local Send = {
 			Name="TeamRequest",
 			Val=1,
-			Dat={{N="T",T="T",V=TeamNetDat}}
+			Dat={T=TeamNetDat}
 		}
 		NDat.AddData(Send,Ply)	
 	else

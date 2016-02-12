@@ -61,4 +61,5 @@ function LoadPP()
 	end
 end
 
+if CurTime()>500 then LoadPP() end
 hook.Add("InitPostEntity","WarMelons OwnerShip", LoadPP)

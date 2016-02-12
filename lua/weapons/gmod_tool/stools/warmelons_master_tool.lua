@@ -43,7 +43,6 @@ TOOL.Description = "MelonWars Omni Tool"
 
 TOOL.AddToMenu = true -- Tell gmod not to add it. We will do it manually later!
 TOOL.Command = nil
-
 TOOL.ConfigName = ""
 
 function TOOL:UpdateGhostEntity( ent, player,angle )

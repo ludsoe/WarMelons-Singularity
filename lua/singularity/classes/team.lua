@@ -159,7 +159,9 @@ function Team:TeamDestroy()
 	NDat.AddDataAll({
 		Name="TeamDelete",
 		Val=1,
-		Dat={{N="N",T="S",V=self.name}}
+		Dat={
+			N=self.name
+		}
 	})
 		
 	Teams.Teams[self.name]=nil
@@ -396,7 +398,9 @@ function Team:SyncMember(Ply)
 	NDat.AddData({
 		Name="TeamMemberJoin",
 		Val=1,
-		Dat={{N="N",T="S",V=self.name}}
+		Dat={
+			N=self.name
+		}
 	},Ply)
 end
 
@@ -409,7 +413,10 @@ function Team:SyncData()
 	NDat.AddDataAll({
 		Name="TeamSyncMsg",
 		Val=1,
-		Dat={{N="N",T="S",V=self.name},{N="T",T="T",V=self:GetNetData()}}
+		Dat={
+			N=self.name,
+			T=self:GetNetData()
+		}
 	})
 end
 

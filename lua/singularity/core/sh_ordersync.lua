@@ -71,7 +71,9 @@ if SERVER then
 				NDat.AddDataAll({
 					Name="MelonGroupOrders",
 					Val=5,
-					Dat={{N="G",T="T",g}}
+					Dat={
+						G=g
+					}
 				})
 			end
 		end

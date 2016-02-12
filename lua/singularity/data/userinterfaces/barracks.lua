@@ -66,10 +66,10 @@ else
 	
 	function VGUI:SendData(Clear)
 		local Data = {Name="barracks_setup_queue",Val=1,Dat={
-			{N="E",T="E",V=self.Ent},
-			{N="T",T="T",V=self.BQue or {}},
-			{N="B",T="B",V=self.WillLoop},
-			{N="C",T="B",V=Clear}
+			E=self.Ent,
+			T=self.BQue or {},
+			B=self.WillLoop,
+			C=Clear
 		}}
 		NDat.AddData(Data)
 	end
@@ -204,10 +204,10 @@ Utl:HookNet("barracks_setup_queue","",function(D,P)
 			end
 			
 			NDat.AddDataAll({Name="barracks_setup_queue",Val=1,Dat={
-				{N="E",T="E",V=Ent},
-				{N="T",T="T",V=D.T or {}},
-				{N="B",T="B",V=D.B},
-				{N="C",T="B",V=D.C or false}
+				E=Ent,
+				T=D.T or {},
+				B=D.B,
+				C=D.C or false
 			}})
 		else
 			local Window = Glob.Window

@@ -60,7 +60,12 @@ function ENT:DrawAttack(S,E)
 	NDat.AddDataAll({
 		Name="SingNetWorkEffect",
 		Val=1,
-		Dat={{N="N",T="S",V="attack_beam"},{N="Entity",T="E",V=self},{N="Origin",T="V",V=S+Vector(0,0,5)},{N="Start",T="V",V=E+Vector(0,0,0)}}
+		Dat={
+			N="attack_beam",
+			Entity=self,
+			Origin=S+Vector(0,0,5),
+			Start=E+Vector(0,0,0)
+		}
 	})
 end
 
@@ -70,7 +75,11 @@ function ENT:DrawHeal(S,E)
 	NDat.AddDataAll({
 		Name="SingNetWorkEffect",
 		Val=1,
-		Dat={{N="N",T="S",V="heal_splash"},{N="Entity",T="E",V=self},{N="Origin",T="V",V=E+Vector(0,0,5)}}
+		Dat={
+			N="heal_splash",
+			Entity=self,
+			Origin=E+Vector(0,0,5)
+		}
 	})	
 end
 
